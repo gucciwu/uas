@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+    <!-- 数据库驱动包位置 -->
+    <!-- 由于在pom.xml中加入插件时已经配置数据库驱动包，所以此处不必配置了-->
+    <!-- <classPathEntry location="D:\generator\mysql-connector-java-5.1.34.jar" /> -->
+    <!--<classPathEntry location="E:\Database\Oracle\jdbc\lib\ojdbc14.jar" />-->
+    <context id="MySQLTables" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressAllComments" value="false" />
+            <property name="addRemarkComments" value="true" />
+            <property name="javaFileEncoding" value="UTF-8"/>
+        </commentGenerator>
+        <!-- 数据库链接URL、用户名、密码 -->
+        <!--<jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/my_db?characterEncoding=utf8" userId="root" password="123456"> -->
+        <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/uas?useUnicode=true&amp;characterEncoding=utf8&amp;autoReconnect=true&amp;failOverReadOnly=false&amp;autoReconnectForPools=true&amp;useSSL=false" userId="root" password="root">
+        </jdbcConnection>
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+        <!-- 生成模型的包名和位置 -->
+        <javaModelGenerator targetPackage="com.mszq.uas.uasserver.dao.model" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+            <property name="trimStrings" value="true" />
+        </javaModelGenerator>
+        <!-- 生成的映射文件包名和位置 -->
+        <sqlMapGenerator targetPackage="com.mszq.uas.uasserver.dao.xml" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+        <!-- 生成DAO的包名和位置 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="com.mszq.uas.uasserver.dao.mapper" targetProject="src/main/java">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+
+        <table tableName="UAS_USER" domainObjectName="User"/>
+        <table tableName="UAS_PASSWORD" domainObjectName="Password"/>
+        <table tableName="UAS_ACCOUNT" domainObjectName="Account"/>
+        <table tableName="UAS_APP" domainObjectName="App"/>
+        <table tableName="UAS_APP_ACCOUNT" domainObjectName="AppAccount"/>
+        <table tableName="UAS_ORG" domainObjectName="Org"/>
+        <table tableName="UAS_ROLE" domainObjectName="Role"/>
+        <table tableName="UAS_ROLE_TYPE" domainObjectName="RoleType"/>
+        <table tableName="UAS_ROLE_APP" domainObjectName="RoleApp"/>
+        <table tableName="UAS_LOG" domainObjectName="Log"/>
+        <table tableName="UAS_SESSION" domainObjectName="Session"/>
+        <table tableName="UAS_USER_ROLE" domainObjectName="UserRole"/>
+        <table tableName="UAS_ORG_ID_MAP" domainObjectName="OrgIdMap"/>
+        <table tableName="UAS_ORG_TYPE" domainObjectName="OrgType"/>
+        <table tableName="UAS_IP_LIST" domainObjectName="IpList"/>
+    </context>
+</generatorConfiguration>
