@@ -8,8 +8,6 @@ public class GetUsersExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
     private long orgId;
     private long userId;
     private String jobNumber;
-    private long appId;
-    private String secret;
     private String idNumber;
     private Short idType;
 
@@ -74,21 +72,5 @@ public class GetUsersExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
 
     public void setJobNumber(String jobNumber) {
         this.jobNumber = jobNumber;
-    }
-
-    public long getAppId() {
-        return appId;
-    }
-
-    public void setAppId(long appId) {
-        this.appId = appId;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
     }
 }

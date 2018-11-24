@@ -9,8 +9,10 @@ import com.mszq.uas.uasserver.bean.SignoutResponse;
 import com.mszq.uas.uasserver.dao.mapper.PasswordMapper;
 import com.mszq.uas.uasserver.dao.mapper.UserMapper;
 import com.mszq.uas.uasserver.dao.model.*;
+import com.mszq.uas.uasserver.exception.IpForbbidenException;
 import com.mszq.uas.uasserver.redis.model.Session;
 import com.mszq.uas.uasserver.redis.storage.DAO;
+import com.mszq.uas.uasserver.service.IpBlackCheckService;
 import com.mszq.uas.uasserver.util.AESCoder;
 import com.mszq.uas.uasserver.util.MD5Utils;
 import io.swagger.annotations.Api;
@@ -45,9 +47,14 @@ public class AuthController {
     @Autowired
     private PasswordMapper passwordMapper;
 
+    @Autowired
+    private IpBlackCheckService ipBlackCheckService;
+
     @ApiOperation(value="身份认证", notes="提交身份认证信息，员工编号+密码。密码采用AES算法加密")
     @RequestMapping(value="/ua/auth",method = RequestMethod.POST)
-    public @ResponseBody AuthResponse auth(@RequestBody AuthExRequest request, HttpServletRequest httpRequest){
+    public @ResponseBody AuthResponse auth(@RequestBody AuthExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException {
+
+        ipBlackCheckService.isBlackList(httpRequest);
 
         AuthResponse response = new AuthResponse();
         if(request.getJobNumber() == null || request.getPassword() == null){
@@ -129,6 +136,7 @@ public class AuthController {
     @RequestMapping(value="/ua/signout",method = RequestMethod.POST)
     public @ResponseBody
     SignoutResponse signout(@RequestBody SignoutExRequest request){
+
         SignoutResponse response = new SignoutResponse();
         try {
             dao.deleteSession(request.getSessionId());

@@ -7,6 +7,9 @@ import org.springframework.ldap.core.*;
 import org.springframework.ldap.support.LdapNameBuilder;
 
 import javax.naming.Name;
+import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
+import javax.naming.directory.Attributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -32,16 +35,25 @@ public class LdapClient {
         }
     }
 
-    public List<String> search(final String username) {
-        return ldapTemplate.search(
-                "ou=users",
-                "cn=" + username,
-                (AttributesMapper<String>) attrs -> (String) attrs
-                        .get("cn")
-                        .get());
+    public List<Person> search(final String username) {
+
+        String filter = "cn=" + username;
+        List<Person> list = ldapTemplate.search("ou=users", filter, new AttributesMapper() {
+            @Override
+            public Object mapFromAttributes(Attributes attributes) throws NamingException {
+                Person person = new Person();
+                Attribute a = attributes.get("cn");
+                if (a != null) person.setUsername((String)a.get());
+                a = attributes.get("sn");
+                if (a != null) person.setName((String)a.get());
+                return person;
+            }
+        });
+
+        return list;
     }
 
-    public void create(final String username, final String password) {
+    public void create(final String username, final String fullname, final String password) {
         Name dn = LdapNameBuilder
                 .newInstance()
                 .add("ou", "users")
@@ -51,13 +63,20 @@ public class LdapClient {
 
         context.setAttributeValues("objectclass", new String[]{"top", "person", "organizationalPerson", "inetOrgPerson"});
         context.setAttributeValue("cn", username);
-        context.setAttributeValue("sn", username);
+        context.setAttributeValue("sn", fullname);
         context.setAttributeValue("userPassword", digestSHA(password));
 
         ldapTemplate.bind(context);
     }
 
     public void modify(final String username, final String password) {
+
+        List<Person> personList = search(username);
+        if(personList == null || personList.isEmpty())
+            return;
+
+        Person person = personList.get(0);
+
         Name dn = LdapNameBuilder
                 .newInstance()
                 .add("ou", "users")
@@ -67,7 +86,7 @@ public class LdapClient {
 
         context.setAttributeValues("objectclass", new String[]{"top", "person", "organizationalPerson", "inetOrgPerson"});
         context.setAttributeValue("cn", username);
-        context.setAttributeValue("sn", username);
+        context.setAttributeValue("sn", person.getName());
         context.setAttributeValue("userPassword", digestSHA(password));
 
         ldapTemplate.modifyAttributes(context);
