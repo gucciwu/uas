@@ -23,7 +23,7 @@ import org.springframework.stereotype.Service;
 //@Component
 @Service
 public class RedisDao implements DAO {
-	
+
 	private static Logger logger = LoggerFactory.getLogger(RedisDao.class);
 	
 	private static ObjectMapper mapper = new ObjectMapper();
@@ -149,7 +149,7 @@ public class RedisDao implements DAO {
 			}else{
 				long t = Long.parseLong(value);
 				long left = t+config.getTokenTimeout()-s;
-				return t;
+				return left;
 			}
 		} catch (NumberFormatException e) {
 			return 0;

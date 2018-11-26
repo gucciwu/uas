@@ -52,7 +52,7 @@ public class AuthController {
 
     @ApiOperation(value="身份认证", notes="提交身份认证信息，员工编号+密码。密码采用AES算法加密")
     @RequestMapping(value="/ua/auth",method = RequestMethod.POST)
-    public @ResponseBody AuthResponse auth(@RequestBody AuthExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException {
+    public @ResponseBody AuthResponse auth(@RequestBody AuthExRequest request, HttpServletRequest httpRequest) throws Exception {
 
         ipBlackCheckService.isBlackList(httpRequest);
 
@@ -79,6 +79,16 @@ public class AuthController {
         ue.createCriteria().andJobNumberEqualTo(id);
         List<User> users = userMapper.selectByExample(ue);
         if(users != null && users.size() > 0){
+
+            //判断是否已经被锁定
+            long left = dao.findLocker(users.get(0).getId().toString());
+            if(left != 0){
+                String time = this.getGapTime(left);
+                response.setCode(CODE.BIZ.LOCKED);
+                response.setMsg("账户已被锁定，还需要等待："+time);
+                return response;
+            }
+
             PasswordExample pe = new PasswordExample();
             pe.createCriteria().andUserIdEqualTo(users.get(0).getId());
             List<Password> passwords = passwordMapper.selectByExample(pe);
@@ -116,9 +126,20 @@ public class AuthController {
                     try {
                         int errorTime = dao.findErrorCount(""+users.get(0).getId());
                         if(errorTime >= config.getErrorTry()){
-                            dao.addLocker(""+users.get(0).getId());
+                            long l = dao.findLocker(users.get(0).getId().toString());
+                            if(l == 0) {
+                                dao.addLocker("" + users.get(0).getId());
+                                String time = this.getGapTime(l);
+                                response.setCode(CODE.BIZ.LOCKED);
+                                response.setMsg("账户已被锁定，还需要等待："+time);
+                                return response;
+                            }
                         }else{
                             dao.updateErrorCount(""+users.get(0).getId(),errorTime+1);
+                            int l = config.getErrorTry()-(errorTime+1);
+                            response.setCode(CODE.BIZ.LOCKED);
+                            response.setMsg("用户名或密码错误，您还有"+l+"次认证机会");
+                            return response;
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -135,8 +156,9 @@ public class AuthController {
     @ApiOperation(value="注销登录", notes="注销登录，销毁会话信息")
     @RequestMapping(value="/ua/signout",method = RequestMethod.POST)
     public @ResponseBody
-    SignoutResponse signout(@RequestBody SignoutExRequest request){
+    SignoutResponse signout(@RequestBody SignoutExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException {
 
+        ipBlackCheckService.isBlackList(httpRequest);
         SignoutResponse response = new SignoutResponse();
         try {
             dao.deleteSession(request.getSessionId());
@@ -197,6 +219,18 @@ public class AuthController {
             ip = request.getRemoteAddr();
         }
         return "0:0:0:0:0:0:0:1".equals(ip) ? "127.0.0.1" : ip;
+    }
+
+    private String getGapTime(long time) {
+        long hours = time / (1000 * 60 * 60);
+        long minutes = (time - hours * (1000 * 60 * 60)) / (1000 * 60);
+        String diffTime = "";
+        if (minutes < 10) {
+            diffTime = hours + ":0" + minutes;
+        } else {
+            diffTime = hours + ":" + minutes;
+        }
+        return diffTime;
     }
 
 }

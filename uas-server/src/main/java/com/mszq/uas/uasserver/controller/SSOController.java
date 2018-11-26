@@ -11,12 +11,11 @@ import com.mszq.uas.uasserver.dao.model.*;
 import com.mszq.uas.uasserver.redis.model.Session;
 import com.mszq.uas.uasserver.redis.model.Token;
 import com.mszq.uas.uasserver.redis.storage.DAO;
+import com.mszq.uas.uasserver.service.AppSecretVerifyService;
+import com.mszq.uas.uasserver.service.IpBlackCheckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.MessageDigest;
 import java.util.List;
@@ -40,7 +39,12 @@ public class SSOController {
     @Autowired
     private DAO dao;
 
-    @RequestMapping("/sso/require_token")
+    @Autowired
+    private AppSecretVerifyService appSecretVerifyService;
+    @Autowired
+    private IpBlackCheckService ipBlackCheckService;
+
+    @RequestMapping(value="/sso/require_token",method = RequestMethod.POST)
     public @ResponseBody
     RequireTokenResponse require(@RequestBody RequireTokenExRequest request){
 
@@ -131,7 +135,7 @@ public class SSOController {
         return response;
     }
 
-    @RequestMapping("/sso/verify_token")
+    @RequestMapping(value="/sso/verify_token",method = RequestMethod.POST)
     public @ResponseBody
     VerifyTokenResponse verify(@RequestBody VerifyTokenExRequest request){
 

@@ -121,7 +121,17 @@ public class DataSyncController {
 
         UserExample ue = new UserExample();
         ue.createCriteria().andJobNumberEqualTo(request.getJobNumber());
-        int ret = userMapper.deleteByExample(ue);
+        List<User> userList = userMapper.selectByExample(ue);
+        if(userList == null && userList.size() == 0){
+            response.setCode(CODE.BIZ.FAIL_DELETE_SQL);
+            response.setMsg("账户不存在");
+            return response;
+        }
+
+        User user = userList.get(0);
+        user.setStatus(Constant.USER_STATUS.UNSIGNED);
+        user.setModifyTime(new Date());
+        int ret = userMapper.updateByPrimaryKey(user);
         if(ret == 0){
             response.setCode(CODE.BIZ.FAIL_DELETE_SQL);
             response.setMsg("删除失败");
@@ -195,14 +205,26 @@ public class DataSyncController {
 
         AppAccountExample aae = new AppAccountExample();
         aae.createCriteria().andUserIdEqualTo(request.getAppAccount().getUserId()).andAppIdEqualTo(request.getAppAccount().getAppId());
-        int ret = appAccountMapper.updateByExample(request.getAppAccount(),aae);
-        if(ret == 0){
-            response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);
-            response.setMsg("更新失败");
-            return response;
+
+        List<AppAccount> appAccountList = appAccountMapper.selectByExample(aae);
+        if(appAccountList != null && appAccountList.size() > 0 ) {
+
+            AppAccount appAccount = appAccountList.get(0);
+            request.getAppAccount().setId(appAccount.getId());
+
+            int ret = appAccountMapper.updateByExample(request.getAppAccount(), aae);
+            if (ret == 0) {
+                response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);
+                response.setMsg("更新失败");
+                return response;
+            } else {
+                response.setCode(CODE.SUCCESS);
+                response.setMsg("成功");
+                return response;
+            }
         }else{
-            response.setCode(CODE.SUCCESS);
-            response.setMsg("成功");
+            response.setCode(CODE.BIZ.NOT_EXIST_RECORD);
+            response.setMsg("记录不存在");
             return response;
         }
     }
@@ -377,15 +399,15 @@ public class DataSyncController {
 
         AppAccountExample aae = new AppAccountExample();
         AppAccountExample.Criteria c = aae.createCriteria();
-        if(request.getUserIds() != null && request.getUserIds().size() > 0) {
-            c.andUserIdIn(request.getUserIds());
+        if(request.getUserId() > 0) {
+            c.andUserIdEqualTo(request.getUserId());
             List<AppAccount> appAccountList = appAccountMapper.selectByExample(aae);
             response.setData(appAccountList);
             response.setCode(CODE.SUCCESS);
             response.setMsg("成功");
             return response;
-        }else if(request.getJobNumbers() != null && request.getJobNumbers().size() > 0){
-            c.andJobNumberIn(request.getJobNumbers());
+        }else if(request.getJobNumber() != null && !"".equals(request.getJobNumber())){
+            c.andJobNumberEqualTo(request.getJobNumber());
             List<AppAccount> appAccountList = appAccountMapper.selectByExample(aae);
             response.setData(appAccountList);
             response.setCode(CODE.SUCCESS);
@@ -399,25 +421,48 @@ public class DataSyncController {
 
     }
 
-    @RequestMapping(value="/datasync/add_org",method = RequestMethod.POST)
+    @RequestMapping(value="/datasync/update_org",method = RequestMethod.POST)
     public @ResponseBody
-    AddOrgResponse addOrg(@RequestBody AddOrgExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+    UpdateOrgResponse addOrg(@RequestBody UpdateOrgRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
-        AddOrgResponse response = new AddOrgResponse();
+        UpdateOrgResponse response = new UpdateOrgResponse();
 
-        int ret = orgMapper.insert(request.getOrg());
-        if(ret == 0){
-            response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
-            response.setMsg("插入失败");
+        OrgExample oe = new OrgExample();
+        oe.createCriteria().andOrgIdEqualTo(request.getOrg().getOrgId()).andOrgTypeEqualTo(request.getOrg().getOrgType());
+
+        List<Org> orgList = orgMapper.selectByExample(oe);
+        if(orgList!= null && orgList.size()>0) {
+            Org org = orgList.get(0);
+            request.getOrg().setId(org.getId());
+
+            int ret = orgMapper.updateByExample(request.getOrg(), oe);
+            if (ret == 0) {
+                response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);
+                response.setMsg("更新失败");
+                return response;
+            } else {
+                response.setInnerOrgId(org.getId());
+                response.setCode(CODE.SUCCESS);
+                response.setMsg("成功");
+                return response;
+            }
+        }else{
+            //记录不存在，则插入
+            int ret = orgMapper.insert(request.getOrg());
+            if(ret == 0){
+                response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
+                response.setMsg("插入失败");
+                return response;
+            }
+
+            response.setInnerOrgId(request.getOrg().getId());
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("成功");
             return response;
         }
-
-        response.setCode(CODE.SUCCESS);
-        response.setMsg("成功");
-        return response;
     }
 
     @RequestMapping(value="/datasync/del_org",method = RequestMethod.POST)
@@ -431,11 +476,7 @@ public class DataSyncController {
 
         OrgExample oe = new OrgExample();
         OrgExample.Criteria c = oe.createCriteria();
-        if(request.getOrgId() != 0)
-            c.andOrgIdEqualTo(request.getOrgId());
-
-        if(request.getOrgType() != 0)
-            c.andOrgTypeEqualTo(request.getOrgType());
+        c.andOrgIdEqualTo(request.getOrgId()).andOrgTypeEqualTo(request.getOrgType());
 
         List<Org> orgs = orgMapper.selectByExample(oe);
         if(orgs == null || orgs.size() == 0){
@@ -460,7 +501,7 @@ public class DataSyncController {
 
     @RequestMapping(value="/datasync/add_app",method = RequestMethod.POST)
     public @ResponseBody
-    AddAppResponse getOrgs(@RequestBody AddAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+    AddAppResponse addApp(@RequestBody AddAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
@@ -481,7 +522,7 @@ public class DataSyncController {
 
     @RequestMapping(value="/datasync/del_app",method = RequestMethod.POST)
     public @ResponseBody
-    DelAppResponse getOrgs(@RequestBody DelAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+    DelAppResponse delApp(@RequestBody DelAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
@@ -536,29 +577,6 @@ public class DataSyncController {
         return response;
     }
 
-    @RequestMapping(value="/datasync/modify_org",method = RequestMethod.POST)
-    public @ResponseBody
-    ModifyOrgResponse modifyOrg(@RequestBody ModifyOrgExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
-
-        ipBlackCheckService.isBlackList(httpRequest);
-        appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
-
-        ModifyOrgResponse response = new ModifyOrgResponse();
-
-        OrgExample oe = new OrgExample();
-        oe.createCriteria().andOrgIdEqualTo(request.getOrg().getId()).andOrgTypeEqualTo(request.getOrg().getOrgType());
-        int ret = orgMapper.updateByExample(request.getOrg(),oe);
-        if(ret == 0){
-            response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);
-            response.setMsg("更新失败");
-            return response;
-        }else{
-            response.setCode(CODE.SUCCESS);
-            response.setMsg("成功");
-            return response;
-        }
-    }
-
     @RequestMapping(value="/datasync/add_org_type",method = RequestMethod.POST)
     public @ResponseBody
     AddOrgTypeResponse addOrgType(@RequestBody AddOrgTypeExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
@@ -568,13 +586,14 @@ public class DataSyncController {
 
         AddOrgTypeResponse response = new AddOrgTypeResponse();
 
-        OrgTypeExample  ote = new OrgTypeExample();
+        OrgTypeExample ote = new OrgTypeExample();
         int ret = orgTypeMapper.insert(request.getOrgType());
         if(ret == 0){
             response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
             response.setMsg("插入失败");
             return response;
         }
+        response.setOrgTypeId(request.getOrgType().getId());
         response.setCode(CODE.SUCCESS);
         response.setMsg("成功");
         return response;

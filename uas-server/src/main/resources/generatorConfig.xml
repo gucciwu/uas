@@ -35,19 +35,45 @@
         <table tableName="UAS_USER" domainObjectName="User">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
         </table>
-        <table tableName="UAS_PASSWORD" domainObjectName="Password"/>
-        <table tableName="UAS_ACCOUNT" domainObjectName="Account"/>
-        <table tableName="UAS_APP" domainObjectName="App"/>
+        <table tableName="UAS_PASSWORD" domainObjectName="Password">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_ACCOUNT" domainObjectName="Account">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_APP" domainObjectName="App">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
         <table tableName="UAS_APP_ACCOUNT" domainObjectName="AppAccount"/>
-        <table tableName="UAS_ORG" domainObjectName="Org"/>
-        <table tableName="UAS_ROLE" domainObjectName="Role"/>
-        <table tableName="UAS_ROLE_TYPE" domainObjectName="RoleType"/>
-        <table tableName="UAS_ROLE_APP" domainObjectName="RoleApp"/>
-        <table tableName="UAS_LOG" domainObjectName="Log"/>
-        <table tableName="UAS_SESSION" domainObjectName="Session"/>
-        <table tableName="UAS_USER_ROLE" domainObjectName="UserRole"/>
-        <table tableName="UAS_ORG_ID_MAP" domainObjectName="OrgIdMap"/>
-        <table tableName="UAS_ORG_TYPE" domainObjectName="OrgType"/>
-        <table tableName="UAS_IP_LIST" domainObjectName="IpList"/>
+        <table tableName="UAS_ORG" domainObjectName="Org">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_ROLE" domainObjectName="Role">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_ROLE_TYPE" domainObjectName="RoleType" >
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_ROLE_APP" domainObjectName="RoleApp">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_LOG" domainObjectName="Log">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_SESSION" domainObjectName="Session">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_USER_ROLE" domainObjectName="UserRole">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_ORG_ID_MAP" domainObjectName="OrgIdMap">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_ORG_TYPE" domainObjectName="OrgType">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
+        <table tableName="UAS_IP_LIST" domainObjectName="IpList">
+            <generatedKey column="id" sqlStatement="MySql" identity="true"/>
+        </table>
     </context>
 </generatorConfiguration>
