@@ -57,17 +57,29 @@ public class DataSyncControllerTest {
 
     @Test
     public void addApp() {
-        AddAppRequest request = new AddAppRequest();
-        App app = new App();
-        app.setSecret("aaa");
-        app.setName("测试系统A");
-        app.setOrgType((short) 1);
-        app.setPath("");
-        request.setApp(app);
-        ResponseEntity<AddAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/add_app",request, AddAppResponse.class, "");
+        long appId = 0;
+        {
+            AddAppRequest request = new AddAppRequest();
+            App app = new App();
+            app.setSecret("aaa");
+            app.setName("测试系统A");
+            app.setOrgType((short) 1);
+            app.setPath("");
+            request.setApp(app);
+            ResponseEntity<AddAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/add_app", request, AddAppResponse.class, "");
+            Assert.assertEquals(200, response.getStatusCodeValue());
+            appId = response.getBody().getAppId();
+        }
 
-//        Assert.assertNotNull(response);
-        Assert.assertEquals(200,response.getStatusCodeValue());
+        //删除应用
+        {
+            DelAppRequest request = new DelAppRequest();
+            request.setAppId(appId);
+            request.set_appId(1L);
+            request.set_secret("1");
+            ResponseEntity<DelAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_app",request, DelAppResponse.class, "");
+            Assert.assertEquals(200,response.getStatusCodeValue());
+        }
     }
 
     @Test
@@ -140,31 +152,37 @@ public class DataSyncControllerTest {
     }
 
     @Test
-    public void delUser() {
-        UpdateUserExRequest request = new UpdateUserExRequest();
-        request.set_appId(1L);
-        request.set_secret("1");
-        User user = new User();
-        user.setIdNumber("511502198658121560");
-        user.setEmail("xxxxx@126.com");
-        user.setIdType((short) 1);
-        user.setMobile("1858686542");
-        user.setJobNumber("112089");
-        user.setName("双击六个六");
-        user.setOrgId(1L);
-        user.setOrgType((short) 1);
-        user.setStatus(Constant.USER_STATUS.OK);
-        request.setUser(user);
+    public void adddelUser() {
+        final String JOB_NUMBER = "112089";
+        {
+            UpdateUserExRequest request = new UpdateUserExRequest();
+            request.set_appId(1L);
+            request.set_secret("1");
+            User user = new User();
+            user.setIdNumber("511502198658121560");
+            user.setEmail("xxxxx@126.com");
+            user.setIdType((short) 1);
+            user.setMobile("1858686542");
+            user.setJobNumber(JOB_NUMBER);
+            user.setName("双击六个六");
+            user.setOrgId(1L);
+            user.setOrgType((short) 1);
+            user.setStatus(Constant.USER_STATUS.OK);
+            request.setUser(user);
 
-        ResponseEntity<UpdateUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/update_user", request, UpdateUserResponse.class, "");
-        System.out.println(String.format("测试结果为：%s", response.getBody()));
-        Assert.assertEquals(0, response.getBody().getCode());
-
-        DelUserExRequest req = new DelUserExRequest();
-        req.setJobNumber("1120898");
-        ResponseEntity<DelUserResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_user", request, DelUserResponse.class, "");
-        System.out.println(String.format("测试结果为：%s", resp.getBody()));
-        Assert.assertEquals(0, resp.getBody().getCode());
+            ResponseEntity<UpdateUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/update_user", request, UpdateUserResponse.class, "");
+            System.out.println(String.format("测试结果为：%s", response.getBody()));
+            Assert.assertEquals(0, response.getBody().getCode());
+        }
+        {
+            DelUserExRequest req = new DelUserExRequest();
+            req.setJobNumber(JOB_NUMBER);
+            req.set_appId(1L);
+            req.set_secret("1");
+            ResponseEntity<DelUserResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_user", req, DelUserResponse.class, "");
+            System.out.println(String.format("测试结果为：%s", resp.getBody()));
+            Assert.assertEquals(0, resp.getBody().getCode());
+        }
     }
 
     @Test
@@ -302,6 +320,17 @@ public class DataSyncControllerTest {
             System.out.println(String.format("测试结果为：%s", response.getBody()));
             Assert.assertEquals(200, response.getStatusCodeValue());
             userId = response.getBody().getUserId();
+        }
+        {
+            ResetPasswordExRequest request = new ResetPasswordExRequest();
+            request.set_appId(1L);
+            request.set_secret("1");
+            request.setJobNumber(JOB_NUMBER_1);
+            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+
+            ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
+            System.out.println(String.format("测试结果为：%s", response.getBody()));
+            Assert.assertEquals(0, response.getBody().getCode());
         }
         {
             ChangePasswordExRequest request = new ChangePasswordExRequest();

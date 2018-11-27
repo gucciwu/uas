@@ -8,6 +8,8 @@ import com.mszq.uas.uasserver.bean.VerifyTokenExRequest;
 import com.mszq.uas.uasserver.bean.VerifyTokenResponse;
 import com.mszq.uas.uasserver.dao.mapper.*;
 import com.mszq.uas.uasserver.dao.model.*;
+import com.mszq.uas.uasserver.exception.AppSecretMatchException;
+import com.mszq.uas.uasserver.exception.IpForbbidenException;
 import com.mszq.uas.uasserver.redis.model.Session;
 import com.mszq.uas.uasserver.redis.model.Token;
 import com.mszq.uas.uasserver.redis.storage.DAO;
@@ -17,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.security.MessageDigest;
 import java.util.List;
 
@@ -46,7 +49,10 @@ public class SSOController {
 
     @RequestMapping(value="/sso/require_token",method = RequestMethod.POST)
     public @ResponseBody
-    RequireTokenResponse require(@RequestBody RequireTokenExRequest request){
+    RequireTokenResponse require(@RequestBody RequireTokenExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+
+        ipBlackCheckService.isBlackList(httpRequest);
+        appSecretVerifyService.verifyAppSecret(request.get_appId(), request.get_secret());
 
         RequireTokenResponse response = new RequireTokenResponse();
         //查找会话session
@@ -103,14 +109,6 @@ public class SSOController {
             return response;
         }
 
-        //校验密码密码串
-        App app = apps.get(0);
-        if(!app.getId().equals(request.getAppId()) || !app.getSecret().equals(request.getSecret())){
-            response.setCode(CODE.BIZ.SECRET_NOT_MATCH);
-            response.setMsg("应用不匹配");
-            return response;
-        }
-
         //生成令牌
         Token token = new Token();
         token.setExpireTime(config.getTokenTimeout());
@@ -130,14 +128,17 @@ public class SSOController {
         response.setCode(CODE.SUCCESS);
         response.setMsg("成功");
         response.setExpireTime(token.getExpireTime());
-        response.setRedirectPath(app.getPath());
+        response.setRedirectPath(apps.get(0).getPath());
         response.setToken(token.getToken());
         return response;
     }
 
     @RequestMapping(value="/sso/verify_token",method = RequestMethod.POST)
     public @ResponseBody
-    VerifyTokenResponse verify(@RequestBody VerifyTokenExRequest request){
+    VerifyTokenResponse verify(@RequestBody VerifyTokenExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
+
+        ipBlackCheckService.isBlackList(httpRequest);
+        appSecretVerifyService.verifyAppSecret(request.get_appId(), request.get_secret());
 
         VerifyTokenResponse response = new VerifyTokenResponse();
         //查询token是否存在

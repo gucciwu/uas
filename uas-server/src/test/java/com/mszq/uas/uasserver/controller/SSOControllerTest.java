@@ -5,14 +5,21 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.basement.Constant;
+import com.mszq.uas.uasserver.Config;
 import com.mszq.uas.uasserver.UasServerApplication;
 import com.mszq.uas.uasserver.bean.*;
-import com.mszq.uas.uasserver.dao.model.*;
+import com.mszq.uas.uasserver.dao.model.App;
+import com.mszq.uas.uasserver.dao.model.AppAccount;
+import com.mszq.uas.uasserver.dao.model.Role;
+import com.mszq.uas.uasserver.dao.model.User;
+import com.mszq.uas.uasserver.util.AESCoder;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
@@ -23,17 +30,30 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URL;
 
+import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = UasServerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class PermissionControllerTest {
+public class SSOControllerTest {
+
     @LocalServerPort
     private int port;
 
     private URL base;
-
+    @Autowired
+    @Qualifier("config")
+    private Config config;
     private HttpHeaders headers = new HttpHeaders();
     @Autowired
     private TestRestTemplate restTemplate;
+
+    private String sessionId;
+    long appId = 0;
+    long roleId = 0;
+    final String JOB_NUMBER ="333333";
+    final String MOBILE = "1810888542";
+    long userId = 0;
+    private String token;
+    private long expireTime;
 
     @Before
     public void setUp() throws Exception {
@@ -44,114 +64,7 @@ public class PermissionControllerTest {
         MediaType type = MediaType.parseMediaType("application/json; charset=UTF-8");
         headers.setContentType(type);
         headers.add("Accept", MediaType.APPLICATION_JSON.toString());
-    }
 
-    @Test
-    public void roleTypeAddDel() {
-        long roleTypeId = 0;
-        {
-            AddRoleTypeExRequest request = new AddRoleTypeExRequest();
-            RoleType rt = new RoleType();
-            rt.setName("测试角色分类");
-            request.setRoleType(rt);
-            request.set_appId(1L);
-            request.set_secret("1");
-            ResponseEntity<AddRoleTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_role_type", request, AddRoleTypeResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-            roleTypeId = response.getBody().getRoleTypeId();
-        }
-
-        {
-            DelRoleTypeExRequest request = new DelRoleTypeExRequest();
-            request.setRoleType(roleTypeId);
-            request.set_appId(1L);
-            request.set_secret("1");
-
-            ResponseEntity<DelRoleTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role_type", request, DelRoleTypeResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-        }
-    }
-
-    @Test
-    public void addRole() {
-        long roleId = 0;
-        long roleTypeId = 0;
-        String NAME = "测试角色1111";
-        {
-            AddRoleTypeExRequest request = new AddRoleTypeExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            RoleType rt = new RoleType();
-            rt.setName("测试角色分类");
-            request.setRoleType(rt);
-            ResponseEntity<AddRoleTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_role_type", request, AddRoleTypeResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-            roleTypeId = response.getBody().getRoleTypeId();
-        }
-        {
-            AddRoleExRequest request = new AddRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            Role r = new Role();
-            r.setRoleName(NAME);
-            r.setRoleTypeId((int)roleTypeId);
-            request.setRole(r);
-            ResponseEntity<AddRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_role", request, AddRoleResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-            roleId = response.getBody().getRoleId();
-        }
-        {
-            GetRoleExRequest request = new GetRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            request.setRoleName(NAME);
-
-            ResponseEntity<GetRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/get_roles", request, GetRoleResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-
-            Role role = JSON.parseObject(JSON.toJSONString(response.getBody().getData().get(0)), Role.class);
-            Assert.assertEquals(NAME, role.getRoleName());
-        }
-
-        {
-            DelRoleExRequest request = new DelRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            request.setRoleId(roleId);
-
-            ResponseEntity<DelRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role", request, DelRoleResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-        }
-
-        {
-            GetRoleExRequest request = new GetRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            request.setRoleName(NAME);
-
-            ResponseEntity<GetRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/get_roles", request, GetRoleResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-            Assert.assertEquals(0,response.getBody().getData().size());
-        }
-
-        {
-            DelRoleTypeExRequest request = new DelRoleTypeExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            request.setRoleType(roleTypeId);
-
-            ResponseEntity<DelRoleTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role_type", request, DelRoleTypeResponse.class, "");
-            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
-        }
-    }
-
-    @Test
-    public void assignPermissionToUser() {
-        long appId = 0;
-        long roleId = 0;
-        final String JOB_NUMBER ="333333";
-        final String MOBILE_1 = "1810888542";
-        long userId = 0;
         //创建应用
         {
             AddAppRequest request = new AddAppRequest();
@@ -195,7 +108,7 @@ public class PermissionControllerTest {
             user.setIdNumber("611502198658121430");
             user.setEmail("yyyyy@126.com");
             user.setIdType((short) 1);
-            user.setMobile(MOBILE_1);
+            user.setMobile(MOBILE);
             user.setJobNumber(JOB_NUMBER);
             user.setName("哈哈哈哈");
             user.setOrgId(1L);
@@ -207,6 +120,18 @@ public class PermissionControllerTest {
             System.out.println(String.format("测试结果为：%s", response.getBody()));
             Assert.assertEquals(CODE.SUCCESS, response.getBody().getCode());
             userId = response.getBody().getUserId();
+        }
+        //设置密码
+        {
+            ResetPasswordExRequest request = new ResetPasswordExRequest();
+            request.set_appId(1L);
+            request.set_secret("1");
+            request.setJobNumber(JOB_NUMBER);
+            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+
+            ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
+            System.out.println(String.format("测试结果为：%s", response.getBody()));
+            Assert.assertEquals(0, response.getBody().getCode());
         }
         //将应用付给角色
         {
@@ -230,32 +155,22 @@ public class PermissionControllerTest {
             ResponseEntity<AddRoleToUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_role_to_user", request, AddRoleToUserResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
         }
-        //查询是否已经分配了子账号
+
+        //用户认证生成session
+        //正常认证
         {
-            GetAppAccountIdExRequest request = new GetAppAccountIdExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            request.setUserId(userId);
-            request.setAppId(appId);
-
-            ResponseEntity<GetAppAccountIdResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/get_app_account_id", request, GetAppAccountIdResponse.class, "");
-            System.out.println(String.format("测试结果为：%s", response.getBody()));
-            Assert.assertEquals(0, response.getBody().getCode());
-
-            GetAppAccountIdResponse resp = response.getBody();
-            JSONArray array = JSON.parseArray(JSON.toJSONString(response.getBody().getData()));
-            Assert.assertEquals(1,array.size());
-            AppAccount appAccount1 = null;
-            for (int i = 0; i < array.size(); i++) {
-                JSONObject o = (JSONObject) array.get(i);
-                AppAccount _aa = JSON.parseObject(o.toJSONString(), AppAccount.class);
-                if (JOB_NUMBER.equals(_aa.getAccount())) {
-                    appAccount1 = _aa;
-                    break;
-                }
-            }
-            Assert.assertNotNull(appAccount1);
+            AuthExRequest request = new AuthExRequest();
+            request.setJobNumber(JOB_NUMBER);
+            request.setPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            ResponseEntity<AuthResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/ua/auth", request, AuthResponse.class, "");
+            System.out.println(String.format("测试结果为：%s", resp.getBody()));
+            Assert.assertEquals(0, resp.getBody().getCode());
+            sessionId = resp.getBody().getSessionId();
         }
+    }
+
+    @After
+    public void tearDown() throws Exception {
         //取消用户的角色
         {
             DelRoleToUserExRequest request = new DelRoleToUserExRequest();
@@ -268,23 +183,6 @@ public class PermissionControllerTest {
             ResponseEntity<DelRoleToUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role_to_user", request, DelRoleToUserResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
         }
-        //查询分配的子账号是否已经删除
-        {
-            GetAppAccountIdExRequest request = new GetAppAccountIdExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
-            request.setUserId(userId);
-            request.setAppId(appId);
-
-            ResponseEntity<GetAppAccountIdResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/get_app_account_id", request, GetAppAccountIdResponse.class, "");
-            System.out.println(String.format("测试结果为：%s", response.getBody()));
-            Assert.assertEquals(0, response.getBody().getCode());
-
-            GetAppAccountIdResponse resp = response.getBody();
-            JSONArray array = JSON.parseArray(JSON.toJSONString(response.getBody().getData()));
-            Assert.assertEquals(0,array.size());
-        }
-
         //删除用户
         {
             DelUserExRequest request = new DelUserExRequest();
@@ -325,6 +223,47 @@ public class PermissionControllerTest {
             request.set_secret("1");
             ResponseEntity<DelAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_app",request, DelAppResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
+        }
+    }
+
+    @Test
+    public void requireAndVerify() {
+        {
+            RequireTokenExRequest request = new RequireTokenExRequest();
+            request.set_appId(1L);
+            request.set_secret("1");
+            request.setAppId(appId);
+            request.setSessionId(sessionId);
+            ResponseEntity<RequireTokenResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/sso/require_token",request, RequireTokenResponse.class, "");
+            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
+            Assert.assertNotNull(response.getBody().getToken());
+            Assert.assertEquals(config.getTokenTimeout(),response.getBody().getExpireTime());
+            expireTime = response.getBody().getExpireTime();
+            token = response.getBody().getToken();
+        }
+
+        {
+            VerifyTokenExRequest request = new VerifyTokenExRequest();
+            request.set_appId(1L);
+            request.set_secret("1");
+            request.setToken(token);
+            ResponseEntity<VerifyTokenResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/sso/verify_token",request, VerifyTokenResponse.class, "");
+            Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
+            Assert.assertEquals(JOB_NUMBER,response.getBody().getJobNumber());
+        }
+        //等待token过期后在测试
+        {
+            try {
+                Thread.sleep(expireTime);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            VerifyTokenExRequest request = new VerifyTokenExRequest();
+            request.set_appId(1L);
+            request.set_secret("1");
+            request.setToken(token);
+            ResponseEntity<VerifyTokenResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/sso/verify_token",request, VerifyTokenResponse.class, "");
+            Assert.assertEquals(response.getBody().getCode(), CODE.BIZ.TOKEN_NOT_EXIST);
         }
     }
 }

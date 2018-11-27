@@ -3,6 +3,7 @@ package com.mszq.uas.uasserver.aspect;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.uasserver.exception.AppSecretMatchException;
 import com.mszq.uas.uasserver.exception.IpForbbidenException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,8 +28,18 @@ public class ControllerExceptionAdvice {
         return result;
     }
 
+    @ExceptionHandler(DuplicateKeyException.class)
+    public @ResponseBody com.mszq.uas.uasserver.bean.Response handleDuplicateKeyException(DuplicateKeyException ex) {
+        ex.printStackTrace();
+        com.mszq.uas.uasserver.bean.Response result = new com.mszq.uas.uasserver.bean.Response();
+        result.setCode(CODE.BIZ.DUPLICATE_KEY_ERROR);
+        result.setMsg("违反唯一性限制:"+ex.getMessage());
+        return result;
+    }
+
     @ExceptionHandler(Exception.class)
-    public @ResponseBody com.mszq.uas.uasserver.bean.Response handleIpForbbidenException(Exception ex) {
+    public @ResponseBody com.mszq.uas.uasserver.bean.Response handleException(Exception ex) {
+        ex.printStackTrace();
         com.mszq.uas.uasserver.bean.Response result = new com.mszq.uas.uasserver.bean.Response();
         result.setCode(CODE.SYS.UNKOWN_EXCEPTION);
         result.setMsg("未知异常:"+ex.getMessage());

@@ -401,23 +401,21 @@ public class DataSyncController {
         AppAccountExample.Criteria c = aae.createCriteria();
         if(request.getUserId() > 0) {
             c.andUserIdEqualTo(request.getUserId());
-            List<AppAccount> appAccountList = appAccountMapper.selectByExample(aae);
-            response.setData(appAccountList);
-            response.setCode(CODE.SUCCESS);
-            response.setMsg("成功");
-            return response;
-        }else if(request.getJobNumber() != null && !"".equals(request.getJobNumber())){
-            c.andJobNumberEqualTo(request.getJobNumber());
-            List<AppAccount> appAccountList = appAccountMapper.selectByExample(aae);
-            response.setData(appAccountList);
-            response.setCode(CODE.SUCCESS);
-            response.setMsg("成功");
-            return response;
-        }else{
-            response.setCode(CODE.BIZ.NOT_QUERY_CONDITION);
-            response.setMsg("没有查询条件");
-            return response;
         }
+
+        if(request.getJobNumber() != null && !"".equals(request.getJobNumber())){
+            c.andJobNumberEqualTo(request.getJobNumber());
+        }
+
+        if(request.getAppId() > 0){
+            c.andAppIdEqualTo(request.getAppId());
+        }
+
+        List<AppAccount> appAccountList = appAccountMapper.selectByExample(aae);
+        response.setData(appAccountList);
+        response.setCode(CODE.SUCCESS);
+        response.setMsg("成功");
+        return response;
 
     }
 
@@ -515,6 +513,7 @@ public class DataSyncController {
             return response;
         }
 
+        response.setAppId(request.getApp().getId());
         response.setCode(CODE.SUCCESS);
         response.setMsg("成功");
         return response;

@@ -1,6 +1,7 @@
 package com.mszq.uas.uasserver.controller;
 
 import com.mszq.uas.basement.CODE;
+import com.mszq.uas.basement.Constant;
 import com.mszq.uas.uasserver.Config;
 import com.mszq.uas.uasserver.bean.AuthExRequest;
 import com.mszq.uas.uasserver.bean.AuthResponse;
@@ -66,7 +67,7 @@ public class AuthController {
         String id = null;
         String password = null;
         try {
-            id = AESCoder.decrypt(request.getJobNumber(), config.getAesKey());
+            id = request.getJobNumber();
             password = AESCoder.decrypt(request.getPassword(), config.getAesKey());
         } catch (BadPaddingException|InvalidKeyException|NoSuchAlgorithmException|NoSuchPaddingException|IllegalBlockSizeException e) {
             e.printStackTrace();
@@ -79,9 +80,21 @@ public class AuthController {
         ue.createCriteria().andJobNumberEqualTo(id);
         List<User> users = userMapper.selectByExample(ue);
         if(users != null && users.size() > 0){
+            User user = users.get(0);
+
+            //判断用户状态是否正常
+            if(user.getStatus() == Constant.USER_STATUS.SUSPEND){
+                response.setCode(CODE.BIZ.AUTH_FAIL);
+                response.setMsg("用户账户已挂起，请联系管理员");
+                return response;
+            }else if(user.getStatus() == Constant.USER_STATUS.UNSIGNED){
+                response.setCode(CODE.BIZ.AUTH_FAIL);
+                response.setMsg("用户账户已注销");
+                return response;
+            }
 
             //判断是否已经被锁定
-            long left = dao.findLocker(users.get(0).getId().toString());
+            long left = dao.findLocker(user.getId().toString());
             if(left != 0){
                 String time = this.getGapTime(left);
                 response.setCode(CODE.BIZ.LOCKED);
@@ -90,31 +103,30 @@ public class AuthController {
             }
 
             PasswordExample pe = new PasswordExample();
-            pe.createCriteria().andUserIdEqualTo(users.get(0).getId());
+            pe.createCriteria().andUserIdEqualTo(user.getId());
             List<Password> passwords = passwordMapper.selectByExample(pe);
             if(passwords != null && passwords.size()>0){
                 Password p = passwords.get(0);
                 String md5Password = MD5Utils.MD5Encode(password,"UTF-8");
                 if(p.getPassword().equals(md5Password)){
-
-                    User user = users.get(0);
                     String ipAddr = getRemoteHost(httpRequest);
                     user.setLastLoginIp(ipAddr);
-                    user.setLoginCount(user.getLoginCount()+1);
+                    int loginCount = user.getLoginCount()==null?0:user.getLoginCount();
+                    user.setLoginCount(loginCount+1);
                     user.setLastLoginInfo(request.get_devInfo());
                     userMapper.updateByPrimaryKey(user);
 
                     Session session = new Session();
-                    session.setSessionId(this.genSessionId(users.get(0).getId()));
-                    session.setUserId(users.get(0).getId());
-                    session.setJobNumber(users.get(0).getJobNumber());
+                    session.setSessionId(this.genSessionId(user.getId()));
+                    session.setUserId(user.getId());
+                    session.setJobNumber(user.getJobNumber());
                     try {
                         dao.addSession(session);
                         response.setSessionId(session.getSessionId());
                         response.setCode(CODE.SUCCESS);
                         response.setMsg("成功");
                         response.setJobNumber(request.getJobNumber());
-                        response.setUserId(users.get(0).getId());
+                        response.setUserId(user.getId());
                         return response;
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -124,21 +136,27 @@ public class AuthController {
                     }
                 }else{
                     try {
-                        int errorTime = dao.findErrorCount(""+users.get(0).getId());
-                        if(errorTime >= config.getErrorTry()){
-                            long l = dao.findLocker(users.get(0).getId().toString());
-                            if(l == 0) {
-                                dao.addLocker("" + users.get(0).getId());
-                                String time = this.getGapTime(l);
-                                response.setCode(CODE.BIZ.LOCKED);
-                                response.setMsg("账户已被锁定，还需要等待："+time);
-                                return response;
-                            }
-                        }else{
-                            dao.updateErrorCount(""+users.get(0).getId(),errorTime+1);
-                            int l = config.getErrorTry()-(errorTime+1);
+                        int errorCount = dao.findErrorCount(user.getId().toString());
+                        if(errorCount >= config.getErrorTry()){
+                            long l = dao.findLocker(user.getId().toString());
+                            String time = this.getGapTime(l);
                             response.setCode(CODE.BIZ.LOCKED);
-                            response.setMsg("用户名或密码错误，您还有"+l+"次认证机会");
+                            response.setMsg("连续认证错误次数超过"+config.getErrorTry()+"次，账户已被锁定，还需要等待："+time);
+                            return response;
+                        }else{
+                            errorCount = errorCount+1;
+                            dao.updateErrorCount(user.getId().toString(),errorCount);
+                            int l = config.getErrorTry()-errorCount;
+                            response.setCode(CODE.BIZ.LOCKED);
+                            if(l == 0){
+                                dao.addLocker(user.getId().toString());
+                                response.setCode(CODE.BIZ.LOCKED);
+                                String time = this.getGapTime(config.getLockTime());
+                                response.setMsg("连续认证错误次数超过"+config.getErrorTry()+"次，账户已被锁定，还需要等待："+time);
+                                return response;
+                            }else {
+                                response.setMsg("用户名或密码错误，您还有" + l + "次认证机会");
+                            }
                             return response;
                         }
                     } catch (Exception e) {

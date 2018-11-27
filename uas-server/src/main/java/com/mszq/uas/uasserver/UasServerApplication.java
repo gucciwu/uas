@@ -1,8 +1,6 @@
 package com.mszq.uas.uasserver;
 
 import com.mszq.uas.uasserver.filter.SimpleCORSFilter;
-import com.mszq.uas.uasserver.interceptor.AppSecretInterceptor;
-import com.mszq.uas.uasserver.interceptor.IpBlackListInterceptor;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

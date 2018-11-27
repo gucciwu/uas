@@ -5,6 +5,15 @@ import java.util.List;
 public class GetAppAccountIdExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
     private long userId;
     private String jobNumber;
+    private long appId;
+
+    public long getAppId() {
+        return appId;
+    }
+
+    public void setAppId(long appId) {
+        this.appId = appId;
+    }
 
     public long getUserId() {
         return userId;

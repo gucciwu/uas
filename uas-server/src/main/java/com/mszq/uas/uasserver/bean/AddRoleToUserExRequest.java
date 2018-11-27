@@ -6,7 +6,8 @@ import com.mszq.uas.uasserver.dao.model.UserRole;
 public class AddRoleToUserExRequest extends ExRequest {
 
     private boolean autoAddAccount;
-    private UserRole userRole;
+    private long userId;
+    private long roleId;
 
     public boolean isAutoAddAccount() {
         return autoAddAccount;
@@ -16,11 +17,19 @@ public class AddRoleToUserExRequest extends ExRequest {
         this.autoAddAccount = autoAddAccount;
     }
 
-    public UserRole getUserRole() {
-        return userRole;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUserRole(UserRole userRole) {
-        this.userRole = userRole;
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public long getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(long roleId) {
+        this.roleId = roleId;
     }
 }

@@ -142,15 +142,11 @@ public class PermissionController {
             c.andStatusEqualTo(request.getStatus());
 
         List<Role> roleList = roleMapper.selectByExample(re);
-        if(roleList == null || roleList.size() == 0) {
-            response.setCode(CODE.BIZ.NOT_EXIST_RECORD);
-            response.setMsg("角色不存在");
-            return response;
-        }else{
-            response.setCode(CODE.SUCCESS);
-            response.setMsg("成功");
-            return response;
-        }
+        response.setData(roleList);
+        response.setCode(CODE.SUCCESS);
+        response.setMsg("成功");
+        return response;
+
     }
 
     @RequestMapping(value="/permission/modify_role",method = RequestMethod.POST)
@@ -233,7 +229,11 @@ public class PermissionController {
 
         AddRoleToUserResponse response = new AddRoleToUserResponse();
 
-        int ret = userRoleMapper.insert(request.getUserRole());
+        UserRole userRole = new UserRole();
+        userRole.setRoleId(request.getRoleId());
+        userRole.setUserId(request.getUserId());
+
+        int ret = userRoleMapper.insert(userRole);
         if (ret == 0) {
             response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
             response.setMsg("插入失败");
@@ -242,18 +242,18 @@ public class PermissionController {
             //判断是否自动添加子账号
             if (request.isAutoAddAccount()) {
                 //获取用户信息
-                User user = userMapper.selectByPrimaryKey(request.getUserRole().getUserId());
-                if (user != null) {
+                User user = userMapper.selectByPrimaryKey(request.getUserId());
+                if (user == null) {
                     response.setCode(CODE.BIZ.FAIL_SELECT_SQL);
                     response.setMsg("用户信息不存在");
                     return response;
                 }
 
                 //根据角色为用户添加子账号，所有的子账户默认是工号
-                List<App> apps = this.getAllApps(request.getUserRole().getUserId());
+                List<App> apps = this.getAllApps(request.getUserId());
                 for (App a : apps) {
                     AppAccount aa = new AppAccount();
-                    aa.setUserId(request.getUserRole().getUserId());
+                    aa.setUserId(request.getUserId());
                     aa.setOrgType(a.getOrgType());
                     aa.setOrgId(convertOrgIdService.convert(user.getOrgId(), user.getOrgType(), a.getOrgType()));
                     aa.setJobNumber(user.getJobNumber());
@@ -267,6 +267,7 @@ public class PermissionController {
                     }
                 }
             }
+            response.setUserRoleId(userRole.getId());
             response.setCode(CODE.SUCCESS);
             response.setMsg("成功");
             return response;
@@ -297,12 +298,18 @@ public class PermissionController {
             if(request.isAutoDelAccount()){
                 List<App> appList = this.getAllApps(ur.getUserId());
 
-                List<Long> _appId = new ArrayList<Long>();
+                List<Long> _appIdList = new ArrayList<Long>();
                 for(App a:appList)
-                    _appId.add(a.getId());
+                    _appIdList.add(a.getId());
 
                 AppAccountExample aae = new AppAccountExample();
-                aae.createCriteria().andAppIdNotIn(_appId).andUserIdEqualTo(request.getUserId());
+                AppAccountExample.Criteria c = aae.createCriteria();
+                if(_appIdList.size() == 0){
+                    c.andUserIdEqualTo(request.getUserId());
+                }else {
+                    aae.createCriteria().andAppIdNotIn(_appIdList).andUserIdEqualTo(request.getUserId());
+                }
+
                 List<AppAccount> appAccountList = appAccountMapper.selectByExample(aae);
                 if(appAccountList != null){
                     for(AppAccount appAccount:appAccountList)
@@ -328,18 +335,22 @@ public class PermissionController {
                 _roleIdList.add(ur.getRoleId());
             }
 
-            RoleAppExample rae = new RoleAppExample();
-            rae.createCriteria().andRoleIdIn(_roleIdList);
-            List<RoleApp> roleAppList = roleAppMapper.selectByExample(rae);
+            if(_roleIdList.size()>0) {
+                RoleAppExample rae = new RoleAppExample();
+                rae.createCriteria().andRoleIdIn(_roleIdList);
+                List<RoleApp> roleAppList = roleAppMapper.selectByExample(rae);
 
-            List<Long> _appIdList = new ArrayList<Long>();
-            for(RoleApp ra:roleAppList){
-                _appIdList.add(ra.getAppId());
+                List<Long> _appIdList = new ArrayList<Long>();
+                for (RoleApp ra : roleAppList) {
+                    _appIdList.add(ra.getAppId());
+                }
+
+                if(_appIdList.size() > 0) {
+                    AppExample ae = new AppExample();
+                    ae.createCriteria().andIdIn(_appIdList);
+                    apps = appMapper.selectByExample(ae);
+                }
             }
-
-            AppExample ae = new AppExample();
-            ae.createCriteria().andIdIn(_appIdList);
-            apps = appMapper.selectByExample(ae);
         }
         return apps;
     }
