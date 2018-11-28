@@ -15,6 +15,8 @@ import com.mszq.uas.uasserver.redis.model.Token;
 import com.mszq.uas.uasserver.redis.storage.DAO;
 import com.mszq.uas.uasserver.service.AppSecretVerifyService;
 import com.mszq.uas.uasserver.service.IpBlackCheckService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.security.MessageDigest;
 import java.util.List;
-
+@Api(tags={"单点登录"},value="单点登录")
 @RestController
 public class SSOController {
     @Autowired
@@ -46,7 +48,7 @@ public class SSOController {
     private AppSecretVerifyService appSecretVerifyService;
     @Autowired
     private IpBlackCheckService ipBlackCheckService;
-
+    @ApiOperation(value="申请单点登录令牌", notes="接口将返回一个token（令牌），以及一个过期时间。在过期时间内令牌有效")
     @RequestMapping(value="/sso/require_token",method = RequestMethod.POST)
     public @ResponseBody
     RequireTokenResponse require(@RequestBody RequireTokenExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
@@ -132,7 +134,7 @@ public class SSOController {
         response.setToken(token.getToken());
         return response;
     }
-
+    @ApiOperation(value="校验令牌有效性", notes="校验令牌有效性，成功校验后将返回用户登录目标应用系统的账户ID")
     @RequestMapping(value="/sso/verify_token",method = RequestMethod.POST)
     public @ResponseBody
     VerifyTokenResponse verify(@RequestBody VerifyTokenExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {

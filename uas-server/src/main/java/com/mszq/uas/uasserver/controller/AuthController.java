@@ -51,7 +51,7 @@ public class AuthController {
     @Autowired
     private IpBlackCheckService ipBlackCheckService;
 
-    @ApiOperation(value="身份认证", notes="提交身份认证信息，员工编号+密码。密码采用AES算法加密")
+    @ApiOperation(value="身份认证", notes="提交身份认证信息，员工编号+密码。密码采用AES算法加密，密钥请联系管理员")
     @RequestMapping(value="/ua/auth",method = RequestMethod.POST)
     public @ResponseBody AuthResponse auth(@RequestBody AuthExRequest request, HttpServletRequest httpRequest) throws Exception {
 
