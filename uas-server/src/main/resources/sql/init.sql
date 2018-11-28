@@ -173,3 +173,6 @@ create table UAS_ORG_TYPE
   ID      SMALLINT PRIMARY  KEY AUTO_INCREMENT,
   COMMENT    VARCHAR(250)
 );
+
+---------------------------------------------------------------------------------------
+INSERT INTO UAS_APP(NAME,SECRET,ORG_TYPE,PATH,COMMENT) VALUE ('统一认证系统','1',1,'','');
