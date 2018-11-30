@@ -28,6 +28,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.net.URL;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = UasServerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -69,6 +70,16 @@ public class DataSyncControllerTest {
             ResponseEntity<AddAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/add_app", request, AddAppResponse.class, "");
             Assert.assertEquals(200, response.getStatusCodeValue());
             appId = response.getBody().getAppId();
+        }
+
+        {
+            GetAppRequest request = new GetAppRequest();
+            request.set_appId(1L);
+            request.set_secret("1");
+            ResponseEntity<GetAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/get_apps", request, GetAppResponse.class, "");
+            Assert.assertEquals(200, response.getStatusCodeValue());
+            List<App> appList= response.getBody().getData();
+            Assert.assertTrue(appList.size()>0);
         }
 
         //删除应用

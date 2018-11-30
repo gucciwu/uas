@@ -537,12 +537,21 @@ public class DataSyncController {
 
         AppExample ae = new AppExample();
         AppExample.Criteria c = ae.createCriteria();
-        if(request.getAppId() > 0)
+
+        if(request.getAppId() == 0 && (request.getName() == null || "".equals(request.getName()))) {
+            List<App> appList = appMapper.selectAll();
+            response.setData(appList);
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("成功");
+            return response;
+        }
+
+        if(request.getAppId() > 0){
             c.andIdEqualTo(request.getAppId());
 
-        if(request.getName() != null && !"".equals(request.getName()))
+        }else if(request.getName() != null && !"".equals(request.getName())) {
             c.andNameEqualTo(request.getName());
-
+        }
         List<App> appList = appMapper.selectByExample(ae);
         response.setData(appList);
         response.setCode(CODE.SUCCESS);
