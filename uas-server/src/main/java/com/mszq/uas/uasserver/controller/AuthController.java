@@ -53,7 +53,7 @@ public class AuthController {
 
     @ApiOperation(value="身份认证", notes="提交身份认证信息，员工编号+密码。密码采用AES算法加密，密钥请联系管理员")
     @RequestMapping(value="/ua/auth",method = RequestMethod.POST)
-    public @ResponseBody AuthResponse auth(@RequestBody AuthExRequest request, HttpServletRequest httpRequest) throws Exception {
+    public @ResponseBody AuthResponse auth(@RequestBody AuthExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
 
@@ -94,12 +94,16 @@ public class AuthController {
             }
 
             //判断是否已经被锁定
-            long left = dao.findLocker(user.getId().toString());
-            if(left != 0){
-                String time = this.getGapTime(left);
-                response.setCode(CODE.BIZ.LOCKED);
-                response.setMsg("账户已被锁定，还需要等待："+time);
-                return response;
+            try{
+                long left = dao.findLocker(user.getId().toString());
+                if(left != 0){
+                    String time = this.getGapTime(left);
+                    response.setCode(CODE.BIZ.LOCKED);
+                    response.setMsg("账户已被锁定，还需要等待："+time);
+                    return response;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             PasswordExample pe = new PasswordExample();
@@ -121,7 +125,12 @@ public class AuthController {
                     session.setUserId(user.getId());
                     session.setJobNumber(user.getJobNumber());
                     try {
-                        dao.addSession(session);
+
+                        try {
+                            dao.addSession(session);
+                        }catch(Exception ex){
+                            ex.printStackTrace();
+                        }
                         response.setSessionId(session.getSessionId());
                         response.setCode(CODE.SUCCESS);
                         response.setMsg("成功");
