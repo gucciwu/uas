@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+</head>
+<body>
+<input type="button" onclick="fun()" name="test" title="test" value="test">
+</body>
+<script type="text/javascript">
+function fun(){
+	$.ajax({
+ 		url:'ApplyToken', 
+ 		type: 'POST',
+ 		async:true,
+ 		data: {sessionid:2222,targetappid:1011,appid:1008}, 
+ 		dataType: 'json',
+		timeout: 30000,
+		cache:false, 
+ 		success: function(json){
+ 			alert(json);
+ 		},
+ 		error: function(XMLHttpRequest, textStatus, errorThrown){
+ 			alert("请求失败，错误信息："+textStatus);
+ 		}
+ 	});
+}
+
+</script>
+</html>

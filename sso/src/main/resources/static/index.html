@@ -1,0 +1,275 @@
+<!--
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@page import="java.util.List,com.apex.cas3.bean.AppBean"%>
+<%
+String path = request.getContextPath();
+String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+List<AppBean> listApp=AppBean.getListApp();
+String serviceUrl = request.getParameter("service");
+String serviceUrl1 = (String)request.getSession().getAttribute("TYRZ_SERVICE");-->
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="cache-control" content="no-cache">
+<link rel="shortcut icon" href="./images/favicon.ico">
+<title>宏源证券统一认证 | 用户登录</title>
+<meta name="description" content="宏源证券,统一认证,用户登录">
+<meta name="keywords" content="宏源证券,统一认证,用户登录">
+<link rel="stylesheet" type="text/css" href="./css/comm17158a.css">
+<link rel="stylesheet" type="text/css" href="./css/bizmail15de8d.css">
+<link rel="stylesheet" type="text/css" href="./css/login.css">
+<link rel="stylesheet" type="text/css" href="./css/tooltipster.css" />
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+<script type="text/javascript" src="./js/jquery.tooltipster.js"></script>
+<script type="text/javascript" src="./js/sticky.min.js"></script>
+<link rel="stylesheet" href="./css/sticky.min.css" type="text/css" />
+
+<script language="javascript">
+var service='<%=serviceUrl%>';
+if(service == null){
+	service = '<%=serviceUrl1%>';
+}
+service = service.toLowerCase();
+
+$(document).ready(function() {
+	$('#forgotpass').tooltipster({
+   		content: $("<p style='text-align:left;'>点击进入找回密码界面</p>")
+	});
+
+	$('#systemtip').tooltipster({
+   		content: $("<p style='text-align:left;'>选择需要登录的目标系统</p>")
+	});
+
+	$('#useridtip').tooltipster({
+	   		content: $("<p style='text-align:left;'>1.正式员工的用户账号与公司 OA 系统的用户名相同<br>2.非员工的经纪人（及非全日制员工）的用户账号是其经纪人编号</p>")
+	});
+
+	$('#passwordtip').tooltipster({
+	   		content: $("<p style='text-align:left;'>初始密码为用户身份证号后 6 位</p>")
+	});
+
+	if(!CookieEnable()){
+		$('#infobarNoCookie').attr("style","");
+	}
+
+	$("#system option").each(function (){
+		var thisUrl = $(this).attr('value');
+
+		if(service == null && thisUrl ==null){
+			$(this).attr('selected','selected');
+		}else if(service != null && thisUrl!=null){
+			var url = thisUrl.toLowerCase()
+			if(service.indexOf(url) >= 0 ){
+				$(this).attr('selected','selected');
+			}else if(url.indexOf(service) >= 0){
+				$(this).attr('selected','selected');
+			}
+		}
+	});
+
+	$.sticky("<center><b>通知</b></center><p>YYYY年MM月dd日，OA系统接入统一认证平台，为确保您正常使用OA及邮件系统，请您在登录OA系统后，修改您的密码。</p><p>使用邮件客户端的用户，请您在修改OA密码后，注意调整您的邮件客户端密码。</p><p>详细说明参见<a href='oa.pdf' style='color:red'>统一认证对接OA系统说明</a></p>");
+});
+
+function CookieEnable(){
+
+	var result= false;
+
+	if (navigator.cookiesEnabled)
+		return true ;
+
+	document.cookie = "testcookie=yes;" ;
+
+	var cookieSet = document.cookie;
+
+	if (cookieSet.indexOf( "testcookie=yes" ) > -1)
+		result= true ;
+
+	document.cookie = "" ;
+
+	return result;
+}
+
+var bSubmit = false;
+function fnSubmit(){
+	if(bSubmit)
+		return false;
+	bSubmit = true;
+
+	return true;
+}
+function EnterSumbit()
+{
+	if( event.keyCode == 13 )
+	{
+		if(fnSubmit()){
+			var forms = document.getElementsByName('loginForm');
+			if (forms.length==1){
+				forms[0].submit();
+			}
+		}
+	}
+}
+
+window.onload = function(){
+	//document.getElementById('shadow').style.visibility  = 'visible';
+	var user = document.getElementById('userId');
+	if (user.value.length<=0)
+		user.focus();
+	else
+		document.getElementById('pass').focus();
+}
+
+
+function reloadImg(){
+	//alert(1);
+	//alert($("#yzmImg").attr("src"));
+	document.getElementById("yzmImg").src="jcaptcha?rand="+Math.random();
+	//$("#yzm").attr("src","jcaptcha?rand="+Math.random());
+}
+
+function optionchange(url)
+{
+	window.location = url;
+}
+</script>
+<style type="text/css">
+.topLink {
+	height: 26px;
+	padding-top: 35px;
+}
+
+.qqmaillogo {
+	float: left;
+	padding-left: 4px;
+}
+
+.wd {
+	width: 800px;
+	clear: both;
+	margin: 0 auto;
+}
+</style>
+</head>
+<body style="background: #edf4f9" class="txt_center " 	onKeyPress="EnterSumbit()">
+
+	<div>
+		<div style="height: 66px; margin-top: 20px;" class="wd getuserdata"
+			id="topDataTd">
+			<div class="">
+				<a href="#"><img src="./images/logo.png" class="qqmaillogo" title="宏源证券统一认证单点登录" alt="单点登录"></a>
+			</div>
+			<div class="topLink right addrtitle">
+				<a href="#" class="toptitle">统一认证</a><span style="color: #798699"> | </span>
+				<a href="Troubleshooter.pdf" class="toptitle">常见问题</a><span style="color: #798699"> | </span>
+				<a href="http://casblog.sinaapp.com/" class="toptitle">博客</a>
+			</div>
+		</div>
+	</div>
+	<div class="loginContainer">
+		<div class="wd loginMain" style="text-align: left; min-height: 300px; #background: url(images/login_img158992.jpg) no-repeat;overflow:hidden;">
+			<form name="loginForm" method="post" action="UserCheck">
+				<input type="hidden" name="validate" value="login">
+				<input type="hidden" name="TYRZ_APPID" value="${TYRZ_APPID}">
+				<input type="hidden" name="TYRZ_SERVICE" value="${TYRZ_SERVICE}">
+				<div class="login_notice login_panel_left">
+					<div>
+						1、目前综合业务平台、柜员操作平台、营销服务系统（3S）、投顾服务平台、综合运营平台、OA系统已经实现了统一认证。<br>
+						2、其他信息系统正在陆续进行改造以支持统一认证，届时将会及时予以公告。<br>
+						3、其他详细信息请参见<a style="color:red;" href="manual.pdf">使用指南</a>。
+					</div>
+				</div>
+				<div style="padding: 40px 10px 30px 400px;">
+					<div id="downError" class="return_message" style="display:inline;height:45px;padding:0px;line-height:45px;">
+						<div class="re_mes_t1">${msg }<noscript>您的浏览器不支持或已经禁止网页脚本，您无法正常登录</noscript></div>
+					</div>
+
+					<div class="return_message" style="display: none;" id="infobarNoCookie">
+						<div class="re_mes_t1">
+							您的浏览器不支持或已经禁止使用Cookie，您无法正常登录.
+						</div>
+					</div>
+					<div class="loginPanel">
+						<div class="loginPanelTop">
+							<div class="loginPanelBottom">
+								<div class="logintitle bold">
+									<a class="loginTypeIcon loginTypeIconWeixin" id="forgotpass" href="resetPassword.jsp" >忘记密码</a>
+									宏源证券统一认证
+								</div>
+								<div class="loginContent" style="">
+									<div class="divider_line" style="margin:0px;padding:0px;line-height:0px;height:1px;"></div>
+										<div id="loginby_account">
+											<div class="login_errorTips">
+												<div id="msgContainer" class="errMsg" style="background:none;"></div>
+											</div>
+											<div style="height: 25px; clear: left">
+												<label for="userId" class="column">登陆进入：</label>
+												<span>
+													<select id="system" class="loginselect" onchange="optionchange(this.options[this.options.selectedIndex].value)">
+													<option value="null">个人账户管理</option>
+													<%
+														int index=0;
+														for(AppBean bean:listApp){
+															if(!bean.isVisible())continue;
+													%>
+														<option value="<%=bean.getUrl()%>"><%=bean.getName()%></option>
+													<%
+															index++;
+														}
+													%>
+													</select>
+												</span>
+												<img id="systemtip" src="./images/info.png" class="tooltip tooltip-info"/>
+											</div>
+											<div style="padding: 3px 0 0 63px; color: #6076a0; zoom: 1;">&nbsp;</div>
+											<div style="height: 25px; margin: 10px 0 0 0; clear: left">
+												<label for="userId" class="column">帐 号：</label>
+												<input class="txt text" type="text" id="userId" name="u" value="" tabindex="2"  style="width:200px;_width:210px;">
+												<img id="useridtip" src="./images/info.png" class="tooltip tooltip-info"/>
+											</div>
+											<div style="padding: 3px 0 0 63px; color: #6076a0; zoom: 1;">&nbsp;</div>
+											<div style="height: 25px; margin: 10px 0 0 0; clear: left">
+												<label for="pass" class="column">密 码：</label>
+												<input type="password" id="pass" name="p" value="" class="txt text" tabindex="3" style="width:200px;_width:210px;">
+												<img id="passwordtip" src="./images/info.png" class="tooltip tooltip-info"/>
+											</div>
+											<div style="padding: 3px 0 0 63px; color: #6076a0; zoom: 1;">&nbsp;</div>
+											<div style="margin: 8px 0px 0px;">
+												<label for="uin" class="column">验 证 码：</label>
+												<span>
+													<input class="txt text" type="text" id="yzm" name="yzm" value="" tabindex="4" style="ime-mode: disabled;width:80px;">
+												</span>
+												<span style="padding-left:10px;">
+													<img id="yzmImg" src="jcaptcha" width="87" height="26" title="单击更换验证码" onclick="reloadImg();" />
+												</span>
+											</div>
+										</div>
+										<div style="padding: 25px 0 0 63px; *padding: 14px 0 0 34px; _padding: 5px 0 0 64px; clear: both; overflow: hidden;">
+											<input type="submit" class="button_gray bold wd3" value="登 录"
+												style="height: 28px; line-height: 26px; line-height: 24px \9; line-height: 26px \0\9; font-size: 14px; padding-bottom: 4px;"
+												id="btlogin" name="btlogin" tabindex="4">
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+			</form>
+		</div>
+	</div>
+	<script type="text/javascript">//init();</script>
+	<div style="clear: both;"></div>
+	<div class="wd txt_center" style="margin-top: 30px;">
+		<div class="navPageBottom">
+			<a href="about.html">关于统一认证</a>
+			<a href="Troubleshooter.pdf">常见问题</a>
+			<a href="manual.pdf">用户手册</a>
+		</div>
+		<div class="copyright cLight">宏源证券股份有限公司&nbsp;&nbsp;</div>
+	</div>
+	<script type="text/javascript" src="./js/login.js">
+</script>
+</body>
+</html>

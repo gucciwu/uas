@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="pragma" content="no-cache"> 
+<meta http-equiv="cache-control" content="no-cache"> 
+<link rel="shortcut icon" href="./images/favicon.ico">
+<title>宏源证券统一认证 | 账户管理</title>
+<meta name="description" content="宏源证券,统一认证,账户管理">
+<meta name="keywords" content="宏源证券,统一认证,账户管理">
+<link rel="stylesheet" type="text/css" href="./css/biz189f00.css">
+<link rel="stylesheet" type="text/css" href="./css/contacts2013182c6b.css">
+<script type="text/javascript">
+</script>
+</head>
+<body>
+	<header class="header">
+		<div class="wd txt_left">
+			<div class="logo left">
+				<a href="#"><img src="./images/logo.png"></a>
+			</div>
+			<div class="setinfo right" id="SetInfo">
+				<span class="userGreet">您好，<%=userBean.getName() %></span>
+				<span class=""><a href="Troubleshooter.pdf" target="_blank">常见问题</a></span>
+				<span class="lastset"><a href="logout">退出</a></span>
+			</div>
+		</div>
+	</header>
+	<nav class="nav">
+		<ul class="wd" id="navBar" un="topNavBar">
+			<li><a href="#" class="">统一认证个人账户管理</a></li>
+		</ul>
+	</nav>
+	<div id="main" class="mainPanel wd txt_left" listshowalias="off">
+		<div class="company">
+			<aside class="left_panel" un="leftNavBar">
+				<ul class="sidetd">
+					<li>
+						<a href="main.jsp" class="selected">个人信息<span class="arrow_right"></span></a>
+						<p class="line"></p>
+					</li>
+					<li>
+						<a href="applist.jsp" >应用列表<span class="arrow_right"></span></a>
+						<p class="line"></p>
+					</li>
+					<li>
+						<a href="modifypassword.jsp" >修改密码<span class="arrow_right"></span></a>
+						<p class="line"></p>
+					</li>
+				</ul>
+			</aside>
+			<div class="right_panel">
+				<div class="content_block"
+					style="padding-top: 0; background: #FFFFFF;">
+					<div class="domainMainPanel">
+						<div class="con_body b_size">
+						<h1 class="p_title">个人信息</h1>
+						<div class="formPanel" style="padding: 0;">
+							<div class="mbr_de_pic">
+								<img src="./images/getqqicon">
+							</div>
+							<section>
+								<div class="settingDiv_l">姓名</div>
+								<div class="settingDiv_r">
+									<div><%=userBean.getName() %></div>
+								</div>
+							</section>
+							<section>
+								<div class="settingDiv_l">身份证</div>
+								<div class="settingDiv_r"><%=userBean.getZjh() %></div>
+							</section>
+							<section>
+								<div class="settingDiv_l">邮箱</div>
+								<div class="settingDiv_r">
+									<span class="addrtitle"><%=userBean.getEmail() %></span>
+								</div>
+							</section>
+							<section>
+								<div class="settingDiv_l">联系电话</div>
+								<div class="settingDiv_r">
+									<span class="addrtitle"><%=userBean.getMobile() %></span>
+								</div>
+							</section>
+							<section>
+								<div class="settingDiv_l">登录时间</div>
+								<div class="settingDiv_r">
+									<span class="addrtitle"><%=userBean.getLoginTime() %></span>
+								</div>
+							</section>
+							<section>
+								<div class="settingDiv_l">登录次数</div>
+								<div class="settingDiv_r">
+									<span class="addrtitle"><%=userBean.getLogincount() %></span>
+								</div>
+							</section>
+							<section>
+								<div class="settingDiv_l">上次登录时间</div>
+								<div class="settingDiv_r">
+									<span class="addrtitle"><%=userBean.getLastLoginTime() %></span>
+								</div>
+							</section>
+							<section>
+								<div class="settingDiv_l">认证失效时长</div>
+								<div class="settingDiv_r">
+									<span class="addrtitle">90分</span>
+								</div>
+							</section>
+						</div>
+					</div>
+				</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	<div class="wd txt_center" style="margin: 35px auto;">
+		<div class="wd txt_center" style="margin: 35px auto;">
+		<div class="navPageBottom">
+			<a href="about.html">关于统一认证</a><span style="color: #798699"> | </span>
+			<a href="Troubleshooter.pdf">常见问题</a><span style="color: #798699"> | </span>
+			<a href="manual.pdf">用户手册</a><span style="color: #798699"> </span>
+			
+		</div>
+		<div class="copyright addrtitle" style="padding-top: 4px;">宏源证券股份有限公司&nbsp;&nbsp;</div>
+	</div>
+	</div>
+	<script type="text/javascript">
+		
+	</script>
+</body>
+</html>
