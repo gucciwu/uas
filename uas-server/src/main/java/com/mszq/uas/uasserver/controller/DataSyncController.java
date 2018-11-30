@@ -524,6 +524,32 @@ public class DataSyncController {
         response.setMsg("成功");
         return response;
     }
+
+    @ApiOperation(value="查询应用", notes="对接统一认证的应用系统，都需要在统一认证系统中注册")
+    @RequestMapping(value="/datasync/get_apps",method = RequestMethod.POST)
+    public @ResponseBody
+    GetAppResponse getApp(@RequestBody GetAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+
+        ipBlackCheckService.isBlackList(httpRequest);
+        appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
+
+        GetAppResponse response = new GetAppResponse();
+
+        AppExample ae = new AppExample();
+        AppExample.Criteria c = ae.createCriteria();
+        if(request.getAppId() > 0)
+            c.andIdEqualTo(request.getAppId());
+
+        if(request.getName() != null && !"".equals(request.getName()))
+            c.andNameEqualTo(request.getName());
+
+        List<App> appList = appMapper.selectByExample(ae);
+        response.setData(appList);
+        response.setCode(CODE.SUCCESS);
+        response.setMsg("成功");
+        return response;
+    }
+
     @ApiOperation(value="删除应用", notes="将应用系统信息在统一认证中删除")
     @RequestMapping(value="/datasync/del_app",method = RequestMethod.POST)
     public @ResponseBody
