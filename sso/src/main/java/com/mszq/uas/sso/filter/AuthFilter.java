@@ -14,11 +14,11 @@ import com.mszq.uas.sso.Constants;
 public class AuthFilter implements Filter {
 
 
-	//public static final String[] urls=new String[]{".pdf","/jcaptcha","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/resetPassword",".css",".png",".jpg",".gif",".ico"};
+	//public static final String[] urls=new String[]{".pdf","/jcaptcha","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/resetPassword",".login.css",".png",".jpg",".gif",".ico"};
 	//	servlet 过滤
 	public static final String[] urls=new String[]{"/jcaptcha","/ApplyToken","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/changeoapassword","/resetPassword","/provideData?wsdl","/helloWorld?wsdl","/webservice","/services","/about.html","/test.html","/changeoapassword.jsp"};
 	//  后缀过滤
-	public static final String[] suffixs=new String[]{"pdf","js","css","png","jpg","gif","ico"};
+	public static final String[] suffixs=new String[]{"pdf","js","css","png","jpg","gif","ico","ttf"};
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}

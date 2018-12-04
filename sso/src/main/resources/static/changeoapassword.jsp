@@ -11,9 +11,9 @@ String oauid = (String)request.getParameter("oauid");
 <meta http-equiv="pragma" content="no-cache"> 
 <meta http-equiv="cache-control" content="no-cache"> 
 <link rel="shortcut icon" href="./images/favicon.ico">
-<title>宏源证券统一认证 | OA密码同步</title>
-<meta name="description" content="宏源证券,统一认证,OA密码同步">
-<meta name="keywords" content="宏源证券,统一认证,OA密码同步">
+<title>民生证券统一认证 | OA密码同步</title>
+<meta name="description" content="民生证券,统一认证,OA密码同步">
+<meta name="keywords" content="民生证券,统一认证,OA密码同步">
 <link rel="stylesheet" type="text/css" href="./css/biz189f00.css">
 <link rel="stylesheet" type="text/css" href="./css/contacts2013182c6b.css">
 <link rel="stylesheet" type="text/css" href="./css/tooltipster.css" />
@@ -145,7 +145,7 @@ String oauid = (String)request.getParameter("oauid");
 			</div>
 			<div class="setinfo right" id="SetInfo">
 				<span class=""><a href="oa.pdf" target="_blank">说明</a></span>
-				<span class="lastset"><a href="index.html">返回登录</a></span>
+				<span class="lastset"><a href="index.html_bak">返回登录</a></span>
 			</div>
 		</div>
 	</header>
@@ -229,7 +229,7 @@ String oauid = (String)request.getParameter("oauid");
 				<a href="Troubleshooter.pdf">常见问题</a><span style="color: #798699"> | </span>
 				<a href="manual.pdf">用户手册</a><span style="color: #798699"></span>
 			</div>
-			<div class="copyright addrtitle" style="padding-top: 4px;">宏源证券股份有限公司&nbsp;&nbsp;</div>
+			<div class="copyright addrtitle" style="padding-top: 4px;">民生证券股份有限公司&nbsp;&nbsp;</div>
 		</div>
 	</div>
 </body>

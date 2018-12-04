@@ -9,7 +9,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 Object userid=request.getAttribute("userid");
 com.apex.cas3.bean.UserBean userBean=(com.apex.cas3.bean.UserBean)session.getAttribute(com.apex.cas3.Constants.SESSION_USER);
 if(userBean==null){
-	request.getRequestDispatcher("index.html")
+	request.getRequestDispatcher("index.html_bak")
 	.forward(request, response);
 	return;
 }
@@ -17,7 +17,7 @@ List<AppBean> listApp=AppBean.getListApp();//request.getRealPath("app")
 
 Object temp=request.getSession().getAttribute("MUST_EDIT_PWD");
 if(temp!=null&&"true".equals(temp.toString())){
-	request.getRequestDispatcher("modifypassword.jsp")
+	request.getRequestDispatcher("modifypassword.html")
 	.forward(request, response);
 	return;
 }
@@ -29,9 +29,9 @@ if(temp!=null&&"true".equals(temp.toString())){
 <meta http-equiv="pragma" content="no-cache"> 
 <meta http-equiv="cache-control" content="no-cache">
 <link rel="shortcut icon" href="./images/favicon.ico">
-<title>宏源证券统一认证 | 接入应用列表</title>
-<meta name="description" content="宏源证券,统一认证,接入应用列表">
-<meta name="keywords" content="宏源证券,统一认证,接入应用列表">
+<title>民生证券统一认证 | 接入应用列表</title>
+<meta name="description" content="民生证券,统一认证,接入应用列表">
+<meta name="keywords" content="民生证券,统一认证,接入应用列表">
 <link rel="stylesheet" type="text/css" href="./css/biz189f00.css">
 <link rel="stylesheet" type="text/css" href="./css/contacts2013182c6b.css">
 </head>
@@ -61,15 +61,15 @@ if(temp!=null&&"true".equals(temp.toString())){
 			<aside class="left_panel">
 				<ul class="sidetd">
 					<li>
-						<a href="main.jsp">个人信息<span class="arrow_right"></span></a>
+						<a href="main.html">个人信息<span class="arrow_right"></span></a>
 						<p class="line"></p>
 					</li>
 					<li>
-						<a href="applist.jsp" class="selected">应用列表<span class="arrow_right"></span></a>
+						<a href="applist.html" class="selected">应用列表<span class="arrow_right"></span></a>
 						<p class="line"></p>
 					</li>
 					<li>
-						<a href="modifypassword.jsp">修改密码<span class="arrow_right"></span></a>
+						<a href="modifypassword.html">修改密码<span class="arrow_right"></span></a>
 						<p class="line"></p>
 					</li>
 				</ul>
@@ -124,7 +124,7 @@ if(temp!=null&&"true".equals(temp.toString())){
 				<a href="Troubleshooter.pdf">常见问题</a><span style="color: #798699"> | </span>
 				<a href="manual.pdf">用户手册</a><span style="color: #798699"></span>
 			</div>
-			<div class="copyright addrtitle" style="padding-top: 4px;">宏源证券股份有限公司&nbsp;&nbsp;</div>
+			<div class="copyright addrtitle" style="padding-top: 4px;">民生证券股份有限公司&nbsp;&nbsp;</div>
 		</div>
 	</div>
 </body>

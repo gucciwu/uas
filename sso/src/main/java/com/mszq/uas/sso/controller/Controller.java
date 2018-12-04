@@ -41,7 +41,7 @@ import java.util.Random;
 public class Controller {
 
     /** 统一登陆界面 */
-    static final String LOGIN_PATH = "index.html";
+    static final String LOGIN_PATH = "index.html_bak";
     /** 用户认证成功后获取的session id*/
     public static final String PARAM_SESSIONID="sessionid";
     /** targetappid为该需要登录的目标系统appid */
@@ -201,7 +201,7 @@ public class Controller {
 
         if(service.toLowerCase().indexOf(app.getPath().toLowerCase()) !=0 ){
             request.setAttribute("msg", "操作错误，不允许单点登录URL:"+service);
-            request.getRequestDispatcher("main.jsp")
+            request.getRequestDispatcher("main.html")
                     .forward(request, response);
             return;
         }
@@ -221,7 +221,7 @@ public class Controller {
             System.out.println("TICKET:"+ticket);
             if(ticket==null||"".equals(ticket)){
                 request.setAttribute("msg", "申请子令牌失败，禁止单点登录目标系统");
-                request.getRequestDispatcher("main.jsp")
+                request.getRequestDispatcher("main.html")
                         .forward(request, response);
             }else{
                 url.append(service).append(service.indexOf("?")==-1?"?":"&").append("auims_ticket=").append(ticket);
@@ -230,10 +230,10 @@ public class Controller {
             return;
         }else{//未登陆
             //request.getRequestDispatcher(LOGIN_PATH).forward(request, response);
-            if(request!=null&&request.getRequestDispatcher("index.html")!=null){
+            if(request!=null&&request.getRequestDispatcher("index.html_bak")!=null){
                 String temp=request.getParameter("msg");
                 if(temp!=null)request.setAttribute("msg", temp);
-                request.getRequestDispatcher("index.html")
+                request.getRequestDispatcher("index.html_bak")
                         .forward(request, response);
             }else
                 response.sendRedirect(LOGIN_PATH);
@@ -264,7 +264,7 @@ public class Controller {
         }
         request.setAttribute(Constants.SESSION_SERVICE, service);
         request.setAttribute(Constants.SESSION_APPID, appid);
-        request.getRequestDispatcher("index.jsp").forward(request, response);
+        request.getRequestDispatcher("index.html").forward(request, response);
     }
 
     @RequestMapping("/modify")
@@ -284,21 +284,21 @@ public class Controller {
         }
 		if(oldpass==null||newpass==null||confirmpass==null||"".equals(oldpass)||"".equals(newpass)||"".equals(confirmpass)){
 			request.setAttribute("msg","旧密码、新密码或确认密码不可为空！");
-			request.getRequestDispatcher("modifypassword.jsp")
+			request.getRequestDispatcher("modifypassword.html")
 					.forward(request, response);
 		}
 
 		if(!newpass.equals(confirmpass)){
 			request.setAttribute("msg","新密码和确认密码不一致！");
-			request.getRequestDispatcher("modifypassword.jsp")
+			request.getRequestDispatcher("modifypassword.html")
 					.forward(request, response);
 		}
 
         if(userid == null){
-            if(request!=null&&request.getRequestDispatcher("index.jsp")!=null){
+            if(request!=null&&request.getRequestDispatcher("index.html")!=null){
                 String temp=request.getParameter("msg");
                 if(temp!=null)request.setAttribute("msg", temp);
-                request.getRequestDispatcher("index.jsp")
+                request.getRequestDispatcher("index.html")
                         .forward(request, response);
             }else
                 response.sendRedirect(LOGIN_PATH);
@@ -329,7 +329,7 @@ public class Controller {
     public void gotoJsonPage(Map<String,Object>json,HttpServletRequest request, HttpServletResponse response){
         try {
             request.setAttribute("JsonData", JSON.toJSONString(json));
-            request.getRequestDispatcher("views/sys/json.jsp").forward(//ROOT_PATH +
+            request.getRequestDispatcher("views/sys/json.html").forward(//ROOT_PATH +
                     request, response);
         } catch (ServletException e) {
             e.printStackTrace();
@@ -350,8 +350,8 @@ public class Controller {
         if(user!=null){
             user=user.replaceAll("[%]|[<]|[>]|[']||[\"]|[=]|[(]|[)]|[|]", "");
         }
-        service=request.getParameter(Constants.SESSION_SERVICE);
-        targetAppid=request.getParameter(Constants.SESSION_APPID);
+        service=request.getParameter("service");
+        targetAppid=request.getParameter("appid");
         service=service==null?"":service.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
         targetAppid=targetAppid==null?"":targetAppid.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
         request.setAttribute(Constants.SESSION_SERVICE, service);
@@ -360,20 +360,20 @@ public class Controller {
 
         if(yzm==null||request.getSession().getAttribute(Constants.SESSION_YZM)==null){
             request.setAttribute("msg","请输入验证码！");
-            request.getRequestDispatcher("index.jsp")
+            request.getRequestDispatcher("index.html")
                     .forward(request, response);
             return;
         }
         if(user==null||pass==null||"".equals(user)||"".equals(pass)){
             request.setAttribute("msg","用户名或密码不可为空！");
-            request.getRequestDispatcher("index.jsp")
+            request.getRequestDispatcher("index.html")
                     .forward(request, response);
             return;
         }
         String sessionYZM=request.getSession().getAttribute(Constants.SESSION_YZM).toString();
         if(!yzm.equals(sessionYZM)){
             request.setAttribute("msg","验证码有误！");
-            request.getRequestDispatcher("index.jsp")
+            request.getRequestDispatcher("index.html")
                     .forward(request, response);
             return;
         }
@@ -381,7 +381,7 @@ public class Controller {
         App app = uasService.getApp(Long.parseLong(targetAppid));
         if(service.toLowerCase().indexOf(app.getPath().toLowerCase()) !=0 ){
             request.setAttribute("msg", "操作错误，不允许单点登录URL:"+service);
-            request.getRequestDispatcher("main.jsp")
+            request.getRequestDispatcher("main.html")
                     .forward(request, response);
             return;
         }
@@ -393,11 +393,11 @@ public class Controller {
 //		switch(util.getUserStatus(user)){
 //			case 1:
 //				request.setAttribute("status", 1);
-//				request.getRequestDispatcher("resetoa.jsp").forward(request, response);
+//				request.getRequestDispatcher("resetoa.html").forward(request, response);
 //				return;
 //			case 2:
 //				request.setAttribute("status", 2);
-//				request.getRequestDispatcher("resetoa.jsp").forward(request, response);
+//				request.getRequestDispatcher("resetoa.html").forward(request, response);
 //				return;
 //			default:
 //				break;
@@ -405,9 +405,7 @@ public class Controller {
 
         AuthResponse resp = uasService.auth(user,pass);
         if (resp.getCode() != CODE.SUCCESS){
-            request.setAttribute("msg", resp.getMsg());
-            request.getRequestDispatcher("index.jsp")
-                    .forward(request, response);
+            response.sendRedirect("/index.html?msg="+resp.getMsg());
             return;
         } else {
 
@@ -419,9 +417,7 @@ public class Controller {
 
             if(PasswordCheck.check(pass)){
                 request.getSession().setAttribute("MUST_EDIT_PWD", "true");
-                request.setAttribute("msg", "您的登录密码强度不够，请立即修改密码！");
-                request.getRequestDispatcher("modifypassword.jsp")
-                        .forward(request, response);
+                response.sendRedirect("/modifypassword.html?msg=您的登录密码强度不够，请立即修改密码！");
                 return;
             }
 
@@ -432,15 +428,15 @@ public class Controller {
                 //session.removeAttribute(Constants.SESSION_SERVICE);
                 //session.removeAttribute(Constants.SESSION_APPID);
                 StringBuilder url=new StringBuilder();
-                String ticket="";
-                ticket=uasService.getToken(targetAppid,sessionId);//申请子令牌
-                if(ticket==null||"".equals(ticket)){
+                String token="";
+                token=uasService.getToken(targetAppid,sessionId);//申请子令牌
+                if(token==null||"".equals(token)){
                     request.setAttribute("msg","申请子令牌失败，禁止单点登录目标系统");
-                    request.getRequestDispatcher("main.jsp")
+                    request.getRequestDispatcher("main.html")
                             .forward(request, response);
                     return;
                 }
-                url.append(service).append(service.indexOf("?")==-1?"?":"&").append("auims_ticket=").append(ticket);
+                url.append(service).append(service.indexOf("?")==-1?"?":"&").append("token=").append(token);
                 response.sendRedirect(url.toString());
             }
         }

@@ -5,9 +5,9 @@
 <meta http-equiv="pragma" content="no-cache"> 
 <meta http-equiv="cache-control" content="no-cache"> 
 <link rel="shortcut icon" href="./images/favicon.ico">
-<title>宏源证券统一认证 | 账户管理</title>
-<meta name="description" content="宏源证券,统一认证,账户管理">
-<meta name="keywords" content="宏源证券,统一认证,账户管理">
+<title>民生证券统一认证 | 账户管理</title>
+<meta name="description" content="民生证券,统一认证,账户管理">
+<meta name="keywords" content="民生证券,统一认证,账户管理">
 <link rel="stylesheet" type="text/css" href="./css/biz189f00.css">
 <link rel="stylesheet" type="text/css" href="./css/contacts2013182c6b.css">
 <script type="text/javascript">
@@ -20,7 +20,7 @@
 				<a href="#"><img src="./images/logo.png"></a>
 			</div>
 			<div class="setinfo right" id="SetInfo">
-				<span class="userGreet">您好，<%=userBean.getName() %></span>
+				<span class="userGreet">您好，<span id="username"></span><%=userBean.getName() %></span>
 				<span class=""><a href="Troubleshooter.pdf" target="_blank">常见问题</a></span>
 				<span class="lastset"><a href="logout">退出</a></span>
 			</div>
@@ -36,15 +36,15 @@
 			<aside class="left_panel" un="leftNavBar">
 				<ul class="sidetd">
 					<li>
-						<a href="main.jsp" class="selected">个人信息<span class="arrow_right"></span></a>
+						<a href="main.html" class="selected">个人信息<span class="arrow_right"></span></a>
 						<p class="line"></p>
 					</li>
 					<li>
-						<a href="applist.jsp" >应用列表<span class="arrow_right"></span></a>
+						<a href="applist.html" >应用列表<span class="arrow_right"></span></a>
 						<p class="line"></p>
 					</li>
 					<li>
-						<a href="modifypassword.jsp" >修改密码<span class="arrow_right"></span></a>
+						<a href="modifypassword.html" >修改密码<span class="arrow_right"></span></a>
 						<p class="line"></p>
 					</li>
 				</ul>
@@ -62,47 +62,41 @@
 							<section>
 								<div class="settingDiv_l">姓名</div>
 								<div class="settingDiv_r">
-									<div><%=userBean.getName() %></div>
+									<div id="name"><%=userBean.getName() %></div>
 								</div>
 							</section>
 							<section>
 								<div class="settingDiv_l">身份证</div>
-								<div class="settingDiv_r"><%=userBean.getZjh() %></div>
+								<div class="settingDiv_r" id="id"><%=userBean.getZjh() %></div>
 							</section>
 							<section>
 								<div class="settingDiv_l">邮箱</div>
 								<div class="settingDiv_r">
-									<span class="addrtitle"><%=userBean.getEmail() %></span>
+									<span class="addrtitle" id="mail"><%=userBean.getEmail() %></span>
 								</div>
 							</section>
 							<section>
 								<div class="settingDiv_l">联系电话</div>
 								<div class="settingDiv_r">
-									<span class="addrtitle"><%=userBean.getMobile() %></span>
-								</div>
-							</section>
-							<section>
-								<div class="settingDiv_l">登录时间</div>
-								<div class="settingDiv_r">
-									<span class="addrtitle"><%=userBean.getLoginTime() %></span>
+									<span class="addrtitle" id="mobile"><%=userBean.getMobile() %></span>
 								</div>
 							</section>
 							<section>
 								<div class="settingDiv_l">登录次数</div>
 								<div class="settingDiv_r">
-									<span class="addrtitle"><%=userBean.getLogincount() %></span>
+									<span class="addrtitle" id="logintime"><%=userBean.getLogincount() %></span>
 								</div>
 							</section>
 							<section>
 								<div class="settingDiv_l">上次登录时间</div>
 								<div class="settingDiv_r">
-									<span class="addrtitle"><%=userBean.getLastLoginTime() %></span>
+									<span class="addrtitle" id="lastlogintime"><%=userBean.getLastLoginTime() %></span>
 								</div>
 							</section>
 							<section>
 								<div class="settingDiv_l">认证失效时长</div>
 								<div class="settingDiv_r">
-									<span class="addrtitle">90分</span>
+									<span class="addrtitle" id="timeout">90分</span>
 								</div>
 							</section>
 						</div>
@@ -120,7 +114,7 @@
 			<a href="manual.pdf">用户手册</a><span style="color: #798699"> </span>
 			
 		</div>
-		<div class="copyright addrtitle" style="padding-top: 4px;">宏源证券股份有限公司&nbsp;&nbsp;</div>
+		<div class="copyright addrtitle" style="padding-top: 4px;">民生证券股份有限公司&nbsp;&nbsp;</div>
 	</div>
 	</div>
 	<script type="text/javascript">
