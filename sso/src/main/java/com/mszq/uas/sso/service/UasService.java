@@ -3,6 +3,7 @@ package com.mszq.uas.sso.service;
 import com.alibaba.fastjson.JSON;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.sso.Config;
+import com.mszq.uas.sso.bean.ModifyPassData;
 import com.mszq.uas.uasserver.bean.*;
 import com.mszq.uas.uasserver.dao.model.App;
 import com.mszq.uas.uasserver.dao.model.Org;
@@ -77,7 +78,7 @@ public class UasService {
         ResponseEntity<AuthResponse> response = this.restTemplate.postForEntity(config.getHost() + "/ua/signout", request, AuthResponse.class, "");
     }
 
-    public void modifyPassword(String jobNumber, String oldPassword, String newPassword) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public ModifyPassData modifyPassword(String jobNumber, String oldPassword, String newPassword) throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
         ChangePasswordExRequest request = new ChangePasswordExRequest();
         request.set_appId(config.getAppId());
         request.set_secret(config.getSecret());
@@ -89,6 +90,11 @@ public class UasService {
         if(response.getBody().getCode()!=CODE.SUCCESS){
             System.out.println(response.getBody().getMsg());
         }
+
+        ModifyPassData data = new ModifyPassData();
+        data.setCode(response.getBody().getCode());
+        data.setMsg(response.getBody().getMsg());
+        return data;
     }
 
     public AuthResponse auth(String jobNumber, String password){

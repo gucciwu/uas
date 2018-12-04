@@ -1,124 +1,148 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta http-equiv="pragma" content="no-cache"> 
-<meta http-equiv="cache-control" content="no-cache"> 
-<link rel="shortcut icon" href="./images/favicon.ico">
-<title>民生证券统一认证 | 账户管理</title>
-<meta name="description" content="民生证券,统一认证,账户管理">
-<meta name="keywords" content="民生证券,统一认证,账户管理">
-<link rel="stylesheet" type="text/css" href="./css/biz189f00.css">
-<link rel="stylesheet" type="text/css" href="./css/contacts2013182c6b.css">
-<script type="text/javascript">
-</script>
-</head>
+	<title>Detail Admin - My Info</title>
+    
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	
+    <!-- bootstrap -->
+    <link href="asset/css/bootstrap/bootstrap.css" rel="stylesheet" />
+    <link href="asset/css/bootstrap/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="asset/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet" />
+
+    <!-- global styles -->
+    <link rel="stylesheet" type="text/css" href="asset/css/layout.css" />
+    <link rel="stylesheet" type="text/css" href="asset/css/elements.css" />
+    <link rel="stylesheet" type="text/css" href="asset/css/icons.css" />
+
+    <!-- libraries -->
+    <link rel="stylesheet" type="text/css" href="asset/css/lib/font-awesome.css" />
+    
+    <!-- this page specific styles -->
+    <link rel="stylesheet" href="asset/css/compiled/personal-info.css" type="text/css" media="screen" />
+
+    <!-- open sans font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css' />
+
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>
 <body>
-	<header class="header">
-		<div class="wd txt_left">
-			<div class="logo left">
-				<a href="#"><img src="./images/logo.png"></a>
-			</div>
-			<div class="setinfo right" id="SetInfo">
-				<span class="userGreet">您好，<span id="username"></span><%=userBean.getName() %></span>
-				<span class=""><a href="Troubleshooter.pdf" target="_blank">常见问题</a></span>
-				<span class="lastset"><a href="logout">退出</a></span>
-			</div>
-		</div>
-	</header>
-	<nav class="nav">
-		<ul class="wd" id="navBar" un="topNavBar">
-			<li><a href="#" class="">统一认证个人账户管理</a></li>
-		</ul>
-	</nav>
-	<div id="main" class="mainPanel wd txt_left" listshowalias="off">
-		<div class="company">
-			<aside class="left_panel" un="leftNavBar">
-				<ul class="sidetd">
-					<li>
-						<a href="main.html" class="selected">个人信息<span class="arrow_right"></span></a>
-						<p class="line"></p>
-					</li>
-					<li>
-						<a href="applist.html" >应用列表<span class="arrow_right"></span></a>
-						<p class="line"></p>
-					</li>
-					<li>
-						<a href="modifypassword.html" >修改密码<span class="arrow_right"></span></a>
-						<p class="line"></p>
-					</li>
-				</ul>
-			</aside>
-			<div class="right_panel">
-				<div class="content_block"
-					style="padding-top: 0; background: #FFFFFF;">
-					<div class="domainMainPanel">
-						<div class="con_body b_size">
-						<h1 class="p_title">个人信息</h1>
-						<div class="formPanel" style="padding: 0;">
-							<div class="mbr_de_pic">
-								<img src="./images/getqqicon">
-							</div>
-							<section>
-								<div class="settingDiv_l">姓名</div>
-								<div class="settingDiv_r">
-									<div id="name"><%=userBean.getName() %></div>
-								</div>
-							</section>
-							<section>
-								<div class="settingDiv_l">身份证</div>
-								<div class="settingDiv_r" id="id"><%=userBean.getZjh() %></div>
-							</section>
-							<section>
-								<div class="settingDiv_l">邮箱</div>
-								<div class="settingDiv_r">
-									<span class="addrtitle" id="mail"><%=userBean.getEmail() %></span>
-								</div>
-							</section>
-							<section>
-								<div class="settingDiv_l">联系电话</div>
-								<div class="settingDiv_r">
-									<span class="addrtitle" id="mobile"><%=userBean.getMobile() %></span>
-								</div>
-							</section>
-							<section>
-								<div class="settingDiv_l">登录次数</div>
-								<div class="settingDiv_r">
-									<span class="addrtitle" id="logintime"><%=userBean.getLogincount() %></span>
-								</div>
-							</section>
-							<section>
-								<div class="settingDiv_l">上次登录时间</div>
-								<div class="settingDiv_r">
-									<span class="addrtitle" id="lastlogintime"><%=userBean.getLastLoginTime() %></span>
-								</div>
-							</section>
-							<section>
-								<div class="settingDiv_l">认证失效时长</div>
-								<div class="settingDiv_r">
-									<span class="addrtitle" id="timeout">90分</span>
-								</div>
-							</section>
-						</div>
-					</div>
-				</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	<div class="wd txt_center" style="margin: 35px auto;">
-		<div class="wd txt_center" style="margin: 35px auto;">
-		<div class="navPageBottom">
-			<a href="about.html">关于统一认证</a><span style="color: #798699"> | </span>
-			<a href="Troubleshooter.pdf">常见问题</a><span style="color: #798699"> | </span>
-			<a href="manual.pdf">用户手册</a><span style="color: #798699"> </span>
-			
-		</div>
-		<div class="copyright addrtitle" style="padding-top: 4px;">民生证券股份有限公司&nbsp;&nbsp;</div>
-	</div>
-	</div>
-	<script type="text/javascript">
-		
-	</script>
+
+    <!-- navbar -->
+    <div class="navbar navbar-inverse">
+        <div class="navbar-inner">
+            <a class="brand" href="index.html"><img src="img/logo.png" /></a>
+            <ul class="nav pull-right">
+                <li id="fat-menu1" class="dropdown">
+                    <a href="modifypassword.html" role="button" class="logout">
+                        <span class="navbar_icon">修改密码</span>
+                    </a>
+                </li>
+                <li id="fat-menu2" class="dropdown">
+                    <a href="logout.html" role="button" class="logout">
+                        <span class="navbar_icon">退出</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!-- end navbar -->
+
+	<!-- main container .wide-content is used for this layout without sidebar :)  -->
+    <div class="content wide-content">
+        <div class="container-fluid">
+            <div class="settings-wrapper" id="pad-wrapper">
+                <!-- avatar column -->
+                <div class="span3 avatar-box hidden-phone">
+                    <div class="personal-image">
+                        <img src="images/head.png" class="avatar img-circle" />
+                        <p><strong id="username"></strong>你好</p>
+                    </div>
+                </div>
+
+                <!-- edit form column -->
+                <div class="span7 personal-info">
+                    <h5 class="personal-title">账户信息</h5>
+
+                    <form />
+                        <div class="field-box">
+                            <label>姓名:</label>
+                            <input class="span5 inline-input" id="name" type="text" value="" />
+                        </div>
+                        <div class="field-box">
+                            <label>员工号:</label>
+                            <input class="span5 inline-input" id="jobnumber" type="text" value="" />
+                        </div>
+                        <div class="field-box">
+                            <label>身份证:</label>
+                            <input class="span5 inline-input" id="id" type="text" value="" />
+                        </div>
+                        <div class="field-box">
+                            <label>邮箱:</label>
+                            <input class="span5 inline-input" id="mail" type="text" value="" />
+                        </div>
+                        <div class="field-box">
+                            <label>电话:</label>
+                            <input class="span5 inline-input" id="mobile" type="text" value="" />
+                        </div>
+                        <div class="field-box">
+                            <label>登录次数:</label>
+                            <input class="span5 inline-input" id="logincount" type="text" value="" />
+                        </div>
+                        <div class="field-box">
+                            <label>上次登录时间:</label>
+                            <input class="span5 inline-input" id="lastlogintime" type="text" value="" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- end main container -->
+
+
+	<!-- scripts -->
+    <script src="js/jquery-1.11.1.min.js"></script>
+    <script src="asset/js/bootstrap.min.js"></script>
+    <script src="asset/js/theme.js"></script>
 </body>
 </html>
+<script type="text/javascript">
+    $(document).ready(function() {
+
+    });
+
+    function getUserInfo(){
+        $.ajax({
+            url:'getuserinfo',
+            type: 'GET',
+            async:true,
+            dataType: 'json',
+            timeout: 30000,
+            cache:false,
+            success: function(json){
+                if(json.redirectUrl){
+                    alert(json.msg);
+                    window.location.href=json.redirectUrl;
+                }else if(json.code != 0){
+                    alert(json.msg);
+                }else{
+                    $("#username").attr("value",json.user.name);
+                    $("#name").attr("value",json.user.name);
+                    $("#jobnumber").attr("value",json.jobNumber);
+                    $("#id").attr("value",json.user.idNumber);
+                    $("#mail").attr("value",json.user.email);
+                    $("#mobile").attr("value",json.user.mobile);
+                    $("#logincount").attr("value",json.user.loginCount);
+                    $("#lastlogintime").attr("value",json.user.modifyTime);
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown){
+                alert("请求失败，错误信息："+textStatus);
+            }
+        });
+
+    }
+</script>

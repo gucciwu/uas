@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.sso.Constants;
+import com.mszq.uas.sso.bean.ModifyPassData;
+import com.mszq.uas.sso.bean.UserData;
 import com.mszq.uas.sso.service.PasswordCheck;
 import com.mszq.uas.sso.service.UasService;
 import com.mszq.uas.uasserver.bean.AuthResponse;
@@ -12,10 +14,11 @@ import com.mszq.uas.uasserver.bean.VerifyTokenResponse;
 import com.mszq.uas.uasserver.dao.model.App;
 import com.mszq.uas.uasserver.dao.model.Org;
 import com.mszq.uas.uasserver.dao.model.User;
-import org.jcp.xml.dsig.internal.dom.Utils;
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.crypto.BadPaddingException;
@@ -41,7 +44,11 @@ import java.util.Random;
 public class Controller {
 
     /** 统一登陆界面 */
-    static final String LOGIN_PATH = "index.html_bak";
+    static final String LOGIN_PATH = "index.html";
+    /** 用户信息页面 */
+    static final String MAIN_PATH = "main.html";
+    /**修改密码页面*/
+    static final String MODIFY_PWD_PATH = "modifypassword.html";
     /** 用户认证成功后获取的session id*/
     public static final String PARAM_SESSIONID="sessionid";
     /** targetappid为该需要登录的目标系统appid */
@@ -201,7 +208,7 @@ public class Controller {
 
         if(service.toLowerCase().indexOf(app.getPath().toLowerCase()) !=0 ){
             request.setAttribute("msg", "操作错误，不允许单点登录URL:"+service);
-            request.getRequestDispatcher("main.html")
+            request.getRequestDispatcher("main.html_bak")
                     .forward(request, response);
             return;
         }
@@ -221,7 +228,7 @@ public class Controller {
             System.out.println("TICKET:"+ticket);
             if(ticket==null||"".equals(ticket)){
                 request.setAttribute("msg", "申请子令牌失败，禁止单点登录目标系统");
-                request.getRequestDispatcher("main.html")
+                request.getRequestDispatcher("main.html_bak")
                         .forward(request, response);
             }else{
                 url.append(service).append(service.indexOf("?")==-1?"?":"&").append("auims_ticket=").append(ticket);
@@ -230,10 +237,10 @@ public class Controller {
             return;
         }else{//未登陆
             //request.getRequestDispatcher(LOGIN_PATH).forward(request, response);
-            if(request!=null&&request.getRequestDispatcher("index.html_bak")!=null){
+            if(request!=null&&request.getRequestDispatcher(LOGIN_PATH)!=null){
                 String temp=request.getParameter("msg");
                 if(temp!=null)request.setAttribute("msg", temp);
-                request.getRequestDispatcher("index.html_bak")
+                request.getRequestDispatcher(LOGIN_PATH)
                         .forward(request, response);
             }else
                 response.sendRedirect(LOGIN_PATH);
@@ -264,50 +271,59 @@ public class Controller {
         }
         request.setAttribute(Constants.SESSION_SERVICE, service);
         request.setAttribute(Constants.SESSION_APPID, appid);
-        request.getRequestDispatcher("index.html").forward(request, response);
+        request.getRequestDispatcher(LOGIN_PATH).forward(request, response);
     }
 
     @RequestMapping("/modify")
-    protected void modify(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected @ResponseBody
+    ModifyPassData modify(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        String userid=(String)session.getAttribute(Constants.SESSION_USERID);
-        String appid = (String)session.getAttribute(Constants.SESSION_APPID);
+        String callbackUrl = null;
+        ModifyPassData data = new ModifyPassData();
+        if(session.getAttribute("callback") != null){
+            callbackUrl = (String) session.getAttribute("callback");
+        }
+        String jobNumber = null;
+        if(session.getAttribute(Constants.SESSION_JOB_NUMBER) != null){
+            jobNumber = (String)session.getAttribute(Constants.SESSION_JOB_NUMBER);
+        }
         String oldpass = request.getParameter("opass");
         String newpass = request.getParameter("pass");
         String confirmpass = request.getParameter("cpass");
         //System.out.println(userid+" "+newpass+" "+confirmpass);
         Map<String,Object> json=new HashMap<String,Object>();
         if(PasswordCheck.check(newpass)){
-            json.put("code", "-1");
-            json.put("msg", "新密码不符合设置规范");
-            this.gotoJsonPage(json, request, response);
+            data.setCode(-1);
+            data.setMsg("新密码不符合设置规范");
+            return data;
         }
 		if(oldpass==null||newpass==null||confirmpass==null||"".equals(oldpass)||"".equals(newpass)||"".equals(confirmpass)){
-			request.setAttribute("msg","旧密码、新密码或确认密码不可为空！");
-			request.getRequestDispatcher("modifypassword.html")
-					.forward(request, response);
+            data.setCode(-1);
+            data.setMsg("旧密码、新密码或确认密码不可为空！");
+			return data;
 		}
 
 		if(!newpass.equals(confirmpass)){
-			request.setAttribute("msg","新密码和确认密码不一致！");
-			request.getRequestDispatcher("modifypassword.html")
-					.forward(request, response);
+            data.setCode(-1);
+            data.setMsg("新密码和确认密码不一致！");
+			return data;
 		}
 
-        if(userid == null){
-            if(request!=null&&request.getRequestDispatcher("index.html")!=null){
+        if(jobNumber == null){
+            if(request!=null&&request.getRequestDispatcher(LOGIN_PATH)!=null){
                 String temp=request.getParameter("msg");
-                if(temp!=null)request.setAttribute("msg", temp);
-                request.getRequestDispatcher("index.html")
-                        .forward(request, response);
+                String url = LOGIN_PATH;
+                if(temp != null)url= url+"?msg="+url;
+                data.setCode(-2);
+                data.setMsg(temp);
+                data.setRedirectUrl(url);
+                return data;
             }else
-                response.sendRedirect(LOGIN_PATH);
+                data.setRedirectUrl(LOGIN_PATH);
+                return data;
         }else{
             try {
-                uasService.modifyPassword(userid, oldpass, newpass);
-                json.put("code", 0);
-                json.put("msg", "修改成功");
-                this.gotoJsonPage(json, request, response);
+                return uasService.modifyPassword(jobNumber, oldpass, newpass);
             } catch (IllegalBlockSizeException e) {
                 e.printStackTrace();
             } catch (InvalidKeyException e) {
@@ -320,25 +336,13 @@ public class Controller {
                 e.printStackTrace();
             }
 
-            json.put("code", "-1");
-            json.put("msg", "未知异常");
-            this.gotoJsonPage(json, request, response);
+            data.setCode(-1);
+            data.setMsg("未知异常");
+            return data;
         }
     }
 
-    public void gotoJsonPage(Map<String,Object>json,HttpServletRequest request, HttpServletResponse response){
-        try {
-            request.setAttribute("JsonData", JSON.toJSONString(json));
-            request.getRequestDispatcher("views/sys/json.html").forward(//ROOT_PATH +
-                    request, response);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @RequestMapping("/UserCheck")
+    @RequestMapping(value="/UserCheck", method=RequestMethod.POST)
     public void userCheck(HttpServletRequest request,
                           HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
@@ -359,71 +363,49 @@ public class Controller {
         request.setAttribute("userid", user);
 
         if(yzm==null||request.getSession().getAttribute(Constants.SESSION_YZM)==null){
-            request.setAttribute("msg","请输入验证码！");
-            request.getRequestDispatcher("index.html")
-                    .forward(request, response);
+            String msg ="请输入验证码！";
+            response.sendRedirect(LOGIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
             return;
         }
         if(user==null||pass==null||"".equals(user)||"".equals(pass)){
-            request.setAttribute("msg","用户名或密码不可为空！");
-            request.getRequestDispatcher("index.html")
-                    .forward(request, response);
+            String msg ="用户名或密码不可为空！";
+            response.sendRedirect(LOGIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
             return;
         }
         String sessionYZM=request.getSession().getAttribute(Constants.SESSION_YZM).toString();
         if(!yzm.equals(sessionYZM)){
-            request.setAttribute("msg","验证码有误！");
-            request.getRequestDispatcher("index.html")
-                    .forward(request, response);
+            String msg ="验证码有误！";
+            response.sendRedirect(LOGIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
             return;
         }
 
         App app = uasService.getApp(Long.parseLong(targetAppid));
         if(service.toLowerCase().indexOf(app.getPath().toLowerCase()) !=0 ){
-            request.setAttribute("msg", "操作错误，不允许单点登录URL:"+service);
-            request.getRequestDispatcher("main.html")
-                    .forward(request, response);
+            String msg ="URL地址非法，无法登录"+app.getName();
+            response.sendRedirect(LOGIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
             return;
         }
 
-//		//判断该用户的统一认证账户和OA账户是否已经同步密码？（1）账户新建，则直接提示用户首次登录，密码需要重置。
-//		//（2）用户已存在单未同步密码，则提示用户统一认证账户需要与OA密码保持一致，需要重置密码。
-//		//TODO 强制设置为需要重置密码，便于测试
-//		FixSyncUserStatus util = new FixSyncUserStatus();
-//		switch(util.getUserStatus(user)){
-//			case 1:
-//				request.setAttribute("status", 1);
-//				request.getRequestDispatcher("resetoa.html").forward(request, response);
-//				return;
-//			case 2:
-//				request.setAttribute("status", 2);
-//				request.getRequestDispatcher("resetoa.html").forward(request, response);
-//				return;
-//			default:
-//				break;
-//		}
-
         AuthResponse resp = uasService.auth(user,pass);
         if (resp.getCode() != CODE.SUCCESS){
-            response.sendRedirect("/index.html?msg="+resp.getMsg());
+            response.sendRedirect("/index.html?msg="+Base64.encodeBase64String(resp.getMsg().getBytes()));
             return;
         } else {
 
             setSessionUser(user,request.getSession());
             String sessionId=resp.getSessionId();
-            session.setAttribute(Constants.SESSION_USERID, resp.getUserId());
             session.setAttribute(Constants.SESSION_JOB_NUMBER, resp.getJobNumber());
             session.setAttribute(Constants.SESSION_SESSIONID, sessionId);
 
             if(PasswordCheck.check(pass)){
-                request.getSession().setAttribute("MUST_EDIT_PWD", "true");
-                response.sendRedirect("/modifypassword.html?msg=您的登录密码强度不够，请立即修改密码！");
+                String msg = "您的登录密码强度不够，请立即修改密码！";
+                response.sendRedirect("/modifypassword.html?msg="+Base64.encodeBase64String(msg.getBytes()));
                 return;
             }
 
             if(service==null||"".equals(service)){
                 //进入主页面
-                response.sendRedirect("main");
+                response.sendRedirect(MAIN_PATH);
             }else{
                 //session.removeAttribute(Constants.SESSION_SERVICE);
                 //session.removeAttribute(Constants.SESSION_APPID);
@@ -431,14 +413,50 @@ public class Controller {
                 String token="";
                 token=uasService.getToken(targetAppid,sessionId);//申请子令牌
                 if(token==null||"".equals(token)){
-                    request.setAttribute("msg","申请子令牌失败，禁止单点登录目标系统");
-                    request.getRequestDispatcher("main.html")
+                    String msg = "申请子令牌失败，禁止单点登录目标系统";
+                    request.getRequestDispatcher(MAIN_PATH+"?")
                             .forward(request, response);
                     return;
                 }
                 url.append(service).append(service.indexOf("?")==-1?"?":"&").append("token=").append(token);
                 response.sendRedirect(url.toString());
             }
+        }
+    }
+
+    @RequestMapping(value="/getuserinfo", method=RequestMethod.GET)
+    protected @ResponseBody
+    UserData getuserinfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        UserData data = new UserData();
+
+        if(request.getSession() != null){
+            if(request.getSession().getAttribute(Constants.SESSION_ORG) != null) {
+                Org org = (Org) request.getSession().getAttribute(Constants.SESSION_ORG);
+                data.setOrg(org);
+            }else{
+                data.setCode(-1);
+                data.setMsg("获取用户的组织机构信息出错");
+                return data;
+            }
+
+            if(request.getSession().getAttribute(Constants.SESSION_USER) != null){
+                User user = (User) request.getSession().getAttribute(Constants.SESSION_ORG);
+                data.setUser(user);
+            }else{
+                data.setCode(-1);
+                data.setMsg("获取用户账户信息出错");
+                return data;
+            }
+
+            data.setCode(0);
+            data.setMsg("成功");
+            return data;
+        }else{
+            data.setCode(-1);
+            String msg = "会话为空,请重新登录";
+            data.setMsg(msg);
+            data.setRedirectUrl(LOGIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
+            return data;
         }
     }
 
