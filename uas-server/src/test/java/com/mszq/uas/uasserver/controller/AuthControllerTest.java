@@ -45,6 +45,8 @@ public class AuthControllerTest {
     @Autowired
     @Qualifier("config")
     private Config config;
+    final long APPID=1L;
+    final String SECRET="1";
 
     private String JOB_NUMBER_1 = "6666666";
     private String JOB_NUMBER_2 = "66666666622";
@@ -66,8 +68,8 @@ public class AuthControllerTest {
         //创建用户1
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber(ID_1);
             user.setEmail("xxxxx@126.com");
@@ -87,8 +89,8 @@ public class AuthControllerTest {
         //创建用户2
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber(ID_2);
             user.setEmail("xx222xx@126.com");
@@ -108,8 +110,8 @@ public class AuthControllerTest {
         //创建用户3
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber(ID_3);
             user.setEmail("xx222xx@126.com");
@@ -130,8 +132,8 @@ public class AuthControllerTest {
         //设置用户1的密码
         {
             ResetPasswordExRequest request = new ResetPasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
 
@@ -142,8 +144,8 @@ public class AuthControllerTest {
         //设置用户2的密码
         {
             ResetPasswordExRequest request = new ResetPasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_2);
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
 
@@ -154,8 +156,8 @@ public class AuthControllerTest {
         //设置用户3的密码
         {
             ResetPasswordExRequest request = new ResetPasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_3);
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
 
@@ -170,8 +172,8 @@ public class AuthControllerTest {
         {
             DelUserExRequest req = new DelUserExRequest();
             req.setJobNumber(JOB_NUMBER_1);
-            req.set_appId(1L);
-            req.set_secret("1");
+            req.set_appId(APPID);
+            req.set_secret(SECRET);
             ResponseEntity<DelUserResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/datasync/delele_user", req, DelUserResponse.class, "");
             System.out.println(String.format("测试结果为：%s", resp.getBody()));
             Assert.assertEquals(0, resp.getBody().getCode());
@@ -179,8 +181,8 @@ public class AuthControllerTest {
         {
             DelUserExRequest req = new DelUserExRequest();
             req.setJobNumber(JOB_NUMBER_2);
-            req.set_appId(1L);
-            req.set_secret("1");
+            req.set_appId(APPID);
+            req.set_secret(SECRET);
             ResponseEntity<DelUserResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/datasync/delele_user", req, DelUserResponse.class, "");
             System.out.println(String.format("测试结果为：%s", resp.getBody()));
             Assert.assertEquals(0, resp.getBody().getCode());
@@ -188,8 +190,8 @@ public class AuthControllerTest {
         {
             DelUserExRequest req = new DelUserExRequest();
             req.setJobNumber(JOB_NUMBER_3);
-            req.set_appId(1L);
-            req.set_secret("1");
+            req.set_appId(APPID);
+            req.set_secret(SECRET);
             ResponseEntity<DelUserResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/datasync/delele_user", req, DelUserResponse.class, "");
             System.out.println(String.format("测试结果为：%s", resp.getBody()));
             Assert.assertEquals(0, resp.getBody().getCode());

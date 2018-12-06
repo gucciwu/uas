@@ -15,4 +15,5 @@ public interface DAO {
 	public long findLocker(String id) throws Exception;
 	public void updateErrorCount(String id, int times) throws Exception;
 	public int findErrorCount(String id) throws Exception;
+	public void deleteErrorCount(String id) throws Exception;
 }

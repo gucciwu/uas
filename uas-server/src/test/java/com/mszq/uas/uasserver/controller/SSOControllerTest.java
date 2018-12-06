@@ -54,6 +54,8 @@ public class SSOControllerTest {
     long userId = 0;
     private String token;
     private long expireTime;
+    final long APPID=1L;
+    final String SECRET="1";
 
     @Before
     public void setUp() throws Exception {
@@ -74,8 +76,8 @@ public class SSOControllerTest {
             app.setOrgType((short) 1);
             app.setPath("");
             request.setApp(app);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
             ResponseEntity<AddAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/add_app",request, AddAppResponse.class, "");
             Assert.assertEquals(200,response.getStatusCodeValue());
             Assert.assertEquals(0,response.getBody().getCode());
@@ -84,8 +86,8 @@ public class SSOControllerTest {
         //创建角色
         {
             AddRoleExRequest request = new AddRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             Role r = new Role();
             r.setRoleName("测试账户ABCD");
             r.setRoleTypeId((int)1);
@@ -102,8 +104,8 @@ public class SSOControllerTest {
             Assert.assertEquals(errorresponse.getBody().getCode(), CODE.SYS.APP_SECRET_NOT_MATCH);
 
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber("611502198658121430");
             user.setEmail("yyyyy@126.com");
@@ -124,8 +126,8 @@ public class SSOControllerTest {
         //设置密码
         {
             ResetPasswordExRequest request = new ResetPasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER);
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
 
@@ -138,8 +140,8 @@ public class SSOControllerTest {
             AddAppToRoleExRequest request = new AddAppToRoleExRequest();
             request.setAppId(appId);
             request.setRoleId(roleId);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
             ResponseEntity<AddAppToRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_app_to_role", request, AddAppToRoleResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
         }
@@ -148,8 +150,8 @@ public class SSOControllerTest {
             AddRoleToUserExRequest request = new AddRoleToUserExRequest();
             request.setRoleId(roleId);
             request.setUserId(userId);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setAutoAddAccount(true);
 
             ResponseEntity<AddRoleToUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_role_to_user", request, AddRoleToUserResponse.class, "");
@@ -177,8 +179,8 @@ public class SSOControllerTest {
             request.setRoleId(roleId);
             request.setUserId(userId);
             request.setAutoDelAccount(true);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
 
             ResponseEntity<DelRoleToUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role_to_user", request, DelRoleToUserResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -187,8 +189,8 @@ public class SSOControllerTest {
         {
             DelUserExRequest request = new DelUserExRequest();
             request.setJobNumber(JOB_NUMBER);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
             ResponseEntity<DelUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_user", request, DelUserResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -199,8 +201,8 @@ public class SSOControllerTest {
             DelAppToRoleExRequest request = new DelAppToRoleExRequest();
             request.setAppId(appId);
             request.setRoleId(roleId);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
 
             ResponseEntity<DelAppToRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_app_to_role", request, DelAppToRoleResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -208,8 +210,8 @@ public class SSOControllerTest {
         //删除角色
         {
             DelRoleExRequest request = new DelRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setRoleId(roleId);
 
             ResponseEntity<DelRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role", request, DelRoleResponse.class, "");
@@ -219,8 +221,8 @@ public class SSOControllerTest {
         {
             DelAppRequest request = new DelAppRequest();
             request.setAppId(appId);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             ResponseEntity<DelAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_app",request, DelAppResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
         }
@@ -230,8 +232,8 @@ public class SSOControllerTest {
     public void requireAndVerify() {
         {
             RequireTokenExRequest request = new RequireTokenExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setAppId(appId);
             request.setSessionId(sessionId);
             ResponseEntity<RequireTokenResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/sso/require_token",request, RequireTokenResponse.class, "");
@@ -244,8 +246,8 @@ public class SSOControllerTest {
 
         {
             VerifyTokenExRequest request = new VerifyTokenExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setToken(token);
             ResponseEntity<VerifyTokenResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/sso/verify_token",request, VerifyTokenResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -259,8 +261,8 @@ public class SSOControllerTest {
                 e.printStackTrace();
             }
             VerifyTokenExRequest request = new VerifyTokenExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setToken(token);
             ResponseEntity<VerifyTokenResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/sso/verify_token",request, VerifyTokenResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.BIZ.TOKEN_NOT_EXIST);

@@ -128,6 +128,7 @@ public class AuthController {
 
                         try {
                             dao.addSession(session);
+                            dao.deleteErrorCount(user.getId().toString());
                         }catch(Exception ex){
                             ex.printStackTrace();
                         }

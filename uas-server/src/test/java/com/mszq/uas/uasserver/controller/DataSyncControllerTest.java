@@ -41,7 +41,8 @@ public class DataSyncControllerTest {
 
     private HttpHeaders headers = new HttpHeaders();
 
-
+    final long APPID=1L;
+    final String SECRET="1";
     @Before
     public void setUp() throws Exception {
         String url = String.format("http://localhost:%d/", port);
@@ -74,8 +75,8 @@ public class DataSyncControllerTest {
 
         {
             GetAppRequest request = new GetAppRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             ResponseEntity<GetAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/get_apps", request, GetAppResponse.class, "");
             Assert.assertEquals(200, response.getStatusCodeValue());
             List<App> appList= response.getBody().getData();
@@ -86,8 +87,8 @@ public class DataSyncControllerTest {
         {
             DelAppRequest request = new DelAppRequest();
             request.setAppId(appId);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             ResponseEntity<DelAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_app",request, DelAppResponse.class, "");
             Assert.assertEquals(200,response.getStatusCodeValue());
         }
@@ -106,8 +107,8 @@ public class DataSyncControllerTest {
             Assert.assertEquals(errorresponse.getBody().getCode(), CODE.SYS.APP_SECRET_NOT_MATCH);
 
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber("511502198658121430");
             user.setEmail("liugss@126.com");
@@ -115,7 +116,7 @@ public class DataSyncControllerTest {
             user.setMobile(MOBILE_1);
             user.setJobNumber(JOB_NUMBER);
             user.setName("六三");
-            user.setOrgId(1L);
+            user.setOrgId(APPID);
             user.setOrgType((short) 1);
             user.setStatus(Constant.USER_STATUS.OK);
             request.setUser(user);
@@ -128,8 +129,8 @@ public class DataSyncControllerTest {
 //        Thread.sleep(100);
         {
             GetUsersExRequest request = new GetUsersExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER);
             ResponseEntity<GetUsersResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/get_users", request, GetUsersResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -139,8 +140,8 @@ public class DataSyncControllerTest {
         }
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             selectUser.setMobile(MOBILE_2);
             request.setUser(selectUser);
             ResponseEntity<UpdateUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/update_user", request, UpdateUserResponse.class, "");
@@ -152,8 +153,8 @@ public class DataSyncControllerTest {
         {
             GetUsersExRequest request = new GetUsersExRequest();
             request = new GetUsersExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(selectUser.getJobNumber());
             ResponseEntity<GetUsersResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/get_users", request, GetUsersResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -167,8 +168,8 @@ public class DataSyncControllerTest {
         final String JOB_NUMBER = "112089";
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber("511502198658121560");
             user.setEmail("xxxxx@126.com");
@@ -176,7 +177,7 @@ public class DataSyncControllerTest {
             user.setMobile("1858686542");
             user.setJobNumber(JOB_NUMBER);
             user.setName("双击六个六");
-            user.setOrgId(1L);
+            user.setOrgId(APPID);
             user.setOrgType((short) 1);
             user.setStatus(Constant.USER_STATUS.OK);
             request.setUser(user);
@@ -188,8 +189,8 @@ public class DataSyncControllerTest {
         {
             DelUserExRequest req = new DelUserExRequest();
             req.setJobNumber(JOB_NUMBER);
-            req.set_appId(1L);
-            req.set_secret("1");
+            req.set_appId(APPID);
+            req.set_secret(SECRET);
             ResponseEntity<DelUserResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_user", req, DelUserResponse.class, "");
             System.out.println(String.format("测试结果为：%s", resp.getBody()));
             Assert.assertEquals(0, resp.getBody().getCode());
@@ -205,8 +206,8 @@ public class DataSyncControllerTest {
         final long APP_ID = 5555L;
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber("511111198658121430");
             user.setEmail("ssss@126.com");
@@ -225,8 +226,8 @@ public class DataSyncControllerTest {
         }
         {
             AddIdToAppExRequest request = new AddIdToAppExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             AppAccount aa = new AppAccount();
             aa.setAccount("abc");
             aa.setAppId(APP_ID);
@@ -243,8 +244,8 @@ public class DataSyncControllerTest {
 
         {
             ChangeIdToAppExRequest request = new ChangeIdToAppExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             AppAccount bb = new AppAccount();
             bb.setAccount("abc");
             bb.setAppId(APP_ID);
@@ -261,8 +262,8 @@ public class DataSyncControllerTest {
 
         {
             GetAppAccountIdExRequest request = new GetAppAccountIdExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setUserId(USER_ID);
 
             ResponseEntity<GetAppAccountIdResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/get_app_account_id", request, GetAppAccountIdResponse.class, "");
@@ -285,8 +286,8 @@ public class DataSyncControllerTest {
 
         {
             DelIdToAppExRequest request = new DelIdToAppExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setAppId(APP_ID);
             request.setUserId(USER_ID);
 
@@ -313,8 +314,8 @@ public class DataSyncControllerTest {
         long userId = 0;
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber("511111198658121430");
             user.setEmail("ssss@126.com");
@@ -334,8 +335,8 @@ public class DataSyncControllerTest {
         }
         {
             ResetPasswordExRequest request = new ResetPasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
 
@@ -345,8 +346,8 @@ public class DataSyncControllerTest {
         }
         {
             ChangePasswordExRequest request = new ChangePasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setOldPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
@@ -358,8 +359,8 @@ public class DataSyncControllerTest {
 
         {
             ChangePasswordExRequest request = new ChangePasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setOldPassword(AESCoder.encrypt("654321", "SMW+RuTwO5ObncmeF5NjMA=="));
             request.setNewPassword(AESCoder.encrypt("111111", "SMW+RuTwO5ObncmeF5NjMA=="));
@@ -371,8 +372,8 @@ public class DataSyncControllerTest {
 
         {
             ChangePasswordExRequest request = new ChangePasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setOldPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
@@ -383,8 +384,8 @@ public class DataSyncControllerTest {
         }
         {
             ChangePasswordExRequest request = new ChangePasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setOldPassword(AESCoder.encrypt("654321", "SMW+RuTwO5ObncmeF5NjMA=="));
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
@@ -410,8 +411,8 @@ public class DataSyncControllerTest {
 
         {
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber("511111198658121430");
             user.setEmail("ssss@126.com");
@@ -430,8 +431,8 @@ public class DataSyncControllerTest {
         }
         {
             ResetPasswordExRequest request = new ResetPasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
 
@@ -442,8 +443,8 @@ public class DataSyncControllerTest {
 
         {
             ResetPasswordExRequest request = new ResetPasswordExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
             request.setNewPassword(AESCoder.encrypt("654321", "SMW+RuTwO5ObncmeF5NjMA=="));
 
@@ -471,8 +472,8 @@ public class DataSyncControllerTest {
             OrgType ot = new OrgType();
             ot.setComment("测试");
             request.setOrgType(ot);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
 
             ResponseEntity<AddOrgTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/add_org_type", request, AddOrgTypeResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -482,8 +483,8 @@ public class DataSyncControllerTest {
 
         {
             UpdateOrgRequest  request = new UpdateOrgRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             Org org = new Org();
             org.setName("测试部门");
             org.setGrade(1);
@@ -500,8 +501,8 @@ public class DataSyncControllerTest {
 
         {
             GetOrgsExRequest  request = new GetOrgsExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setOrgId(ORG_ID_1);
             request.setOrgType(orgTypeId);
 
@@ -525,8 +526,8 @@ public class DataSyncControllerTest {
 
         {
             UpdateOrgRequest  request = new UpdateOrgRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             Org org = new Org();
             org.setName("测试部门");
             org.setGrade(1);
@@ -543,8 +544,8 @@ public class DataSyncControllerTest {
 
         {
             GetOrgsExRequest  request = new GetOrgsExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setOrgId(ORG_ID_1);
             request.setOrgType(orgTypeId);
             request.setStatus(Constant.ORG_STATUS.UNSIGNED);
@@ -569,8 +570,8 @@ public class DataSyncControllerTest {
 
         {
             DelOrgExRequest  request = new DelOrgExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setOrgId(ORG_ID_1);
             request.setOrgType(orgTypeId);
 
@@ -581,8 +582,8 @@ public class DataSyncControllerTest {
 
         {
             GetOrgsExRequest  request = new GetOrgsExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setOrgId(ORG_ID_1);
             request.setOrgType(orgTypeId);
 
@@ -607,8 +608,8 @@ public class DataSyncControllerTest {
         {
             DelOrgTypeExRequest request = new DelOrgTypeExRequest();
             request.setOrgType(orgTypeId);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
 
             ResponseEntity<DelOrgTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_org_type", request, DelOrgTypeResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));

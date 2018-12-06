@@ -148,7 +148,7 @@ public class RedisDao implements DAO {
 				return 0;
 			}else{
 				long t = Long.parseLong(value);
-				long left = t+config.getTokenTimeout()-s;
+				long left = t+config.getLockTime()-s;
 				return left;
 			}
 		} catch (NumberFormatException e) {
@@ -173,6 +173,18 @@ public class RedisDao implements DAO {
 		}finally{
 			long e = System.currentTimeMillis();
 			logger.trace("ELAPSE[FIND ERROR]:"+(e-s)+"ms");
+		}
+	}
+
+	@Override
+	public void deleteErrorCount(String id) {
+		long s = System.currentTimeMillis();
+
+		try{
+			redisTemplate.delete(ERROR+"_"+id);
+		}finally{
+			long e = System.currentTimeMillis();
+			logger.trace("ELAPSE[DELETE ERROR]:"+(e-s)+"ms");
 		}
 	}
 

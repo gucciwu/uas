@@ -30,7 +30,8 @@ public class PermissionControllerTest {
     private int port;
 
     private URL base;
-
+    final long APPID=1L;
+    final String SECRET="1";
     private HttpHeaders headers = new HttpHeaders();
     @Autowired
     private TestRestTemplate restTemplate;
@@ -54,8 +55,8 @@ public class PermissionControllerTest {
             RoleType rt = new RoleType();
             rt.setName("测试角色分类");
             request.setRoleType(rt);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             ResponseEntity<AddRoleTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_role_type", request, AddRoleTypeResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
             roleTypeId = response.getBody().getRoleTypeId();
@@ -64,8 +65,8 @@ public class PermissionControllerTest {
         {
             DelRoleTypeExRequest request = new DelRoleTypeExRequest();
             request.setRoleType(roleTypeId);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
 
             ResponseEntity<DelRoleTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role_type", request, DelRoleTypeResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -79,8 +80,8 @@ public class PermissionControllerTest {
         String NAME = "测试角色1111";
         {
             AddRoleTypeExRequest request = new AddRoleTypeExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             RoleType rt = new RoleType();
             rt.setName("测试角色分类");
             request.setRoleType(rt);
@@ -90,8 +91,8 @@ public class PermissionControllerTest {
         }
         {
             AddRoleExRequest request = new AddRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             Role r = new Role();
             r.setRoleName(NAME);
             r.setRoleTypeId((int)roleTypeId);
@@ -102,8 +103,8 @@ public class PermissionControllerTest {
         }
         {
             GetRoleExRequest request = new GetRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setRoleName(NAME);
 
             ResponseEntity<GetRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/get_roles", request, GetRoleResponse.class, "");
@@ -115,8 +116,8 @@ public class PermissionControllerTest {
 
         {
             DelRoleExRequest request = new DelRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setRoleId(roleId);
 
             ResponseEntity<DelRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role", request, DelRoleResponse.class, "");
@@ -125,8 +126,8 @@ public class PermissionControllerTest {
 
         {
             GetRoleExRequest request = new GetRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setRoleName(NAME);
 
             ResponseEntity<GetRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/get_roles", request, GetRoleResponse.class, "");
@@ -136,8 +137,8 @@ public class PermissionControllerTest {
 
         {
             DelRoleTypeExRequest request = new DelRoleTypeExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setRoleType(roleTypeId);
 
             ResponseEntity<DelRoleTypeResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role_type", request, DelRoleTypeResponse.class, "");
@@ -161,8 +162,8 @@ public class PermissionControllerTest {
             app.setOrgType((short) 1);
             app.setPath("");
             request.setApp(app);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
             ResponseEntity<AddAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/add_app",request, AddAppResponse.class, "");
             Assert.assertEquals(200,response.getStatusCodeValue());
             Assert.assertEquals(0,response.getBody().getCode());
@@ -171,8 +172,8 @@ public class PermissionControllerTest {
         //创建角色
         {
             AddRoleExRequest request = new AddRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             Role r = new Role();
             r.setRoleName("测试账户ABCD");
             r.setRoleTypeId((int)1);
@@ -189,8 +190,8 @@ public class PermissionControllerTest {
             Assert.assertEquals(errorresponse.getBody().getCode(), CODE.SYS.APP_SECRET_NOT_MATCH);
 
             UpdateUserExRequest request = new UpdateUserExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             User user = new User();
             user.setIdNumber("611502198658121430");
             user.setEmail("yyyyy@126.com");
@@ -213,8 +214,8 @@ public class PermissionControllerTest {
             AddAppToRoleExRequest request = new AddAppToRoleExRequest();
             request.setAppId(appId);
             request.setRoleId(roleId);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
             ResponseEntity<AddAppToRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_app_to_role", request, AddAppToRoleResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
         }
@@ -223,8 +224,8 @@ public class PermissionControllerTest {
             AddRoleToUserExRequest request = new AddRoleToUserExRequest();
             request.setRoleId(roleId);
             request.setUserId(userId);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setAutoAddAccount(true);
 
             ResponseEntity<AddRoleToUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/add_role_to_user", request, AddRoleToUserResponse.class, "");
@@ -233,8 +234,8 @@ public class PermissionControllerTest {
         //查询是否已经分配了子账号
         {
             GetAppAccountIdExRequest request = new GetAppAccountIdExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setUserId(userId);
             request.setAppId(appId);
 
@@ -262,8 +263,8 @@ public class PermissionControllerTest {
             request.setRoleId(roleId);
             request.setUserId(userId);
             request.setAutoDelAccount(true);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
 
             ResponseEntity<DelRoleToUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role_to_user", request, DelRoleToUserResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -271,8 +272,8 @@ public class PermissionControllerTest {
         //查询分配的子账号是否已经删除
         {
             GetAppAccountIdExRequest request = new GetAppAccountIdExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setUserId(userId);
             request.setAppId(appId);
 
@@ -289,8 +290,8 @@ public class PermissionControllerTest {
         {
             DelUserExRequest request = new DelUserExRequest();
             request.setJobNumber(JOB_NUMBER);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
             ResponseEntity<DelUserResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_user", request, DelUserResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -301,8 +302,8 @@ public class PermissionControllerTest {
             DelAppToRoleExRequest request = new DelAppToRoleExRequest();
             request.setAppId(appId);
             request.setRoleId(roleId);
-            request.set_secret("1");
-            request.set_appId(1L);
+            request.set_secret(SECRET);
+            request.set_appId(APPID);
 
             ResponseEntity<DelAppToRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_app_to_role", request, DelAppToRoleResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
@@ -310,8 +311,8 @@ public class PermissionControllerTest {
         //删除角色
         {
             DelRoleExRequest request = new DelRoleExRequest();
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             request.setRoleId(roleId);
 
             ResponseEntity<DelRoleResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/permission/del_role", request, DelRoleResponse.class, "");
@@ -321,8 +322,8 @@ public class PermissionControllerTest {
         {
             DelAppRequest request = new DelAppRequest();
             request.setAppId(appId);
-            request.set_appId(1L);
-            request.set_secret("1");
+            request.set_appId(APPID);
+            request.set_secret(SECRET);
             ResponseEntity<DelAppResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/del_app",request, DelAppResponse.class, "");
             Assert.assertEquals(response.getBody().getCode(), CODE.SUCCESS);
         }
