@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Detail Admin - My Info</title>
+	<title>统一认证</title>
     
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 	
@@ -21,9 +21,6 @@
     <!-- this page specific styles -->
     <link rel="stylesheet" href="asset/css/compiled/personal-info.css" type="text/css" media="screen" />
 
-    <!-- open sans font -->
-    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css' />
-
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
@@ -33,7 +30,7 @@
     <!-- navbar -->
     <div class="navbar navbar-inverse">
         <div class="navbar-inner">
-            <a class="brand" href="index.html"><img src="img/logo.png" /></a>
+            <a class="brand" href="index.html"><img src="images/logo.png" /></a>
             <ul class="nav pull-right">
                 <li id="fat-menu1" class="dropdown">
                     <a href="modifypassword.html" role="button" class="logout">
@@ -41,7 +38,7 @@
                     </a>
                 </li>
                 <li id="fat-menu2" class="dropdown">
-                    <a href="logout.html" role="button" class="logout">
+                    <a href="logout" role="button" class="logout">
                         <span class="navbar_icon">退出</span>
                     </a>
                 </li>
@@ -56,9 +53,9 @@
             <div class="settings-wrapper" id="pad-wrapper">
                 <!-- avatar column -->
                 <div class="span3 avatar-box hidden-phone">
-                    <div class="personal-image">
+                    <div class="personal-image text-center">
                         <img src="images/head.png" class="avatar img-circle" />
-                        <p><strong id="username"></strong>你好</p>
+                        <p><strong id="username"></strong>，你好</p>
                     </div>
                 </div>
 
@@ -111,7 +108,7 @@
 </html>
 <script type="text/javascript">
     $(document).ready(function() {
-
+        getUserInfo();
     });
 
     function getUserInfo(){
@@ -129,9 +126,9 @@
                 }else if(json.code != 0){
                     alert(json.msg);
                 }else{
-                    $("#username").attr("value",json.user.name);
+                    $("#username").text(json.user.name);
                     $("#name").attr("value",json.user.name);
-                    $("#jobnumber").attr("value",json.jobNumber);
+                    $("#jobnumber").attr("value",json.user.jobNumber);
                     $("#id").attr("value",json.user.idNumber);
                     $("#mail").attr("value",json.user.email);
                     $("#mobile").attr("value",json.user.mobile);

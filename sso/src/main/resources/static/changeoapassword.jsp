@@ -10,7 +10,7 @@ String oauid = (String)request.getParameter("oauid");
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="pragma" content="no-cache"> 
 <meta http-equiv="cache-control" content="no-cache"> 
-<link rel="shortcut icon" href="./images/favicon.ico">
+<link rel="shortcut icon" href="favicon.ico">
 <title>民生证券统一认证 | OA密码同步</title>
 <meta name="description" content="民生证券,统一认证,OA密码同步">
 <meta name="keywords" content="民生证券,统一认证,OA密码同步">

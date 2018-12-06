@@ -177,6 +177,9 @@ public class Controller {
             graphics.setFont(getRandomFont());
             String content = new String(getRandomNumber(4));
             request.getSession().setAttribute(Constants.SESSION_YZM, content);
+            String retUrl = request.getHeader("Referer");
+            System.err.println("Last Url:"+retUrl);
+            System.err.println("Set YZM:"+request.getSession().getAttribute(Constants.SESSION_YZM));
             graphics.drawString(content, 16, 24);
 
             //释放资源
@@ -363,6 +366,7 @@ public class Controller {
         request.setAttribute("userid", user);
 
         if(yzm==null||request.getSession().getAttribute(Constants.SESSION_YZM)==null){
+            System.err.println("请输入验证码！"+"Get:"+yzm+",Session:"+request.getSession().getAttribute("Constants.SESSION_YZM"));
             String msg ="请输入验证码！";
             response.sendRedirect(LOGIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
             return;
@@ -374,6 +378,7 @@ public class Controller {
         }
         String sessionYZM=request.getSession().getAttribute(Constants.SESSION_YZM).toString();
         if(!yzm.equals(sessionYZM)){
+            System.err.println("验证码有误！"+"Get:"+yzm+",Session:"+request.getSession().getAttribute("Constants.SESSION_YZM"));
             String msg ="验证码有误！";
             response.sendRedirect(LOGIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
             return;
@@ -414,8 +419,7 @@ public class Controller {
                 token=uasService.getToken(targetAppid,sessionId);//申请子令牌
                 if(token==null||"".equals(token)){
                     String msg = "申请子令牌失败，禁止单点登录目标系统";
-                    request.getRequestDispatcher(MAIN_PATH+"?")
-                            .forward(request, response);
+                    response.sendRedirect(MAIN_PATH+"?msg="+Base64.encodeBase64String(msg.getBytes()));
                     return;
                 }
                 url.append(service).append(service.indexOf("?")==-1?"?":"&").append("token=").append(token);
@@ -440,7 +444,7 @@ public class Controller {
             }
 
             if(request.getSession().getAttribute(Constants.SESSION_USER) != null){
-                User user = (User) request.getSession().getAttribute(Constants.SESSION_ORG);
+                User user = (User) request.getSession().getAttribute(Constants.SESSION_USER);
                 data.setUser(user);
             }else{
                 data.setCode(-1);
@@ -464,7 +468,7 @@ public class Controller {
         User user = uasService.getUser(jobNumber);
         if(user != null) {
             //证件号需要处理一下，把中间6位变为*
-            String zjh = user.getJobNumber();
+            String zjh = user.getIdNumber();
             if (zjh != null && zjh.length() >= 15) {
                 String nZjh = zjh.substring(0, (zjh.length() - 10)) + "******" + zjh.substring(zjh.length() - 4);
                 zjh = nZjh;
@@ -473,7 +477,7 @@ public class Controller {
             //手机号需要处理一下，把中间4为变为*
             String mobile = user.getMobile();
             if (mobile != null && mobile.length() >= 11) {
-                String nMobile = mobile.substring(0, mobile.length() - 6) + "****" + mobile.substring(mobile.length() - 2);
+                String nMobile = mobile.substring(0, mobile.length() - 4) + "****" + mobile.substring(mobile.length() - 4);
                 mobile = nMobile;
             }
             user.setMobile(mobile);

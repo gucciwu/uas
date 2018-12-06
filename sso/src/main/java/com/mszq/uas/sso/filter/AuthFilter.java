@@ -16,9 +16,9 @@ public class AuthFilter implements Filter {
 
 	//public static final String[] urls=new String[]{".pdf","/jcaptcha","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/resetPassword",".login.css",".png",".jpg",".gif",".ico"};
 	//	servlet 过滤
-	public static final String[] urls=new String[]{"/jcaptcha","/ApplyToken","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/changeoapassword","/resetPassword","/provideData?wsdl","/helloWorld?wsdl","/webservice","/services","/about.html","/test.html","/changeoapassword.jsp"};
+	public static final String[] urls=new String[]{"/jcaptcha","/ApplyToken","/UserCheck","/logout","/login","/validate","/index.html","/about.html","error_page.html"};
 	//  后缀过滤
-	public static final String[] suffixs=new String[]{"pdf","js","css","png","jpg","gif","ico","ttf"};
+	public static final String[] suffixs=new String[]{"pdf","js","css","png","jpg","gif","ico","ttf","woff","woff2","eot"};
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}
@@ -64,8 +64,13 @@ public class AuthFilter implements Filter {
 				b=true;break;
 			}
 		}
+		String cleanUrl = url;
+		if(url.contains("?")) {
+			cleanUrl = url.substring(0, url.indexOf("?"));
+		}
+
 		for(String suffix:suffixs){
-			if(url.endsWith(suffix)){
+			if(cleanUrl.endsWith(suffix)){
 				b=true;break;
 			}
 		}

@@ -4,7 +4,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bootstrap Registration Form Template</title>
+    <title>统一认证</title>
     <title>民生证券统一认证 | 账户管理</title>
     <meta name="description" content="民生证券,统一认证,账户管理">
     <meta name="keywords" content="民生证券,统一认证,账户管理">
@@ -21,19 +21,6 @@
     <script src="./js/html5shiv.js"></script>
     <script src="./js/respond.min.js"></script>
     <![endif]-->
-
-    <!-- Favicon and touch icons -->
-    <link rel="shortcut icon"
-          href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/assets/ico/favicon.png">
-    <link rel="apple-touch-icon-precomposed" sizes="144x144"
-          href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114"
-          href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/assets/ico/apple-touch-icon-114-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="72x72"
-          href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/assets/ico/apple-touch-icon-72-precomposed.png">
-    <link rel="apple-touch-icon-precomposed"
-          href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/assets/ico/apple-touch-icon-57-precomposed.png">
-    <link rel="stylesheet" href="./css/sticky.min.css" type="text/css"/>
 </head>
 <style type="text/css">
     .topLink {
@@ -53,8 +40,9 @@
     }
 </style>
 
-<body>
+<body class="login-bg">
 <!-- Top menu -->
+
 <nav class="navbar navbar-inverse navbar-no-bg" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -65,12 +53,12 @@
                 <span class="icon-bar"></span>
             </button>
             <a class="navbar-brand"
-               href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/index.html">Bootstrap
-                Registration Form Template</a>
+               href="http://www.mszq.com">民生证券</a>
         </div>
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="top-navbar-1">
             <ul class="nav navbar-nav navbar-right">
+                <!--
                 <li>
 							<span>
 								<a href="about.html">关于统一认证</a>
@@ -81,12 +69,11 @@
                     <span>
 								<a href="manual.pdf">用户手册</a>
 							</span>
-                </li>
+                </li>-->
             </ul>
         </div>
     </div>
 </nav>
-
 <!-- Top content -->
 <div class="top-content">
 
@@ -97,10 +84,8 @@
                     <h1><strong>单点登录门户</strong></h1>
                     <div class="description">
                         <p>
-                            This is a free responsive registration form made with Bootstrap.
-                            Download it on <a
-                                href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/index.html#"><strong>AZMIND</strong></a>,
-                            customize and use it as you like!
+                            您正在使用民生证券统一认证系统。使用说明请参见
+                            <a href="manual.pdf"><strong class="text-danger">使用说明</strong></a>
                         </p>
                     </div>
                     <!--
@@ -116,8 +101,9 @@
                 <div class="col-sm-5 form-box">
                     <div class="form-top">
                         <div class="form-top-left">
-                            <h3><i class="fa fa-pencil"></i>单点登录</h3>
+                            <h3><i class="fa fa-lock"></i>&nbsp;&nbsp;单点登录</h3>
                             <!--<p>Fill in the form below to get instant access:</p>-->
+                            <p class="text-danger" id="msg"></p>
                         </div>
                         <!--
                         <div class="form-top-right">
@@ -125,7 +111,7 @@
                         </div>-->
                     </div>
                     <div class="form-bottom">
-                        <form role="form" action="UserCheck" method="post" class="registration-form">
+                        <form role="form" action="UserCheck" method="post" class="login-form">
                             <input type="hidden" name="validate" value="login">
                             <input type="hidden" name="appid" value="">
                             <input type="hidden" name="service" value="">
@@ -137,13 +123,13 @@
                             </div>
                             <div class="form-group">
                                 <label class="column" for="pass">密码</label>
-                                <input type="text" name="p" placeholder="密码..."
+                                <input type="password" name="p" placeholder="密码..."
                                        class="form-password form-control" id="pass">
                             </div>
                             <div class="form-group">
                                 <label for="yzm" class="column">验 证 码：</label>
                                 <div class="">
-                                    <input type="text" id="yzm" name="yzm" value="" style="ime-mode: disabled;width:90px;">
+                                    <input type="text" id="yzm" name="yzm" autocomplete="off" style="ime-mode: disabled;width:90px;">
                                     <img id="yzmImg" src="jcaptcha" width="87" height="40" title="单击更换验证码" onclick="reloadImg();" />
                                 </div>
                                 <!--
@@ -163,31 +149,37 @@
             </div>
         </div>
     </div>
-    <div class="copyrights">民生证券股份有限公司&nbsp;&nbsp;</div>
+    <!--
+    <div class="copyrights">民生证券股份有限公司&nbsp;&nbsp;</div>-->
 </div>
 
 
 <!-- Javascript -->
 <script src="./js/jquery-1.11.1.min.js"></script>
 <script src="./js/bootstrap.min.js"></script>
-<script src="./js/jquery.backstretch.min.js"></script>
 <script src="./js/retina-1.1.0.min.js"></script>
 <script src="./js/scripts.js"></script>
 <script src="./js/sticky.min.js"></script>
 <script type="text/javascript" src="./js/jquery.tooltipster.js"></script>
-
+<script src="js/base64.js"></script>
 <!--[if lt IE 10]>
 <script src="assets/js/placeholder.js"></script>
 <![endif]-->
-<div class="backstretch" style="left: 0px; top: 0px; overflow: hidden; margin: 0px; padding: 0px; height: 740px; width: 1423px; z-index: -999999; position: fixed;">
-    <img src="./images/1.jpg" style="position: absolute; margin: 0px; padding: 0px; border: none; width: 1423px; height: 1067.25px; max-height: none; max-width: none; z-index: -999999; left: 0px; top: -163.625px;">
-</div>
 <script language="javascript">
 
     var service = null
-    var appid;
+    var appid = 1;
 
     $(document).ready(function () {
+        var msg =getQueryVariable("msg");
+        if(msg){
+            var b = new Base64();
+            var m = b.decode(msg);
+            $("#msg").text(m);
+        }else{
+            $("#msg").text("");
+        }
+
         $('#forgotpass').tooltipster({
             content: $("<p style='text-align:left;'>点击进入找回密码界面</p>")
         });
@@ -305,7 +297,7 @@
             var pair = vars[i].split("=");
             if(pair[0] == variable){return pair[1];}
         }
-        return(false);
+        return null;
     }
 </script>
 
