@@ -11,26 +11,26 @@
             <outputDirectory>\static</outputDirectory>
         </fileSet>
     </fileSets>
-	<files>
-		<file>
-			<source>${project.build.directory}/${project.build.finalName}.jar</source>
-			<outputDirectory>/</outputDirectory>
-		</file>
-		<file>
-			<source>${project.basedir}/src/main/resources/application.properties</source>
-			<outputDirectory>/config</outputDirectory>
-		</file>
-		<file>
-			<source>${project.basedir}/src/main/resources/start.sh</source>
-			<outputDirectory>/</outputDirectory>
-		</file>
-		<file>
-			<source>${project.basedir}/src/main/resources/stop.sh</source>
-			<outputDirectory>/</outputDirectory>
-		</file>
-		<file>
-			<source>${project.basedir}/src/main/resources/restart.sh</source>
-			<outputDirectory>/</outputDirectory>
-		</file>
-	</files>
+    <files>
+        <file>
+            <source>${project.build.directory}/${project.build.finalName}.jar</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/application.properties</source>
+            <outputDirectory>/config</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/start.sh</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/stop.sh</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+        <file>
+            <source>${project.basedir}/src/main/resources/restart.sh</source>
+            <outputDirectory>/</outputDirectory>
+        </file>
+    </files>
 </assembly>

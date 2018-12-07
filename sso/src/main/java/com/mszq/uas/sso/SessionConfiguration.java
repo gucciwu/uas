@@ -11,7 +11,7 @@ import org.springframework.data.redis.serializer.RedisSerializer;
 public class SessionConfiguration {
 
     @Bean("springSessionDefaultRedisSerializer")
-    public RedisSerializer<Object> defaultRedisSerializer(){
+    public RedisSerializer<Object> defaultRedisSerializer() {
         return valueSerializer();
     }
 

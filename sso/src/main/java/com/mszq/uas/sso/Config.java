@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Configuration
 @Component("ssoConfig")
-@ConfigurationProperties(prefix="uas.sso")
+@ConfigurationProperties(prefix = "uas.sso")
 public class Config {
     private String host;
     private String aesKey;

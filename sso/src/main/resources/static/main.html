@@ -1,143 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>统一认证</title>
-    
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	
+    <title>统一认证</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
     <!-- bootstrap -->
-    <link href="asset/css/bootstrap/bootstrap.css" rel="stylesheet" />
-    <link href="asset/css/bootstrap/bootstrap-responsive.css" rel="stylesheet" />
-    <link href="asset/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet" />
+    <link href="asset/css/bootstrap/bootstrap.css" rel="stylesheet"/>
+    <link href="asset/css/bootstrap/bootstrap-responsive.css" rel="stylesheet"/>
+    <link href="asset/css/bootstrap/bootstrap-overrides.css" type="text/css" rel="stylesheet"/>
 
     <!-- global styles -->
-    <link rel="stylesheet" type="text/css" href="asset/css/layout.css" />
-    <link rel="stylesheet" type="text/css" href="asset/css/elements.css" />
-    <link rel="stylesheet" type="text/css" href="asset/css/icons.css" />
+    <link rel="stylesheet" type="text/css" href="asset/css/layout.css"/>
+    <link rel="stylesheet" type="text/css" href="asset/css/elements.css"/>
+    <link rel="stylesheet" type="text/css" href="asset/css/icons.css"/>
 
     <!-- libraries -->
-    <link rel="stylesheet" type="text/css" href="asset/css/lib/font-awesome.css" />
-    
+    <link rel="stylesheet" type="text/css" href="asset/css/lib/font-awesome.css"/>
+
     <!-- this page specific styles -->
-    <link rel="stylesheet" href="asset/css/compiled/personal-info.css" type="text/css" media="screen" />
+    <link rel="stylesheet" href="asset/css/compiled/personal-info.css" type="text/css" media="screen"/>
 
     <!--[if lt IE 9]>
       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+</head>
 <body>
 
-    <!-- navbar -->
-    <div class="navbar navbar-inverse">
-        <div class="navbar-inner">
-            <a class="brand" href="index.html"><img src="images/logo.png" /></a>
-            <ul class="nav pull-right">
-                <li id="fat-menu1" class="dropdown">
-                    <a href="modifypassword.html" role="button" class="logout">
-                        <span class="navbar_icon">修改密码</span>
-                    </a>
-                </li>
-                <li id="fat-menu2" class="dropdown">
-                    <a href="logout" role="button" class="logout">
-                        <span class="navbar_icon">退出</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+<!-- navbar -->
+<div class="navbar navbar-inverse">
+    <div class="navbar-inner">
+        <a class="brand" href="index.html"><img src="images/logo.png"/></a>
+        <ul class="nav pull-right">
+            <li id="fat-menu1" class="dropdown">
+                <a href="modifypassword.html" role="button" class="logout">
+                    <span class="navbar_icon">修改密码</span>
+                </a>
+            </li>
+            <li id="fat-menu2" class="dropdown">
+                <a href="logout" role="button" class="logout">
+                    <span class="navbar_icon">退出</span>
+                </a>
+            </li>
+        </ul>
     </div>
-    <!-- end navbar -->
+</div>
+<!-- end navbar -->
 
-	<!-- main container .wide-content is used for this layout without sidebar :)  -->
-    <div class="content wide-content">
-        <div class="container-fluid">
-            <div class="settings-wrapper" id="pad-wrapper">
-                <!-- avatar column -->
-                <div class="span3 avatar-box hidden-phone">
-                    <div class="personal-image text-center">
-                        <img src="images/head.png" class="avatar img-circle" />
-                        <p><strong id="username"></strong>，你好</p>
-                    </div>
+<!-- main container .wide-content is used for this layout without sidebar :)  -->
+<div class="content wide-content">
+    <div class="container-fluid">
+        <div class="settings-wrapper" id="pad-wrapper">
+            <!-- avatar column -->
+            <div class="span3 avatar-box hidden-phone">
+                <div class="personal-image text-center">
+                    <img src="images/head.png" class="avatar img-circle"/>
+                    <p><strong id="username"></strong>，你好</p>
                 </div>
+            </div>
 
-                <!-- edit form column -->
-                <div class="span7 personal-info">
-                    <h5 class="personal-title">账户信息</h5>
+            <!-- edit form column -->
+            <div class="span7 personal-info">
+                <h5 class="personal-title">账户信息</h5>
 
-                    <form />
-                        <div class="field-box">
-                            <label>姓名:</label>
-                            <input class="span5 inline-input" id="name" type="text" value="" />
-                        </div>
-                        <div class="field-box">
-                            <label>员工号:</label>
-                            <input class="span5 inline-input" id="jobnumber" type="text" value="" />
-                        </div>
-                        <div class="field-box">
-                            <label>身份证:</label>
-                            <input class="span5 inline-input" id="id" type="text" value="" />
-                        </div>
-                        <div class="field-box">
-                            <label>邮箱:</label>
-                            <input class="span5 inline-input" id="mail" type="text" value="" />
-                        </div>
-                        <div class="field-box">
-                            <label>电话:</label>
-                            <input class="span5 inline-input" id="mobile" type="text" value="" />
-                        </div>
-                        <div class="field-box">
-                            <label>登录次数:</label>
-                            <input class="span5 inline-input" id="logincount" type="text" value="" />
-                        </div>
-                        <div class="field-box">
-                            <label>上次登录时间:</label>
-                            <input class="span5 inline-input" id="lastlogintime" type="text" value="" />
-                        </div>
-                    </form>
+                <form/>
+                <div class="field-box">
+                    <label>姓名:</label>
+                    <input class="span5 inline-input" id="name" type="text" value=""/>
                 </div>
+                <div class="field-box">
+                    <label>员工号:</label>
+                    <input class="span5 inline-input" id="jobnumber" type="text" value=""/>
+                </div>
+                <div class="field-box">
+                    <label>身份证:</label>
+                    <input class="span5 inline-input" id="id" type="text" value=""/>
+                </div>
+                <div class="field-box">
+                    <label>邮箱:</label>
+                    <input class="span5 inline-input" id="mail" type="text" value=""/>
+                </div>
+                <div class="field-box">
+                    <label>电话:</label>
+                    <input class="span5 inline-input" id="mobile" type="text" value=""/>
+                </div>
+                <div class="field-box">
+                    <label>登录次数:</label>
+                    <input class="span5 inline-input" id="logincount" type="text" value=""/>
+                </div>
+                <div class="field-box">
+                    <label>上次登录时间:</label>
+                    <input class="span5 inline-input" id="lastlogintime" type="text" value=""/>
+                </div>
+                </form>
             </div>
         </div>
     </div>
-    <!-- end main container -->
+</div>
+<!-- end main container -->
 
 
-	<!-- scripts -->
-    <script src="js/jquery-1.11.1.min.js"></script>
-    <script src="asset/js/bootstrap.min.js"></script>
-    <script src="asset/js/theme.js"></script>
+<!-- scripts -->
+<script src="js/jquery-1.11.1.min.js"></script>
+<script src="asset/js/bootstrap.min.js"></script>
+<script src="asset/js/theme.js"></script>
 </body>
 </html>
 <script type="text/javascript">
-    $(document).ready(function() {
+    $(document).ready(function () {
         getUserInfo();
     });
 
-    function getUserInfo(){
+    function getUserInfo() {
         $.ajax({
-            url:'getuserinfo',
+            url: 'getuserinfo',
             type: 'GET',
-            async:true,
+            async: true,
             dataType: 'json',
             timeout: 30000,
-            cache:false,
-            success: function(json){
-                if(json.redirectUrl){
+            cache: false,
+            success: function (json) {
+                if (json.redirectUrl) {
                     alert(json.msg);
-                    window.location.href=json.redirectUrl;
-                }else if(json.code != 0){
+                    window.location.href = json.redirectUrl;
+                } else if (json.code != 0) {
                     alert(json.msg);
-                }else{
+                } else {
                     $("#username").text(json.user.name);
-                    $("#name").attr("value",json.user.name);
-                    $("#jobnumber").attr("value",json.user.jobNumber);
-                    $("#id").attr("value",json.user.idNumber);
-                    $("#mail").attr("value",json.user.email);
-                    $("#mobile").attr("value",json.user.mobile);
-                    $("#logincount").attr("value",json.user.loginCount);
-                    $("#lastlogintime").attr("value",json.user.modifyTime);
+                    $("#name").attr("value", json.user.name);
+                    $("#jobnumber").attr("value", json.user.jobNumber);
+                    $("#id").attr("value", json.user.idNumber);
+                    $("#mail").attr("value", json.user.email);
+                    $("#mobile").attr("value", json.user.mobile);
+                    $("#logincount").attr("value", json.user.loginCount);
+                    $("#lastlogintime").attr("value", json.user.modifyTime);
                 }
             },
-            error: function(XMLHttpRequest, textStatus, errorThrown){
-                alert("请求失败，错误信息："+textStatus);
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert("请求失败，错误信息：" + textStatus);
             }
         });
 

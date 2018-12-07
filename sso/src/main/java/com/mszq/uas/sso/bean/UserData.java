@@ -1,7 +1,7 @@
 package com.mszq.uas.sso.bean;
 
-import com.mszq.uas.uasserver.dao.model.Org;
-import com.mszq.uas.uasserver.dao.model.User;
+import com.mszq.uas.sso.model.Org;
+import com.mszq.uas.sso.model.User;
 
 public class UserData {
     private int code;
