@@ -1,6 +1,8 @@
 package com.mszq.uas.uasserver.aspect;
 
 import com.alibaba.fastjson.JSON;
+import com.mszq.uas.uasserver.bean.Request;
+import com.mszq.uas.uasserver.bean.Response;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
 import org.aspectj.lang.annotation.Around;
@@ -16,6 +18,9 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Enumeration;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 @Component
 @Aspect
@@ -23,56 +28,29 @@ public class LogAspect {
 
     private static Logger logger = LoggerFactory.getLogger(LogAspect.class);
 
-    @Around("execution(* com.mszq.uas..*Controller.*(..))")
+    @Around("execution(* com.mszq.uas.uasserver..*ControllerService.*(..))")
     public Object handle(ProceedingJoinPoint joinPoint) throws Throwable {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        //IP地址
-        String ipAddr = getRemoteHost(request);
-        String url = request.getRequestURL().toString();
-        String reqParam = preHandle(joinPoint, request);
-        logger.info("请求源IP:【{}】,请求URL:【{}】,请求参数:【{}】", ipAddr, url, reqParam);
-
-        Object result = joinPoint.proceed();
-        String respParam = postHandle(result);
-        logger.info("请求源IP:【{}】,请求URL:【{}】,返回参数:【{}】", ipAddr, url, respParam);
-
-        return result;
-    }
-
-    /**
-     * 入参数据
-     *
-     * @param joinPoint
-     * @param request
-     * @return
-     */
-    private String preHandle(ProceedingJoinPoint joinPoint, HttpServletRequest request) {
-
-        String reqParam = "";
-        Signature signature = joinPoint.getSignature();
-        MethodSignature methodSignature = (MethodSignature) signature;
-        Method targetMethod = methodSignature.getMethod();
-        Annotation[] annotations = targetMethod.getAnnotations();
-        for (Annotation annotation : annotations) {
-            if (annotation.annotationType().equals(RequestMapping.class)) {
-                reqParam = JSON.toJSONString(request.getParameterMap());
-                break;
+        //请求前
+        Object objects[] = joinPoint.getArgs();
+        String ipAddr = null;
+        String url = null;
+        String req = null;
+        for(Object object:objects){
+            if(object instanceof HttpServletRequest){
+                HttpServletRequest request = (HttpServletRequest)object;
+                ipAddr = getRemoteHost(request);
+                url = request.getRequestURL().toString();
+            }else if(object instanceof Request){
+                req = JSON.toJSONString(object);
             }
         }
-        return reqParam;
-    }
-
-    /**
-     * 返回数据
-     *
-     * @param retVal
-     * @return
-     */
-    private String postHandle(Object retVal) {
-        if (null == retVal) {
-            return "";
-        }
-        return JSON.toJSONString(retVal);
+        logger.trace("请求源IP:【{}】,请求URL:【{}】,请求参数:【{}】", ipAddr, url, req);
+        //执行
+        Object result = joinPoint.proceed();
+        //请求后
+        String resp = JSON.toJSONString(result);
+        logger.trace("请求源IP:【{}】,请求URL:【{}】,返回参数:【{}】", ipAddr, url, resp);
+        return result;
     }
 
     /**

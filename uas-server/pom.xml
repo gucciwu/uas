@@ -202,7 +202,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-                            <finalName>sso</finalName>
+                            <finalName>uas-server</finalName>
                             <descriptors> <!--描述文件路径-->
                                 <descriptor>src/main/resources/assembly.xml</descriptor>
                             </descriptors>
