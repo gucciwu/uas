@@ -1,6 +1,6 @@
 package com.mszq.uas.sso.bean;
 
-public class RequireTokenResponse extends com.mszq.uas.sso.bean.Response {
+public class RequireTokenResponse extends Response {
 
     private String token;
     private long expireTime;

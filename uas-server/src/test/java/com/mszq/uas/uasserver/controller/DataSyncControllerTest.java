@@ -306,7 +306,7 @@ public class DataSyncControllerTest {
     }
 
     @Test
-    public void changePassword() throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public void changePassword() throws Exception {
 
         final String JOB_NUMBER_1 = "999999";
         final long USER_ID = 5555L;
@@ -404,7 +404,7 @@ public class DataSyncControllerTest {
     }
 
     @Test
-    public void resetPassword() throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public void resetPassword() throws Exception {
         final String JOB_NUMBER_1 = "999999";
         final long USER_ID = 5555L;
         final long APP_ID = 5555L;

@@ -1,15 +1,11 @@
 package com.mszq.uas.uasserver.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.basement.Constant;
 import com.mszq.uas.uasserver.Config;
 import com.mszq.uas.uasserver.UasServerApplication;
 import com.mszq.uas.uasserver.bean.*;
 import com.mszq.uas.uasserver.dao.model.App;
-import com.mszq.uas.uasserver.dao.model.AppAccount;
 import com.mszq.uas.uasserver.dao.model.Role;
 import com.mszq.uas.uasserver.dao.model.User;
 import com.mszq.uas.uasserver.util.AESCoder;
@@ -30,7 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.net.URL;
 
-import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = UasServerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SSOControllerTest {

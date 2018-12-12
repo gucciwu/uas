@@ -59,13 +59,13 @@ public class DataSyncController {
     @ApiOperation(value="修改密码", notes="密码需要采用AES算法加密，密钥串请联系管理员")
     @RequestMapping(value="/datasync/change_password",method = RequestMethod.POST)
     public @ResponseBody
-    ChangePasswordResponse changePassword(@RequestBody ChangePasswordExRequest request, HttpServletRequest httpRequest) throws IllegalBlockSizeException, InvalidKeyException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, IpForbbidenException, AppSecretMatchException {
+    ChangePasswordResponse changePassword(@RequestBody ChangePasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
         return  service.changePassword(request,httpRequest);
     }
     @ApiOperation(value="重置密码", notes="密码需要采用AES算法加密，密钥串请联系管理员")
     @RequestMapping(value="/datasync/reset_password",method = RequestMethod.POST)
     public @ResponseBody
-    ResetPasswordResponse resetPassword(@RequestBody ResetPasswordExRequest request, HttpServletRequest httpRequest) throws IllegalBlockSizeException, InvalidKeyException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, AppSecretMatchException, IpForbbidenException {
+    ResetPasswordResponse resetPassword(@RequestBody ResetPasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
         return service.resetPassword(request,httpRequest);
     }
     @ApiOperation(value="查询用户信息", notes="根据查询条件全量返回用户信息，目前没有实现分页")

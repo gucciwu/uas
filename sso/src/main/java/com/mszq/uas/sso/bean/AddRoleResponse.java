@@ -1,6 +1,6 @@
 package com.mszq.uas.sso.bean;
 
-public class AddRoleResponse extends com.mszq.uas.sso.bean.Response {
+public class AddRoleResponse extends Response {
     private long roleId;
 
     public long getRoleId() {

@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component("ssoConfig")
 @ConfigurationProperties(prefix = "uas.sso")
 public class Config {
-    private String host;
+    private String hostUrl;
     private String aesKey;
     private long appId;
     private String secret;
@@ -37,11 +37,11 @@ public class Config {
         this.aesKey = aesKey;
     }
 
-    public String getHost() {
-        return host;
+    public String getHostUrl() {
+        return hostUrl;
     }
 
-    public void setHost(String host) {
-        this.host = host;
+    public void setHostUrl(String host) {
+        this.hostUrl = host;
     }
 }

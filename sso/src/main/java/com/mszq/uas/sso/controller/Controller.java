@@ -5,10 +5,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.sso.Constants;
-import com.mszq.uas.sso.bean.AuthResponse;
-import com.mszq.uas.sso.bean.ModifyPassData;
-import com.mszq.uas.sso.bean.UserData;
-import com.mszq.uas.sso.bean.VerifyTokenResponse;
+import com.mszq.uas.sso.bean.*;
 import com.mszq.uas.sso.service.PasswordCheck;
 import com.mszq.uas.sso.service.UasService;
 import com.mszq.uas.sso.model.App;
@@ -106,15 +103,14 @@ public class Controller {
                 out.print(ob.toString());
                 out.flush();
             } else {
-                String ticket = uasService.getToken(targetappid, sessionId);
-                System.out.println("TICKET:" + ticket);
-                if (ticket == null || "".equals(ticket)) {
+                RequireTokenResponse res = uasService.getToken(targetappid, sessionId);
+                if(res.getCode() != CODE.SUCCESS){
                     response.setContentType("application/json;charset=UTF-8");
                     response.setCharacterEncoding("UTF-8");
                     PrintWriter out = response.getWriter();
                     JSONObject ob = new JSONObject();
-                    ob.put("code", "-2");
-                    ob.put("message", "申请子令牌失败，禁止单点登录目标系统");
+                    ob.put("code", res.getCode());
+                    ob.put("message", "申请子令牌失败，禁止单点登录目标系统。原因："+res.getMsg());
                     out.print(ob.toString());
                     out.flush();
                 } else {
@@ -124,7 +120,7 @@ public class Controller {
                     JSONObject ob = new JSONObject();
                     ob.put("code", "1");
                     ob.put("message", "申请令牌成功");
-                    ob.put("token", ticket);
+                    ob.put("token", res.getToken());
                     out.print(ob.toString());
                     out.flush();
                 }
@@ -194,9 +190,9 @@ public class Controller {
             graphics.setFont(getRandomFont());
             String content = new String(getRandomNumber(4));
             request.getSession().setAttribute(Constants.SESSION_YZM, content);
-            String retUrl = request.getHeader("Referer");
-            System.err.println("Last Url:" + retUrl);
-            System.err.println("Set YZM:" + request.getSession().getAttribute(Constants.SESSION_YZM));
+//            String retUrl = request.getHeader("Referer");
+//            System.err.println("Last Url:" + retUrl);
+//            System.err.println("Set YZM:" + request.getSession().getAttribute(Constants.SESSION_YZM));
             graphics.drawString(content, 16, 24);
 
             //释放资源
@@ -212,46 +208,56 @@ public class Controller {
     @RequestMapping("/login")
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, NumberFormatException, IOException {
         // TODO Auto-generated method stub
-        String service = request.getParameter(PARAM_SERVICE);
-        String appid = request.getParameter(PARAM_APPID);
+
         String sessionId = null;
         HttpSession session = request.getSession();
         Object obj = session.getAttribute(Constants.SESSION_SESSIONID);
-        System.out.println(PARAM_SERVICE + ":" + service);
-        System.out.println(PARAM_APPID + ":" + appid);
-        if (service == null || appid == null || service.indexOf("auims_ticket") != -1) {
-            response.sendRedirect(LOGIN_PATH);
+        String service = request.getParameter(PARAM_SERVICE);
+        String targetAppid = request.getParameter(PARAM_APPID);
+        service = request.getParameter("service") == null?(String)session.getAttribute(Constants.SESSION_SERVICE):request.getParameter("service");
+        targetAppid = request.getParameter("appid") == null?(String)session.getAttribute(Constants.SESSION_APPID):request.getParameter("appi");;
+        service = service == null ? "" : service.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
+        targetAppid = targetAppid == null ? "" : targetAppid.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
+        request.setAttribute(Constants.SESSION_SERVICE, service);
+        request.setAttribute(Constants.SESSION_APPID, targetAppid);
+        String param="service="+service+"&appid="+targetAppid;
+
+        if (service == null || targetAppid == null || service.indexOf("token") != -1) {
+            response.sendRedirect(LOGIN_PATH+"?"+param);
             return;
         }
 
-        App app = uasService.getApp(Long.parseLong(appid));
+        App app = uasService.getApp(Long.parseLong(targetAppid));
+        if(app == null){
+            String msg = "应用不存在";
+            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
+            return;
+        }
 
         if (service.toLowerCase().indexOf(app.getPath().toLowerCase()) != 0) {
-            request.setAttribute("msg", "操作错误，不允许单点登录URL:" + service);
-            request.getRequestDispatcher("main.html_bak")
-                    .forward(request, response);
+            String msg = "操作错误，不允许单点登录URL:" + service;
+            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
             return;
         }
 
-        session.setAttribute(Constants.SESSION_APPID, appid);
+        session.setAttribute(Constants.SESSION_APPID, targetAppid);
         session.setAttribute(Constants.SESSION_SERVICE, service);
 
-        request.setAttribute(Constants.SESSION_APPID, appid);
+        request.setAttribute(Constants.SESSION_APPID, targetAppid);
         request.setAttribute(Constants.SESSION_SERVICE, service);
 
         if (obj != null) sessionId = obj.toString();
         System.out.println("3:" + sessionId);
         if (sessionId != null) {//已经登陆过
             StringBuilder url = new StringBuilder();
-            String ticket = "";
-            ticket = uasService.getToken(appid, sessionId);//申请子令牌
-            System.out.println("TICKET:" + ticket);
-            if (ticket == null || "".equals(ticket)) {
-                request.setAttribute("msg", "申请子令牌失败，禁止单点登录目标系统");
-                request.getRequestDispatcher("main.html_bak")
+            RequireTokenResponse resp = uasService.getToken(targetAppid, sessionId);//申请子令牌
+            System.out.println("TOKEN:" + resp.getToken());
+            if (resp.getCode() != CODE.SUCCESS) {
+                request.setAttribute("msg", "申请子令牌失败，禁止单点登录目标系统。原因："+resp.getMsg());
+                request.getRequestDispatcher(LOGIN_PATH)
                         .forward(request, response);
             } else {
-                url.append(service).append(service.indexOf("?") == -1 ? "?" : "&").append("auims_ticket=").append(ticket);
+                url.append(service).append(service.indexOf("?") == -1 ? "?" : "&").append("token=").append(resp.getToken());
                 response.sendRedirect(url.toString());
             }
             return;
@@ -300,7 +306,11 @@ public class Controller {
         HttpSession session = request.getSession();
         String callbackUrl = null;
         ModifyPassData data = new ModifyPassData();
-        if (session.getAttribute("callback") != null) {
+                    String retUrl = request.getHeader("Referer");
+            System.err.println("Last Url:" + retUrl);
+        if (request.getParameter("callback") != null){
+            callbackUrl = request.getParameter("callback");
+        }else if (session.getAttribute("callback") != null) {
             callbackUrl = (String) session.getAttribute("callback");
         }
         String jobNumber = null;
@@ -336,23 +346,15 @@ public class Controller {
                 if (temp != null) url = url + "?msg=" + url;
                 data.setCode(-2);
                 data.setMsg(temp);
-                data.setRedirectUrl(url);
                 return data;
             } else
-                data.setRedirectUrl(LOGIN_PATH);
+                response.sendRedirect(callbackUrl);
             return data;
         } else {
             try {
-                return uasService.modifyPassword(jobNumber, oldpass, newpass);
-            } catch (IllegalBlockSizeException e) {
-                e.printStackTrace();
-            } catch (InvalidKeyException e) {
-                e.printStackTrace();
-            } catch (BadPaddingException e) {
-                e.printStackTrace();
-            } catch (NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            } catch (NoSuchPaddingException e) {
+                data =  uasService.modifyPassword(jobNumber, oldpass, newpass);
+                return data;
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 
@@ -374,43 +376,50 @@ public class Controller {
         if (user != null) {
             user = user.replaceAll("[%]|[<]|[>]|[']||[\"]|[=]|[(]|[)]|[|]", "");
         }
-        service = request.getParameter("service");
-        targetAppid = request.getParameter("appid");
+        service = request.getParameter("service") == null?(String)session.getAttribute(Constants.SESSION_SERVICE):request.getParameter("service");
+        targetAppid = request.getParameter("appid") == null?(String)session.getAttribute(Constants.SESSION_APPID):request.getParameter("appid");;
         service = service == null ? "" : service.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
         targetAppid = targetAppid == null ? "" : targetAppid.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
         request.setAttribute(Constants.SESSION_SERVICE, service);
         request.setAttribute(Constants.SESSION_APPID, targetAppid);
         request.setAttribute("userid", user);
+        String param="service="+service+"&appid="+targetAppid;
 
         if (yzm == null || request.getSession().getAttribute(Constants.SESSION_YZM) == null) {
             System.err.println("请输入验证码！" + "Get:" + yzm + ",Session:" + request.getSession().getAttribute("Constants.SESSION_YZM"));
             String msg = "请输入验证码！";
-            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
+            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
             return;
         }
         if (user == null || pass == null || "".equals(user) || "".equals(pass)) {
             String msg = "用户名或密码不可为空！";
-            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
+            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
             return;
         }
         String sessionYZM = request.getSession().getAttribute(Constants.SESSION_YZM).toString();
         if (!yzm.equals(sessionYZM)) {
             System.err.println("验证码有误！" + "Get:" + yzm + ",Session:" + request.getSession().getAttribute("Constants.SESSION_YZM"));
             String msg = "验证码有误！";
-            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
+            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
             return;
         }
 
         App app = uasService.getApp(Long.parseLong(targetAppid));
+        if(app == null){
+            String msg = "应用不存在";
+            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
+            return;
+        }
+
         if (service.toLowerCase().indexOf(app.getPath().toLowerCase()) != 0) {
             String msg = "URL地址非法，无法登录" + app.getName();
-            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
+            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
             return;
         }
 
         AuthResponse resp = uasService.auth(user, pass);
         if (resp.getCode() != CODE.SUCCESS) {
-            response.sendRedirect("/index.html?msg=" + Base64.encodeBase64String(resp.getMsg().getBytes()));
+            response.sendRedirect("/index.html?msg=" + Base64.encodeBase64String(resp.getMsg().getBytes())+"&"+param);
             return;
         } else {
 
@@ -421,7 +430,7 @@ public class Controller {
 
             if (PasswordCheck.check(pass)) {
                 String msg = "您的登录密码强度不够，请立即修改密码！";
-                response.sendRedirect("/modifypassword.html?msg=" + Base64.encodeBase64String(msg.getBytes()));
+                response.sendRedirect(MODIFY_PWD_PATH+"?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
                 return;
             }
 
@@ -432,14 +441,13 @@ public class Controller {
                 //session.removeAttribute(Constants.SESSION_SERVICE);
                 //session.removeAttribute(Constants.SESSION_APPID);
                 StringBuilder url = new StringBuilder();
-                String token = "";
-                token = uasService.getToken(targetAppid, sessionId);//申请子令牌
-                if (token == null || "".equals(token)) {
-                    String msg = "申请子令牌失败，禁止单点登录目标系统";
-                    response.sendRedirect(MAIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
+                RequireTokenResponse r  = uasService.getToken(targetAppid, sessionId);//申请子令牌
+                if (r.getCode() != CODE.SUCCESS) {
+                    String msg = "申请子令牌失败，禁止单点登录目标系统。原因："+r.getMsg();
+                    response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
                     return;
                 }
-                url.append(service).append(service.indexOf("?") == -1 ? "?" : "&").append("token=").append(token);
+                url.append(service).append(service.indexOf("?") == -1 ? "?" : "&").append("token=").append(r.getToken());
                 response.sendRedirect(url.toString());
             }
         }
@@ -476,7 +484,6 @@ public class Controller {
             data.setCode(-1);
             String msg = "会话为空,请重新登录";
             data.setMsg(msg);
-            data.setRedirectUrl(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
             return data;
         }
     }

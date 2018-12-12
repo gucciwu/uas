@@ -215,12 +215,29 @@ public class DataSyncControllerService {
             return response;
         }
     }
-    public ChangePasswordResponse changePassword(ChangePasswordExRequest request, HttpServletRequest httpRequest) throws IllegalBlockSizeException, InvalidKeyException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, IpForbbidenException, AppSecretMatchException {
+    public ChangePasswordResponse changePassword(ChangePasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
         ChangePasswordResponse response = new ChangePasswordResponse();
+
+        //判断用户是否存在
+        UserExample ue = new UserExample();
+        UserExample.Criteria c = ue.createCriteria();
+        if(request.getUserId() != 0)
+            c.andIdEqualTo(request.getUserId());
+
+        if(request.getJobNumber() != null && !"".equals(request.getJobNumber()))
+            c.andJobNumberEqualTo(request.getJobNumber());
+
+        List<User> userList = userMapper.selectByExample(ue);
+        if(userList == null || userList.size() == 0){
+            response.setCode(CODE.BIZ.USER_NOT_EXIST);
+            response.setMsg("用户不存在");
+            return response;
+        }
+        User user = userList.get(0);
 
         //密码解密
         String oldPassword = AESCoder.decrypt(request.getOldPassword(), config.getAesKey());
@@ -239,7 +256,7 @@ public class DataSyncControllerService {
         if(passwords == null || passwords.size() == 0){
             Password password = new Password();
             password.setPassword(MD5Utils.MD5Encode(newPassword,"UTF-8"));
-            password.setUserId(userId);
+            password.setUserId(user.getId());
             passwordMapper.insert(password);
 
             response.setCode(CODE.SUCCESS);
@@ -269,12 +286,29 @@ public class DataSyncControllerService {
         response.setMsg("成功");
         return response;
     }
-    public ResetPasswordResponse resetPassword(ResetPasswordExRequest request, HttpServletRequest httpRequest) throws IllegalBlockSizeException, InvalidKeyException, NoSuchAlgorithmException, BadPaddingException, NoSuchPaddingException, AppSecretMatchException, IpForbbidenException {
+    public ResetPasswordResponse resetPassword(ResetPasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
         ResetPasswordResponse response = new ResetPasswordResponse();
+
+        //判断用户是否存在
+        UserExample ue = new UserExample();
+        UserExample.Criteria c = ue.createCriteria();
+        if(request.getUserId() != 0)
+            c.andIdEqualTo(request.getUserId());
+
+        if(request.getJobNumber() != null && !"".equals(request.getJobNumber()))
+            c.andJobNumberEqualTo(request.getJobNumber());
+
+        List<User> userList = userMapper.selectByExample(ue);
+        if(userList == null || userList.size() == 0){
+            response.setCode(CODE.BIZ.USER_NOT_EXIST);
+            response.setMsg("用户不存在");
+            return response;
+        }
+        User user = userList.get(0);
 
         //密码解密
         String newPassword = AESCoder.decrypt(request.getNewPassword(), config.getAesKey());
@@ -292,7 +326,7 @@ public class DataSyncControllerService {
         if(passwords == null || passwords.size() == 0){
             Password password = new Password();
             password.setPassword(MD5Utils.MD5Encode(newPassword,"UTF-8"));
-            password.setUserId(userId);
+            password.setUserId(user.getId());
             passwordMapper.insert(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行

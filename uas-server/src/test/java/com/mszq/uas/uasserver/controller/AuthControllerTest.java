@@ -198,7 +198,7 @@ public class AuthControllerTest {
         }
     }
     @Test
-    public void auth() throws IllegalBlockSizeException, InvalidKeyException, BadPaddingException, NoSuchAlgorithmException, NoSuchPaddingException {
+    public void auth() throws Exception {
         //正常认证
         {
             AuthExRequest request = new AuthExRequest();

@@ -173,6 +173,7 @@
     var appid = 1;
 
     $(document).ready(function () {
+
         var msg = getQueryVariable("msg");
         if (msg) {
             var b = new Base64();
@@ -224,7 +225,7 @@
         $("input[name='appid']").attr("value", appid);
         service = getQueryVariable('service');
         if (service) {
-            service = serice.toLowerCase();
+            service = service.toLowerCase();
         }
         $("input[name='service']").attr("value", service);
         //$.sticky("<center><b>通知</b></center><p>YYYY年MM月dd日，OA系统接入统一认证平台，为确保您正常使用OA及邮件系统，请您在登录OA系统后，修改您的密码。</p><p>使用邮件客户端的用户，请您在修改OA密码后，注意调整您的邮件客户端密码。</p><p>详细说明参见<a href='oa.pdf' style='color:red'>统一认证对接OA系统说明</a></p>");

@@ -1,6 +1,6 @@
 package com.mszq.uas.sso.bean;
 
-public class UpdateUserResponse extends com.mszq.uas.sso.bean.Response {
+public class UpdateUserResponse extends Response {
     private long userId;
 
     public long getUserId() {

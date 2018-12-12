@@ -69,7 +69,7 @@ public class AuthControllerService {
         try {
             id = request.getJobNumber();
             password = AESCoder.decrypt(request.getPassword(), config.getAesKey());
-        } catch (BadPaddingException|InvalidKeyException|NoSuchAlgorithmException|NoSuchPaddingException|IllegalBlockSizeException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             response.setCode(CODE.BIZ.AUTH_FAIL);
             response.setMsg("输入信息解密失败");

@@ -1,10 +1,12 @@
 package com.mszq.uas.uasserver.util;
 
+import java.math.BigInteger;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -58,67 +60,120 @@ import org.apache.commons.codec.binary.Base64;
  *      =================================
  */
 public class AESCoder {
-	// 密钥算法
-	public static final String KEY_ALGORITHM = "AES";
-
-	// 加解密算法/工作模式/填充方式,Java6.0支持PKCS5Padding填充方式,BouncyCastle支持PKCS7Padding填充方式
-	public static final String CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
 
 	/**
-	 * 生成密钥
+	 * 加密
+	 * @param src 加密字符串
+	 * @param key 密钥
+	 * @return 加密后的字符串
 	 */
-	public static String generateKey() throws Exception {
-		KeyGenerator kg = KeyGenerator.getInstance(KEY_ALGORITHM); // 实例化密钥生成器
-		kg.init(128); // 初始化密钥生成器:AES要求密钥长度为128,192,256位
-		SecretKey secretKey = kg.generateKey(); // 生成密钥
-		return Base64.encodeBase64String(secretKey.getEncoded()); // 获取二进制密钥编码形式
+	public static String encrypt(String src, String key) throws Exception {
+		// 判断密钥是否为空
+		if (key == null) {
+			System.out.print("密钥不能为空");
+			return null;
+		}
+
+		// 密钥补位
+		int plus= 16-key.length();
+		byte[] data = key.getBytes("utf-8");
+		byte[] raw = new byte[16];
+		byte[] plusbyte={ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+		for(int i=0;i<16;i++)
+		{
+			if (data.length > i)
+				raw[i] = data[i];
+			else
+				raw[i] = plusbyte[plus];
+		}
+
+		SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+		Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");	// 算法/模式/补码方式
+		cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+		byte[] encrypted = cipher.doFinal(src.getBytes("utf-8"));
+
+		//return new Base64().encodeToString(encrypted);//base64
+		return binary(encrypted, 16); //十六进制
 	}
 
 	/**
-	 * 转换密钥
+	 * 解密
+	 * @param src 解密字符串
+	 * @param key 密钥
+	 * @return 解密后的字符串
 	 */
-	public static Key toKey(byte[] key) throws IllegalArgumentException {
-		return new SecretKeySpec(key, KEY_ALGORITHM);
+	public static String decrypt(String src, String key) throws Exception {
+		try {
+			// 判断Key是否正确
+			if (key == null) {
+				System.out.print("Key为空null");
+				return null;
+			}
+
+			// 密钥补位
+			int plus= 16-key.length();
+			byte[] data = key.getBytes("utf-8");
+			byte[] raw = new byte[16];
+			byte[] plusbyte={ 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f};
+			for(int i=0;i<16;i++)
+			{
+				if (data.length > i)
+					raw[i] = data[i];
+				else
+					raw[i] = plusbyte[plus];
+			}
+
+			SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+			Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+			cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+
+			//byte[] encrypted1 = new Base64().decode(src);//base64
+			byte[] encrypted1 = toByteArray(src);//十六进制
+
+			try {
+				byte[] original = cipher.doFinal(encrypted1);
+				String originalString = new String(original,"utf-8");
+				return originalString;
+			} catch (Exception e) {
+				System.out.println(e.toString());
+				return null;
+			}
+		} catch (Exception ex) {
+			System.out.println(ex.toString());
+			return null;
+		}
 	}
 
 	/**
-	 * 加密数据
-	 * 
-	 * @param data
-	 *            待加密数据
-	 * @param key
-	 *            密钥
-	 * @return 加密后的数据
-	 * @throws NoSuchPaddingException 
-	 * @throws NoSuchAlgorithmException 
-	 * @throws InvalidKeyException 
-	 * @throws BadPaddingException 
-	 * @throws IllegalBlockSizeException 
-	 * */
-	public static String encrypt(String data, String key) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-		Key k = toKey(Base64.decodeBase64(key)); // 还原密钥
-		// 使用PKCS7Padding填充方式,这里就得这么写了(即调用BouncyCastle组件实现)
-		// Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM, "BC");
-		Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM); // 实例化Cipher对象，它用于完成实际的加密操作
-		cipher.init(Cipher.ENCRYPT_MODE, k); // 初始化Cipher对象，设置为加密模式
-		return encodeBase64ForURL(Base64.encodeBase64String(cipher.doFinal(data.getBytes()))); // 执行加密操作。加密后的结果通常都会用Base64编码进行传输
+	 * 将byte[]转为各种进制的字符串
+	 * @param bytes byte[]
+	 * @param radix 可以转换进制的范围，从Character.MIN_RADIX到Character.MAX_RADIX，超出范围后变为10进制
+	 * @return 转换后的字符串
+	 */
+	public static String binary(byte[] bytes, int radix){
+		return new BigInteger(1, bytes).toString(radix);	// 这里的1代表正数
 	}
 
 	/**
-	 * 解密数据
-	 * 
-	 * @param data
-	 *            待解密数据
-	 * @param key
-	 *            密钥
-	 * @return 解密后的数据
-	 * @throws IllegalBlockSizeException 
-	 * */
-	public static String decrypt(String data, String key) throws BadPaddingException,InvalidKeyException,NoSuchAlgorithmException,NoSuchPaddingException, IllegalBlockSizeException {
-		Key k = toKey(Base64.decodeBase64(key));
-		Cipher cipher = Cipher.getInstance(CIPHER_ALGORITHM);
-		cipher.init(Cipher.DECRYPT_MODE, k); // 初始化Cipher对象，设置为解密模式
-		return new String(cipher.doFinal(Base64.decodeBase64(decodeBase64ForUrl(data)))); // 执行解密操作
+	 * 16进制的字符串表示转成字节数组
+	 *
+	 * @param hexString 16进制格式的字符串
+	 * @return 转换后的字节数组
+	 **/
+	public static byte[] toByteArray(String hexString) {
+		if (hexString.isEmpty())
+			throw new IllegalArgumentException("this hexString must not be empty");
+
+		hexString = hexString.toLowerCase();
+		final byte[] byteArray = new byte[hexString.length() / 2];
+		int k = 0;
+		for (int i = 0; i < byteArray.length; i++) {//因为是16进制，最多只会占用4位，转换成字节需要两个16进制的字符，高位在先
+			byte high = (byte) (Character.digit(hexString.charAt(k), 16) & 0xff);
+			byte low = (byte) (Character.digit(hexString.charAt(k + 1), 16) & 0xff);
+			byteArray[i] = (byte) (high << 4 | low);
+			k += 2;
+		}
+		return byteArray;
 	}
 	
 	public static String encodeBase64ForURL(String in){
@@ -133,5 +188,12 @@ public class AESCoder {
 		buf = buf.replace('-', '/');
 		buf = buf.replace('.', '=');
 		return in;
+	}
+
+	public static void  main(String[] args) throws Exception {
+		String m = AESCoder.encrypt("123456","42fbe357e0ef4474bb91c5b3e8a9e6f2");
+		System.out.println(m);
+		System.out.println(AESCoder.decrypt(m,"42fbe357e0ef4474bb91c5b3e8a9e6f2"));
+
 	}
 }

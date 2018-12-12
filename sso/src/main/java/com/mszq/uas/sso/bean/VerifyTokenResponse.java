@@ -1,6 +1,6 @@
 package com.mszq.uas.sso.bean;
 
-public class VerifyTokenResponse extends com.mszq.uas.sso.bean.Response {
+public class VerifyTokenResponse extends Response {
 
     private String sessionId;
     private long userId;

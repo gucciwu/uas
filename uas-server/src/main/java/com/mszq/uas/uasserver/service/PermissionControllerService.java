@@ -11,7 +11,9 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PermissionControllerService {
@@ -43,6 +45,7 @@ public class PermissionControllerService {
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
         AddRoleTypeResponse response = new AddRoleTypeResponse();
+
         int ret = roleTypeMapper.insert(request.getRoleType());
         if(ret == 0){
             response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
@@ -202,6 +205,16 @@ public class PermissionControllerService {
 
         AddRoleToUserResponse response = new AddRoleToUserResponse();
 
+        //判断用户是否已经添加该角色
+        UserRoleExample ex = new UserRoleExample();
+        ex.createCriteria().andUserIdEqualTo(request.getUserId()).andRoleIdEqualTo(request.getRoleId());
+        List<UserRole> userRoleList = userRoleMapper.selectByExample(ex);
+        if(userRoleList != null && userRoleList.size() > 0){
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("该用户已经添加了该角色，跳过处理");
+            return response;
+        }
+
         UserRole userRole = new UserRole();
         userRole.setRoleId(request.getRoleId());
         userRole.setUserId(request.getUserId());
@@ -222,9 +235,23 @@ public class PermissionControllerService {
                     return response;
                 }
 
+                //获取用户已经添加的子账户信息
+                AppAccountExample e = new AppAccountExample();
+                e.createCriteria().andUserIdEqualTo(user.getId());
+                List<AppAccount> appAccountList = appAccountMapper.selectByExample(e);
+                Map<Long, Long> map = new HashMap<Long,Long>();
+                for(AppAccount aa:appAccountList)
+                    map.put(aa.getAppId(),aa.getUserId());
+
                 //根据角色为用户添加子账号，所有的子账户默认是工号
                 List<App> apps = this.getAllApps(request.getUserId());
                 for (App a : apps) {
+                    //判断是否已经添加了子账号，如果添加了则跳过
+                    Long userId = map.get(a.getId());
+                    if(userId != null && userId == request.getUserId())
+                        continue;
+
+                    //没有添加则添加子账户
                     AppAccount aa = new AppAccount();
                     aa.setUserId(request.getUserId());
                     aa.setOrgType(a.getOrgType());
