@@ -249,13 +249,9 @@ public class AuthControllerService {
     private String getGapTime(long time) {
         long hours = time / (1000 * 60 * 60);
         long minutes = (time - hours * (1000 * 60 * 60)) / (1000 * 60);
-        String diffTime = "";
-        if (minutes < 10) {
-            diffTime = hours + ":0" + minutes;
-        } else {
-            diffTime = hours + ":" + minutes;
-        }
-        return diffTime;
+        long second = time % 60;
+
+        return String.format("%02d小时%02d分%02d秒",hours,minutes,second);
     }
 
 }
