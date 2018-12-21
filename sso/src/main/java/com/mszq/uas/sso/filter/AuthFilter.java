@@ -14,7 +14,7 @@ import com.mszq.uas.sso.Constants;
 public class AuthFilter implements Filter {
 
 
-    //public static final String[] urls=new String[]{".pdf","/jcaptcha","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/resetPassword",".login.css",".png",".jpg",".gif",".ico"};
+    //public static2 final String[] urls=new String[]{".pdf","/jcaptcha","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/resetPassword",".login.css",".png",".jpg",".gif",".ico"};
     //	servlet 过滤
     public static final String[] urls = new String[]{"/jcaptcha", "/ApplyToken", "/UserCheck", "/logout", "/login", "/validate", "/index.html", "/about.html", "error_page.html"};
     //  后缀过滤

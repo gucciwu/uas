@@ -11,8 +11,8 @@ public class WebMVCConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/static2/**")
+                .addResourceLocations("classpath:/static2/");
     }
 
     @Override
@@ -39,11 +39,11 @@ public class WebMVCConfig implements WebMvcConfigurer {
 //        //IP黑名单验证
 //        InterceptorRegistration registration = registry.addInterceptor(getIpBlackListInterceptor());
 //        registration.addPathPatterns("/**");
-//        //registration.excludePathPatterns("/","/login","/error","/static/**","/logout");       //添加不拦截路径
+//        //registration.excludePathPatterns("/","/login","/error","/static2/**","/logout");       //添加不拦截路径
 //
 //        //APP Secret 验证
 //        InterceptorRegistration registration1 = registry.addInterceptor(getAppSecretInterceptor());
 //        registration1.addPathPatterns("/sso/**","/datasync/**","/permission/**");                    //所有路径都被拦截
-////        registration1.excludePathPatterns("/auth","/signout","/swagger-ui**","/static/**");       //添加不拦截路径
+////        registration1.excludePathPatterns("/auth","/signout","/swagger-ui**","/static2/**");       //添加不拦截路径
     }
 }

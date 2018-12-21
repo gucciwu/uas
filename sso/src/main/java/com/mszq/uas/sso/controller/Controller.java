@@ -190,9 +190,9 @@ public class Controller {
             graphics.setFont(getRandomFont());
             String content = new String(getRandomNumber(4));
             request.getSession().setAttribute(Constants.SESSION_YZM, content);
-//            String retUrl = request.getHeader("Referer");
-//            System.err.println("Last Url:" + retUrl);
-//            System.err.println("Set YZM:" + request.getSession().getAttribute(Constants.SESSION_YZM));
+            String retUrl = request.getHeader("Referer");
+            System.err.println("Last Url:" + retUrl);
+            System.err.println("Set YZM:" + request.getSession().getAttribute(Constants.SESSION_YZM)+" Session ID:"+request.getSession().getId());
             graphics.drawString(content, 16, 24);
 
             //释放资源
@@ -286,8 +286,9 @@ public class Controller {
 
         if (sessionid != null) {
             uasService.logout(sessionid);
+            request.getSession().removeAttribute(Constants.SESSION_SESSIONID);
         }
-        request.getSession().invalidate();
+
         if (service != null) {
             service = java.net.URLDecoder.decode(service);
             request.getSession().setAttribute(Constants.SESSION_SERVICE, service);
