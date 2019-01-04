@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.mszq.uas.basement.CODE;
+import com.mszq.uas.sso.Config;
 import com.mszq.uas.sso.Constants;
 import com.mszq.uas.sso.bean.*;
 import com.mszq.uas.sso.service.PasswordCheck;
@@ -13,6 +14,7 @@ import com.mszq.uas.sso.model.Org;
 import com.mszq.uas.sso.model.User;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -76,6 +78,9 @@ public class Controller {
 
     @Autowired
     private UasService uasService;
+    @Autowired
+    @Qualifier("ssoConfig")
+    private Config config;
 
     @RequestMapping("/ApplyToken")
     protected void applyToken(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -215,7 +220,7 @@ public class Controller {
         String service = request.getParameter(PARAM_SERVICE);
         String targetAppid = request.getParameter(PARAM_APPID);
         service = request.getParameter("service") == null?(String)session.getAttribute(Constants.SESSION_SERVICE):request.getParameter("service");
-        targetAppid = request.getParameter("appid") == null?(String)session.getAttribute(Constants.SESSION_APPID):request.getParameter("appi");;
+        targetAppid = request.getParameter("appid") == null?(String)session.getAttribute(Constants.SESSION_APPID):request.getParameter("appid");;
         service = service == null ? "" : service.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
         targetAppid = targetAppid == null ? "" : targetAppid.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
         request.setAttribute(Constants.SESSION_SERVICE, service);
@@ -405,6 +410,9 @@ public class Controller {
             return;
         }
 
+        if(targetAppid.equals("")||targetAppid.equals("0")){
+            targetAppid = ""+config.getAppId();
+        }
         App app = uasService.getApp(Long.parseLong(targetAppid));
         if(app == null){
             String msg = "应用不存在";

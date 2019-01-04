@@ -150,7 +150,7 @@
 <script language="javascript">
 
     var service = null
-    var appid = 1;
+    var appid = 0;
 
     $(document).ready(function () {
 
@@ -200,7 +200,7 @@
 
         appid = getQueryVariable('appid');
         if (!appid) {
-            appid = 1;
+            appid = 0;
         }
         $("input[name='appid']").attr("value", appid);
         service = getQueryVariable('service');

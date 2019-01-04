@@ -20,6 +20,8 @@ import com.mszq.uas.uasserver.util.AESCoder;
 import com.mszq.uas.uasserver.util.MD5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,8 @@ import java.util.Random;
 @Service
 public class AuthControllerService {
 
+    Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     @Qualifier("config")
     private Config config;
@@ -55,7 +59,9 @@ public class AuthControllerService {
 
     public AuthResponse auth(AuthExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException {
 
+        long s = System.currentTimeMillis();
         ipBlackCheckService.isBlackList(httpRequest);
+        logger.trace("judge blackList:"+(System.currentTimeMillis()-s));
 
         AuthResponse response = new AuthResponse();
         if(request.getJobNumber() == null || request.getPassword() == null){
@@ -68,7 +74,10 @@ public class AuthControllerService {
         String password = null;
         try {
             id = request.getJobNumber();
+
+            s = System.currentTimeMillis();
             password = AESCoder.decrypt(request.getPassword(), config.getAesKey());
+            logger.trace("password decrypt:"+(System.currentTimeMillis()-s));
         } catch (Exception e) {
             e.printStackTrace();
             response.setCode(CODE.BIZ.AUTH_FAIL);
@@ -76,9 +85,11 @@ public class AuthControllerService {
             return response;
         }
 
+        s = System.currentTimeMillis();
         UserExample ue = new UserExample();
         ue.createCriteria().andJobNumberEqualTo(id);
         List<User> users = userMapper.selectByExample(ue);
+        logger.trace("find user:"+(System.currentTimeMillis()-s));
         if(users != null && users.size() > 0){
             User user = users.get(0);
 
@@ -95,7 +106,9 @@ public class AuthControllerService {
 
             //判断是否已经被锁定
             try{
+                s = System.currentTimeMillis();
                 long left = dao.findLocker(user.getId().toString());
+                logger.trace("find locker:"+(System.currentTimeMillis()-s));
                 if(left != 0){
                     String time = this.getGapTime(left);
                     response.setCode(CODE.BIZ.LOCKED);
@@ -106,20 +119,25 @@ public class AuthControllerService {
                 e.printStackTrace();
             }
 
+            s = System.currentTimeMillis();
             PasswordExample pe = new PasswordExample();
             pe.createCriteria().andUserIdEqualTo(user.getId());
             List<Password> passwords = passwordMapper.selectByExample(pe);
+            logger.trace("compare password:"+(System.currentTimeMillis()-s));
             if(passwords != null && passwords.size()>0){
                 Password p = passwords.get(0);
                 String md5Password = MD5Utils.MD5Encode(password,"UTF-8");
                 if(p.getPassword().equals(md5Password)){
+                    s = System.currentTimeMillis();
                     String ipAddr = getRemoteHost(httpRequest);
                     user.setLastLoginIp(ipAddr);
                     int loginCount = user.getLoginCount()==null?0:user.getLoginCount();
                     user.setLoginCount(loginCount+1);
                     user.setLastLoginInfo(request.get_devInfo());
                     userMapper.updateByPrimaryKey(user);
+                    logger.trace("update user info:"+(System.currentTimeMillis()-s));
 
+                    s = System.currentTimeMillis();
                     Session session = new Session();
                     session.setSessionId(this.genSessionId(user.getId()));
                     session.setUserId(user.getId());
@@ -129,6 +147,7 @@ public class AuthControllerService {
                         try {
                             dao.addSession(session);
                             dao.deleteErrorCount(user.getId().toString());
+                            logger.trace("create session:"+(System.currentTimeMillis()-s));
                         }catch(Exception ex){
                             ex.printStackTrace();
                         }
