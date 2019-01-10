@@ -127,6 +127,20 @@ public class UasService {
         }
     }
 
+    public ResetPasswordResponse resetPassword(String jobNumber, String password) throws Exception {
+        ResetPasswordExRequest request = new ResetPasswordExRequest();
+        request.set_appId(config.getAppId());
+        request.set_secret(config.getSecret());
+        request.setJobNumber(jobNumber);
+        request.setNewPassword(AESCoder.encrypt(password, config.getAesKey()));
+        ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(config.getHostUrl() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
+        if(response.getStatusCodeValue() != 200){
+            return null;
+        }else{
+            return response.getBody();
+        }
+    }
+
     public Org getOrg(long orgId, short orgType) {
         GetOrgsExRequest request = new GetOrgsExRequest();
         request.set_appId(config.getAppId());

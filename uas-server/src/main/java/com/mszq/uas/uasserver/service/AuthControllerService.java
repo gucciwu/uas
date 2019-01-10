@@ -61,7 +61,7 @@ public class AuthControllerService {
 
         long s = System.currentTimeMillis();
         ipBlackCheckService.isBlackList(httpRequest);
-        logger.trace("judge blackList:"+(System.currentTimeMillis()-s));
+        logger.trace("judge blackList:"+(System.currentTimeMillis()-s)+"ms");
 
         AuthResponse response = new AuthResponse();
         if(request.getJobNumber() == null || request.getPassword() == null){
@@ -77,7 +77,7 @@ public class AuthControllerService {
 
             s = System.currentTimeMillis();
             password = AESCoder.decrypt(request.getPassword(), config.getAesKey());
-            logger.trace("password decrypt:"+(System.currentTimeMillis()-s));
+            logger.trace("password decrypt:"+(System.currentTimeMillis()-s)+"ms");
         } catch (Exception e) {
             e.printStackTrace();
             response.setCode(CODE.BIZ.AUTH_FAIL);
@@ -89,7 +89,7 @@ public class AuthControllerService {
         UserExample ue = new UserExample();
         ue.createCriteria().andJobNumberEqualTo(id);
         List<User> users = userMapper.selectByExample(ue);
-        logger.trace("find user:"+(System.currentTimeMillis()-s));
+        logger.trace("find user:"+(System.currentTimeMillis()-s)+"ms");
         if(users != null && users.size() > 0){
             User user = users.get(0);
 
@@ -108,7 +108,7 @@ public class AuthControllerService {
             try{
                 s = System.currentTimeMillis();
                 long left = dao.findLocker(user.getId().toString());
-                logger.trace("find locker:"+(System.currentTimeMillis()-s));
+                logger.trace("find locker:"+(System.currentTimeMillis()-s)+"ms");
                 if(left != 0){
                     String time = this.getGapTime(left);
                     response.setCode(CODE.BIZ.LOCKED);
@@ -123,7 +123,7 @@ public class AuthControllerService {
             PasswordExample pe = new PasswordExample();
             pe.createCriteria().andUserIdEqualTo(user.getId());
             List<Password> passwords = passwordMapper.selectByExample(pe);
-            logger.trace("compare password:"+(System.currentTimeMillis()-s));
+            logger.trace("compare password:"+(System.currentTimeMillis()-s)+"ms");
             if(passwords != null && passwords.size()>0){
                 Password p = passwords.get(0);
                 String md5Password = MD5Utils.MD5Encode(password,"UTF-8");
@@ -135,7 +135,7 @@ public class AuthControllerService {
                     user.setLoginCount(loginCount+1);
                     user.setLastLoginInfo(request.get_devInfo());
                     userMapper.updateByPrimaryKey(user);
-                    logger.trace("update user info:"+(System.currentTimeMillis()-s));
+                    logger.trace("update user info:"+(System.currentTimeMillis()-s)+"ms");
 
                     s = System.currentTimeMillis();
                     Session session = new Session();
@@ -147,7 +147,7 @@ public class AuthControllerService {
                         try {
                             dao.addSession(session);
                             dao.deleteErrorCount(user.getId().toString());
-                            logger.trace("create session:"+(System.currentTimeMillis()-s));
+                            logger.trace("create session:"+(System.currentTimeMillis()-s)+"ms");
                         }catch(Exception ex){
                             ex.printStackTrace();
                         }

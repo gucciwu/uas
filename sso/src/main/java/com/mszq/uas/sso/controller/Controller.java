@@ -8,6 +8,7 @@ import com.mszq.uas.sso.Config;
 import com.mszq.uas.sso.Constants;
 import com.mszq.uas.sso.bean.*;
 import com.mszq.uas.sso.service.PasswordCheck;
+import com.mszq.uas.sso.service.SMSService;
 import com.mszq.uas.sso.service.UasService;
 import com.mszq.uas.sso.model.App;
 import com.mszq.uas.sso.model.Org;
@@ -78,6 +79,8 @@ public class Controller {
 
     @Autowired
     private UasService uasService;
+    @Autowired
+    private SMSService smsService;
     @Autowired
     @Qualifier("ssoConfig")
     private Config config;
@@ -278,6 +281,47 @@ public class Controller {
         }
     }
 
+    @RequestMapping("/reset_pwd")
+    public @ResponseBody ResetPasswordData genNewPwdAndSendSMS(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String userid=request.getParameter("userid");   //员工编号，经纪人为经纪人号
+        String username=request.getParameter("username");   //用户姓名
+        String sfzh=request.getParameter("sfzh");   //证件号码
+        String sjhm=request.getParameter("sjhm");   //手机号
+
+        ResetPasswordData data = new ResetPasswordData();
+
+        User user = uasService.getUser(userid);
+        if(user != null) {
+            if ((username != null && username.equals(user.getName())) &&
+                    (sfzh != null && sfzh.equals(user.getIdNumber())) &&
+                    (sjhm != null && sjhm.equals(user.getMobile()))) {
+                Random ran = new Random();
+                String randomNum = String.format("%06d",ran.nextInt(1000000));
+                try {
+                    ResetPasswordResponse resp = uasService.resetPassword(userid, randomNum);
+                    if (resp != null && resp.getCode() == 0) {
+                        smsService.sendSMS(user.getMobile(),"您的统一认证账户密码重置为："+randomNum,"UTF-8");
+                        data.setCode(0);
+                        data.setMsg("重置密码成功，新密码短信已发送至您的手机，请注意查收！");
+                        return data;
+                    }else if( resp != null && resp.getCode() != 0) {
+                        data.setCode(-1);
+                        data.setMsg(resp.getMsg());
+                        return data;
+                    }
+                }catch (Exception ex){
+                    data.setCode(-1);
+                    data.setMsg("重置密码出现异常，请联系系统管理员！");
+                    return data;
+                }
+            }
+        }
+
+        data.setCode(-1);
+        data.setMsg("输入的信息错误，请确认后重新输入！");
+        return data;
+    }
+
     @RequestMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -312,8 +356,8 @@ public class Controller {
         HttpSession session = request.getSession();
         String callbackUrl = null;
         ModifyPassData data = new ModifyPassData();
-                    String retUrl = request.getHeader("Referer");
-            System.err.println("Last Url:" + retUrl);
+        String retUrl = request.getHeader("Referer");
+        System.err.println("Last Url:" + retUrl);
         if (request.getParameter("callback") != null){
             callbackUrl = request.getParameter("callback");
         }else if (session.getAttribute("callback") != null) {
@@ -420,10 +464,12 @@ public class Controller {
             return;
         }
 
-        if (service.toLowerCase().indexOf(app.getPath().toLowerCase()) != 0) {
-            String msg = "URL地址非法，无法登录" + app.getName();
-            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
-            return;
+        if(!targetAppid.equals(""+config.getAppId())) {
+            if (service.toLowerCase().indexOf(app.getPath().toLowerCase()) != 0) {
+                String msg = "URL地址非法，无法登录" + app.getName();
+                response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()) + "&" + param);
+                return;
+            }
         }
 
         AuthResponse resp = uasService.auth(user, pass);
@@ -439,7 +485,11 @@ public class Controller {
 
             if (PasswordCheck.check(pass)) {
                 String msg = "您的登录密码强度不够，请立即修改密码！";
-                response.sendRedirect(MODIFY_PWD_PATH+"?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
+                if(service == null || "".equals(service)){
+                    response.sendRedirect(MODIFY_PWD_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()) + "&callback=" + MAIN_PATH);
+                }else {
+                    response.sendRedirect(MODIFY_PWD_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()) + "&callback=" + service);
+                }
                 return;
             }
 

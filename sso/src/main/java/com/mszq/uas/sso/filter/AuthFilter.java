@@ -16,7 +16,7 @@ public class AuthFilter implements Filter {
 
     //public static2 final String[] urls=new String[]{".pdf","/jcaptcha","/UserCheck","/logout","/login","/validate","/extoa","/ResetPasswordServlet","/resetPassword",".login.css",".png",".jpg",".gif",".ico"};
     //	servlet 过滤
-    public static final String[] urls = new String[]{"/jcaptcha", "/ApplyToken", "/UserCheck", "/logout", "/login", "/validate", "/index.html", "/about.html", "error_page.html"};
+    public static final String[] urls = new String[]{"/jcaptcha", "/ApplyToken", "/UserCheck", "/logout", "/login", "/validate","/index.html", "resetPassword.html","reset_pwd","error_page.html",};
     //  后缀过滤
     public static final String[] suffixs = new String[]{"pdf", "js", "css", "png", "jpg", "gif", "ico", "ttf", "woff", "woff2", "eot"};
 
