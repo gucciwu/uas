@@ -12,6 +12,15 @@ public class Config {
     private String aesKey;
     private long appId;
     private String secret;
+    private boolean debug;
+
+    public boolean isDebug() {
+        return debug;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
 
     public long getAppId() {
         return appId;

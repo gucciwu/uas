@@ -198,9 +198,9 @@ public class Controller {
             graphics.setFont(getRandomFont());
             String content = new String(getRandomNumber(4));
             request.getSession().setAttribute(Constants.SESSION_YZM, content);
-            String retUrl = request.getHeader("Referer");
-            System.err.println("Last Url:" + retUrl);
-            System.err.println("Set YZM:" + request.getSession().getAttribute(Constants.SESSION_YZM)+" Session ID:"+request.getSession().getId());
+//            String retUrl = request.getHeader("Referer");
+//            System.err.println("Last Url:" + retUrl);
+//            System.err.println("Set YZM:" + request.getSession().getAttribute(Constants.SESSION_YZM)+" Session ID:"+request.getSession().getId());
             graphics.drawString(content, 16, 24);
 
             //释放资源
@@ -356,8 +356,8 @@ public class Controller {
         HttpSession session = request.getSession();
         String callbackUrl = null;
         ModifyPassData data = new ModifyPassData();
-        String retUrl = request.getHeader("Referer");
-        System.err.println("Last Url:" + retUrl);
+//        String retUrl = request.getHeader("Referer");
+//        System.err.println("Last Url:" + retUrl);
         if (request.getParameter("callback") != null){
             callbackUrl = request.getParameter("callback");
         }else if (session.getAttribute("callback") != null) {
@@ -435,7 +435,7 @@ public class Controller {
         request.setAttribute("userid", user);
         String param="service="+service+"&appid="+targetAppid;
 
-        if (yzm == null || request.getSession().getAttribute(Constants.SESSION_YZM) == null) {
+        if ((yzm == null || request.getSession().getAttribute(Constants.SESSION_YZM) == null)&& !config.isDebug()) {
             System.err.println("请输入验证码！" + "Get:" + yzm + ",Session:" + request.getSession().getAttribute("Constants.SESSION_YZM"));
             String msg = "请输入验证码！";
             response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
@@ -446,12 +446,15 @@ public class Controller {
             response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
             return;
         }
-        String sessionYZM = request.getSession().getAttribute(Constants.SESSION_YZM).toString();
-        if (!yzm.equals(sessionYZM)) {
-            System.err.println("验证码有误！" + "Get:" + yzm + ",Session:" + request.getSession().getAttribute("Constants.SESSION_YZM"));
-            String msg = "验证码有误！";
-            response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes())+"&"+param);
-            return;
+
+        if(!config.isDebug()) {
+            String sessionYZM = request.getSession().getAttribute(Constants.SESSION_YZM).toString();
+            if (!yzm.equals(sessionYZM)) {
+                System.err.println("验证码有误！" + "Get:" + yzm + ",Session:" + request.getSession().getAttribute("Constants.SESSION_YZM"));
+                String msg = "验证码有误！";
+                response.sendRedirect(LOGIN_PATH + "?msg=" + Base64.encodeBase64String(msg.getBytes()) + "&" + param);
+                return;
+            }
         }
 
         if(targetAppid.equals("")||targetAppid.equals("0")){

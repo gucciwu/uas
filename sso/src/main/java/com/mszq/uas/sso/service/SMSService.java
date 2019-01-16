@@ -41,7 +41,7 @@ public class SMSService {
         huc.setRequestProperty("Content-Language", "en-US");
         huc.setRequestProperty("Accept-Language", "zh-CN");
         huc.setRequestProperty("Content-type", "text/html");
-        System.out.println(strurl);
+//        System.out.println(strurl);
         BufferedReader br = new BufferedReader(new InputStreamReader(huc.getInputStream()));
         String line;
         while ((line = br.readLine()) != null) {
