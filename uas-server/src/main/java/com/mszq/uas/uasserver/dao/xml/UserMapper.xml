@@ -319,9 +319,6 @@
       <if test="record.createTime != null">
         CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.modifyTime != null">
-        MODIFY_TIME = #{record.modifyTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="record.idNumber != null">
         ID_NUMBER = #{record.idNumber,jdbcType=VARCHAR},
       </if>
@@ -371,8 +368,6 @@
       JOB_NUMBER = #{record.jobNumber,jdbcType=VARCHAR},
       USER_NAME = #{record.userName,jdbcType=VARCHAR},
       STATUS = #{record.status,jdbcType=SMALLINT},
-      CREATE_TIME = #{record.createTime,jdbcType=TIMESTAMP},
-      MODIFY_TIME = #{record.modifyTime,jdbcType=TIMESTAMP},
       ID_NUMBER = #{record.idNumber,jdbcType=VARCHAR},
       ID_TYPE = #{record.idType,jdbcType=SMALLINT},
       NAME = #{record.name,jdbcType=VARCHAR},
@@ -407,9 +402,6 @@
       </if>
       <if test="createTime != null">
         CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="modifyTime != null">
-        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
       </if>
       <if test="idNumber != null">
         ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
@@ -457,8 +449,6 @@
     set JOB_NUMBER = #{jobNumber,jdbcType=VARCHAR},
       USER_NAME = #{userName,jdbcType=VARCHAR},
       STATUS = #{status,jdbcType=SMALLINT},
-      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
-      MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
       ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
       ID_TYPE = #{idType,jdbcType=SMALLINT},
       NAME = #{name,jdbcType=VARCHAR},

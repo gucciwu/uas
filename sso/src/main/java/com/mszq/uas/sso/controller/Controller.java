@@ -336,6 +336,8 @@ public class Controller {
         if (sessionid != null) {
             uasService.logout(sessionid);
             request.getSession().removeAttribute(Constants.SESSION_SESSIONID);
+            request.getSession().removeAttribute(Constants.SESSION_USER);
+            request.getSession().removeAttribute(Constants.SESSION_ORG);
         }
 
         if (service != null) {
