@@ -1,5 +1,6 @@
 package com.mszq.uas.sso.service;
 
+import com.mszq.uas.sso.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,7 @@ public class SMSService {
         } else {
             content = java.net.URLEncoder.encode(Content, bmlx);
         }
+
         String strurl = url + "?lx=" + lx + "&DLZH=" + username + "&DLMM=" + password + "&SJHM=" + phoneNum + "&XXNR=" + content;
         URL url = new URL(strurl);
         HttpURLConnection huc = (HttpURLConnection) url.openConnection();

@@ -21,9 +21,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.imageio.ImageIO;
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -34,8 +31,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -300,10 +295,16 @@ public class Controller {
                 try {
                     ResetPasswordResponse resp = uasService.resetPassword(userid, randomNum);
                     if (resp != null && resp.getCode() == 0) {
-                        smsService.sendSMS(user.getMobile(),"您的统一认证账户密码重置为："+randomNum,"UTF-8");
-                        data.setCode(0);
-                        data.setMsg("重置密码成功，新密码短信已发送至您的手机，请注意查收！");
-                        return data;
+                        String res= smsService.sendSMS(user.getMobile(),"您的统一认证账户密码重置为："+randomNum,"UTF-8");
+                        if("0".equals(res)) {
+                            data.setCode(0);
+                            data.setMsg("重置密码成功，新密码短信已发送至您的手机，请注意查收！");
+                            return data;
+                        }else{
+                            data.setCode(-1);
+                            data.setMsg("发送密码短信失败，请联系系统管理员！");
+                            return data;
+                        }
                     }else if( resp != null && resp.getCode() != 0) {
                         data.setCode(-1);
                         data.setMsg(resp.getMsg());
