@@ -341,9 +341,9 @@ ul.navbar-nav {
 
     /* logo */
     .navbar-brand {
-        background-image: url(../images/logo@2x.png) !important;
+        background-image: url(../images/logo_b.png) !important;
         background-repeat: no-repeat !important;
-        background-size: 123px 49px !important;
+        background-size: 200px 49px !important;
     }
 
 }
