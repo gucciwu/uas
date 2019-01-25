@@ -51,7 +51,12 @@ public class SSOControllerService {
 
         RequireTokenResponse response = new RequireTokenResponse();
         //查找会话session
-        Session session = dao.findSession(request.getSessionId());
+        Session session = null;
+        try {
+            session = dao.findSession(request.getSessionId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(session == null){
             response.setCode(CODE.BIZ.SESSION_NOT_EXIST);
             response.setMsg("会话不存在");
@@ -134,7 +139,12 @@ public class SSOControllerService {
 
         VerifyTokenResponse response = new VerifyTokenResponse();
         //查询token是否存在
-        Token token = dao.findToken(request.getToken());
+        Token token = null;
+        try {
+            token = dao.findToken(request.getToken());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         if(token == null){
             response.setCode(CODE.BIZ.TOKEN_NOT_EXIST);
             response.setMsg("Token不匹配");
@@ -142,7 +152,13 @@ public class SSOControllerService {
         }
 
         //查询session
-        Session session = dao.findSession(token.getSessionId());
+        Session session = null;
+        try {
+            session = dao.findSession(token.getSessionId());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         if(session == null){
             response.setCode(CODE.BIZ.SESSION_NOT_EXIST);
             response.setMsg("会话不存在");

@@ -16,16 +16,16 @@ import org.springframework.stereotype.Service;
 
 /**
  * 使用H2 Database实现数据存储访问
- * 
+ *
  * @author liugy
- * 
+ *
  */
 //@Component
 @Service
 public class RedisDao implements DAO {
 
 	private static Logger logger = LoggerFactory.getLogger(RedisDao.class);
-	
+
 	private static ObjectMapper mapper = new ObjectMapper();
 
 	private final String TABLE_SESSION = "SESSION";
@@ -36,17 +36,17 @@ public class RedisDao implements DAO {
 	@Autowired
 	@Qualifier("config")
 	private Config config;
-	
+
 	@Autowired
 	private RedisTemplate<String, String> redisTemplate;
-	
+
 	@Override
 	public void addSession(Session session) throws IOException{
 		long s = System.currentTimeMillis();
-		
+
 		try{
-			redisTemplate.opsForValue().set(TABLE_SESSION+"_"+session.getSessionId(), 
-					mapper.writeValueAsString(session), 
+			redisTemplate.opsForValue().set(TABLE_SESSION+"_"+session.getSessionId(),
+					mapper.writeValueAsString(session),
 					config.getSessionTimeout(),
 					TimeUnit.MILLISECONDS);
 		}finally{
@@ -56,9 +56,9 @@ public class RedisDao implements DAO {
 	}
 
 	@Override
-	public Session findSession(String sessionId){
+	public Session findSession(String sessionId) throws Exception{
 		long s = System.currentTimeMillis();
-		
+
 		try{
 			String value = redisTemplate.opsForValue().get(TABLE_SESSION+"_"+sessionId);
 			if(value == null){
@@ -73,13 +73,13 @@ public class RedisDao implements DAO {
 			long e = System.currentTimeMillis();
 			logger.trace("ELAPSE[FIND SESSION]:"+(e-s)+"ms");
 		}
-		
+
 	}
 
 	@Override
 	public void deleteSession(String sessionId) {
 		long s = System.currentTimeMillis();
-		
+
 		try{
 			redisTemplate.delete(TABLE_SESSION+"_"+sessionId);
 		}finally{
@@ -104,7 +104,7 @@ public class RedisDao implements DAO {
 	}
 
 	@Override
-	public Token findToken(String token) {
+	public Token findToken(String token) throws Exception {
 		long s = System.currentTimeMillis();
 
 		try{

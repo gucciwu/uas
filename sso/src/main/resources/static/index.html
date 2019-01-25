@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>统一认证</title>
     <title>民生证券统一认证 | 账户管理</title>
     <meta name="description" content="民生证券,统一认证,账户管理">
@@ -18,6 +18,10 @@
     <link rel="stylesheet" href="./css/form-elements.css">
     <link rel="stylesheet" href="./css/loginstyle.css">
 
+    <!--[if lt IE 9]>
+         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+         <script src="https://oss.maxcdn.com/libs/respond.js/1.3.0/respond.min.js"></script>
+    <![endif]-->
 </head>
 
 <body class="login-bg">
@@ -60,7 +64,7 @@
     <div class="inner-bg">
         <div class="container">
             <div class="row">
-                <div class="col-xs-7 hidden-xs text">
+                <div class="col-lg-7 col-md-7 col-sm-7 hidden-xs text">
                     <h1><strong>单点登录门户</strong></h1>
                     <div class="description">
                         <p>
@@ -68,17 +72,8 @@
                             <a href="manual.pdf"><strong class="text-danger">使用说明</strong></a>
                         </p>
                     </div>
-                    <!--
-                    <div class="top-big-link">
-                        <a class="btn btn-link-1"
-                           href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/index.html#">Button
-                            1</a>
-                        <a class="btn btn-link-2"
-                           href="http://demo.cssmoban.com/cssthemes4/azds_registration-forms/form-1/index.html#">Button
-                            2</a>
-                    </div>-->
                 </div>
-                <div class="col-xs-5 form-box">
+                <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 form-box">
                     <div class="form-top">
                         <div class="form-top-left">
                             <h3><i class="fa fa-lock"></i>&nbsp;&nbsp;单点登录</h3>
@@ -112,18 +107,9 @@
                                     <input type="text" id="yzm" name="yzm" autocomplete="off"
                                            style="ime-mode: disabled;width:90px;">
                                     <img id="yzmImg" src="jcaptcha" width="87" height="40" title="单击更换验证码"
-                                         onclick="reloadImg();"/>
+                                         onclick="reloadImg();" style="height: 40px"/>
                                 </div>
-                                <!--
-                                <span>
-                                    <input type="text" id="yzm" name="yzm" value="" tabindex="4" style="ime-mode: disabled;width:80px;">
-                                </span>
-                                <span style="padding-left:10px;">
-                                    <img id="yzmImg" src="jcaptcha" width="87" height="26" title="单击更换验证码" onclick="reloadImg();" />
-                                </span>
-                                -->
                             </div>
-                            <!--<button type="submit" class="btn">Sign me up!</button>-->
                             <button type="submit" class="btn btn-block">登录</button>
                         </form>
                         <div class="block text-center"><a href="resetPassword.html">忘记密码</a></div>
@@ -143,8 +129,6 @@
 <script src="./js/bootstrap.min.js"></script>
 <script src="./js/retina-1.1.0.min.js"></script>
 <script src="./js/scripts.js"></script>
-<script src="./js/sticky.min.js"></script>
-<script type="text/javascript" src="./js/jquery.tooltipster.js"></script>
 <script src="js/base64.js"></script>
 <!--[if lt IE 10]>
 <script src="assets/js/placeholder.js"></script>
@@ -264,14 +248,7 @@
 
 
     function reloadImg() {
-        //alert(1);
-        //alert($("#yzmImg").attr("src"));
         document.getElementById("yzmImg").src = "jcaptcha?rand=" + Math.random();
-        //$("#yzm").attr("src","jcaptcha?rand="+Math.random());
-    }
-
-    function optionchange(url) {
-        window.location = url;
     }
 
     function getQueryVariable(variable) {
@@ -286,6 +263,5 @@
         return null;
     }
 </script>
-
 </body>
 </html>
