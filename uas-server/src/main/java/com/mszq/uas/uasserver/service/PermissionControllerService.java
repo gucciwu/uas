@@ -8,6 +8,7 @@ import com.mszq.uas.uasserver.exception.AppSecretMatchException;
 import com.mszq.uas.uasserver.exception.IpForbbidenException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ public class PermissionControllerService {
     @Autowired
     private UserMapper userMapper;
 
+    @Transactional
     public AddRoleTypeResponse addRoleType(AddRoleTypeExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -57,6 +59,7 @@ public class PermissionControllerService {
         }
         return response;
     }
+    @Transactional
     public DelRoleTypeResponse delRoleType(DelRoleTypeExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -73,6 +76,7 @@ public class PermissionControllerService {
         }
         return response;
     }
+    @Transactional
     public AddRoleResponse addRole(AddRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -91,6 +95,7 @@ public class PermissionControllerService {
         }
         return response;
     }
+    @Transactional
     public DelRoleResponse delRole(DelRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
@@ -135,6 +140,7 @@ public class PermissionControllerService {
         return response;
 
     }
+    @Transactional
     public ModifyRoleResponse modifyRole(ModifyRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
@@ -152,6 +158,7 @@ public class PermissionControllerService {
         }
         return response;
     }
+    @Transactional
     public AddAppToRoleResponse addAppToRole(AddAppToRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
@@ -171,6 +178,7 @@ public class PermissionControllerService {
         }
         return response;
     }
+    @Transactional
     public DelAppToRoleResponse delAppToRole(DelAppToRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
@@ -199,6 +207,7 @@ public class PermissionControllerService {
         }
         return response;
     }
+    @Transactional
     public AddRoleToUserResponse addRoleToUser(AddRoleToUserExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(), request.get_secret());
@@ -273,6 +282,7 @@ public class PermissionControllerService {
             return response;
         }
     }
+    @Transactional
     public DelRoleToUserResponse delRoleToUser(DelRoleToUserExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(), request.get_secret());

@@ -15,6 +15,7 @@ import com.mszq.uas.uasserver.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -55,6 +56,7 @@ public class DataSyncControllerService {
 
     private static DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
+    @Transactional
     public UpdateUserResponse updateUser(UpdateUserExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -65,6 +67,10 @@ public class DataSyncControllerService {
         UserExample ue = new UserExample();
         ue.createCriteria().andJobNumberEqualTo(request.getUser().getJobNumber());
         List<User> userList = userMapper.selectByExample(ue);
+
+        boolean isCreate = false;
+        boolean isUpdate = false;
+        String initPassword = "";
         if(userList == null || userList.size() == 0){
             //插入
             User user = request.getUser();
@@ -77,6 +83,25 @@ public class DataSyncControllerService {
                 return response;
             }
             response.setUserId(user.getId());
+            isCreate = true;
+
+            //创建初始密码
+            PasswordExample pe = new PasswordExample();
+            pe.createCriteria().andUserIdEqualTo(user.getId());
+
+            List<Password> passwords = passwordMapper.selectByExample(pe);
+            if(user.getIdNumber().length() >= 6){
+                initPassword = user.getIdNumber().substring(user.getIdNumber().length()-6);
+            }else{
+                initPassword = "mszq@123";
+            }
+
+            if(passwords == null || passwords.size() == 0){
+                Password password = new Password();
+                password.setPassword(MD5Utils.MD5Encode(initPassword,"UTF-8"));
+                password.setUserId(user.getId());
+                passwordMapper.insert(password);
+            }
         }else{
             //更新
             User user = userList.get(0);
@@ -89,13 +114,20 @@ public class DataSyncControllerService {
                 return response;
             }
             response.setUserId(user.getId());
+            isUpdate = true;
         }
 
         //同步ldap数据，如果失败则记录信息，不影响正常运行
         try{
-             List<Person> ldapPersons = ldapClient.search(request.getUser().getJobNumber());
-            if(ldapPersons == null || ldapPersons.size() == 0){
-                ldapClient.create(request.getUser().getJobNumber(), request.getUser().getName(),"mszq@123");
+            if(isCreate) {
+                List<Person> ldapPersons = ldapClient.search(request.getUser().getJobNumber());
+                if (ldapPersons == null || ldapPersons.size() == 0) {
+                    ldapClient.create(request.getUser().getJobNumber(), request.getUser().getName(), initPassword, request.getUser().getEmail(), request.getUser().getMobile());
+                }
+            }
+
+            if(isUpdate){
+                ldapClient.modify(request.getUser().getJobNumber(), request.getUser().getName(),null,request.getUser().getEmail(),request.getUser().getMobile());
             }
         }catch(Exception ex){
             ex.printStackTrace();
@@ -106,6 +138,7 @@ public class DataSyncControllerService {
         return response;
     }
 
+    @Transactional
     public DelUserResponse delUser(DelUserExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -143,7 +176,7 @@ public class DataSyncControllerService {
             return response;
         }
     }
-
+    @Transactional
     public AddIdToAppResponse addIdToApp(AddIdToAppExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -163,6 +196,7 @@ public class DataSyncControllerService {
         }
     }
 
+    @Transactional
     public DelIdToAppResponse delIdToApp(DelIdToAppExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -183,6 +217,7 @@ public class DataSyncControllerService {
             return response;
         }
     }
+    @Transactional
     public ChangeIdToAppResponse changeIdToApp(ChangeIdToAppExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -215,6 +250,7 @@ public class DataSyncControllerService {
             return response;
         }
     }
+    @Transactional
     public ChangePasswordResponse changePassword(ChangePasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -277,7 +313,7 @@ public class DataSyncControllerService {
         //同步ldap数据，如果失败则记录信息，不影响正常运行
         try{
             if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                ldapClient.modify(request.getJobNumber(), request.getNewPassword());
+                ldapClient.modify(request.getJobNumber(),null, newPassword,null,null);
             }
         }catch(Exception ex){
             ex.printStackTrace();
@@ -286,6 +322,7 @@ public class DataSyncControllerService {
         response.setMsg("成功");
         return response;
     }
+    @Transactional
     public ResetPasswordResponse resetPassword(ResetPasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -332,7 +369,7 @@ public class DataSyncControllerService {
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
                 if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(), request.getNewPassword());
+                    ldapClient.modify(request.getJobNumber(), null, newPassword,null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();
@@ -349,7 +386,7 @@ public class DataSyncControllerService {
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
                 if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(), request.getNewPassword());
+                    ldapClient.modify(request.getJobNumber(),null, request.getNewPassword(),null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();
@@ -427,6 +464,7 @@ public class DataSyncControllerService {
         return response;
 
     }
+    @Transactional
     public UpdateOrgResponse addOrg(UpdateOrgRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -468,6 +506,7 @@ public class DataSyncControllerService {
             return response;
         }
     }
+    @Transactional
     public DelOrgResponse delOrg( DelOrgExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -499,6 +538,7 @@ public class DataSyncControllerService {
         response.setMsg("成功");
         return response;
     }
+    @Transactional
     public AddAppResponse addApp(AddAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -549,7 +589,7 @@ public class DataSyncControllerService {
         response.setMsg("成功");
         return response;
     }
-
+    @Transactional
     public DelAppResponse delApp(DelAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -601,6 +641,7 @@ public class DataSyncControllerService {
         response.setMsg("成功");
         return response;
     }
+    @Transactional
     public AddOrgTypeResponse addOrgType(AddOrgTypeExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -620,6 +661,7 @@ public class DataSyncControllerService {
         response.setMsg("成功");
         return response;
     }
+    @Transactional
     public DelOrgTypeResponse delOrgType(DelOrgTypeExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
