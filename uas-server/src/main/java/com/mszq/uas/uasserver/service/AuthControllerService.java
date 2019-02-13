@@ -115,7 +115,7 @@ public class AuthControllerService {
             List<Password> passwords = passwordMapper.selectByExample(pe);
             if(passwords != null && passwords.size()>0){
                 Password p = passwords.get(0);
-                String md5Password = MD5Utils.MD5Encode(password,"UTF-8");
+                String md5Password = MD5Utils.parseStrToMd5L32(password);
                 if(p.getPassword().equals(md5Password)){
                     String ipAddr = getRemoteHost(httpRequest);
                     user.setLastLoginIp(ipAddr);

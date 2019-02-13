@@ -1,0 +1,17 @@
+package com.mszq.uas.uasserver.controller;
+
+import com.mszq.uas.uasserver.bean.ExRequest;
+import com.mszq.uas.uasserver.dao.model.App;
+
+public class ModifyAppRequest extends ExRequest {
+
+    private App app;
+
+    public App getApp() {
+        return app;
+    }
+
+    public void setApp(App app) {
+        this.app = app;
+    }
+}

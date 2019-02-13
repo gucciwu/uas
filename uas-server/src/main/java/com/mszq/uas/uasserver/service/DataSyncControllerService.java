@@ -4,6 +4,8 @@ import com.mszq.uas.basement.CODE;
 import com.mszq.uas.basement.Constant;
 import com.mszq.uas.uasserver.Config;
 import com.mszq.uas.uasserver.bean.*;
+import com.mszq.uas.uasserver.controller.ModifyAppRequest;
+import com.mszq.uas.uasserver.controller.ModifyAppResponse;
 import com.mszq.uas.uasserver.dao.mapper.*;
 import com.mszq.uas.uasserver.dao.model.*;
 import com.mszq.uas.uasserver.exception.AppSecretMatchException;
@@ -98,7 +100,7 @@ public class DataSyncControllerService {
 
             if(passwords == null || passwords.size() == 0){
                 Password password = new Password();
-                password.setPassword(MD5Utils.MD5Encode(initPassword,"UTF-8"));
+                password.setPassword(MD5Utils.parseStrToMd5L32(initPassword));
                 password.setUserId(user.getId());
                 passwordMapper.insert(password);
             }
@@ -127,7 +129,16 @@ public class DataSyncControllerService {
             }
 
             if(isUpdate){
-                ldapClient.modify(request.getUser().getJobNumber(), request.getUser().getName(),null,request.getUser().getEmail(),request.getUser().getMobile());
+                if(request.getUser().getStatus()!=Constant.USER_STATUS.UNSIGNED) {
+                    List<Person> ldapPersons = ldapClient.search(request.getUser().getJobNumber());
+                    if (ldapPersons == null || ldapPersons.size() == 0) {
+                        ldapClient.create(request.getUser().getJobNumber(), request.getUser().getName(), initPassword, request.getUser().getEmail(), request.getUser().getMobile());
+                    }else {
+                        ldapClient.modify(request.getUser().getJobNumber(), request.getUser().getName(), null, request.getUser().getEmail(), request.getUser().getMobile());
+                    }
+                }else{
+                    ldapClient.delete(request.getUser().getJobNumber());
+                }
             }
         }catch(Exception ex){
             ex.printStackTrace();
@@ -291,7 +302,7 @@ public class DataSyncControllerService {
         List<Password> passwords = passwordMapper.selectByExample(pe);
         if(passwords == null || passwords.size() == 0){
             Password password = new Password();
-            password.setPassword(MD5Utils.MD5Encode(newPassword,"UTF-8"));
+            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
             password.setUserId(user.getId());
             passwordMapper.insert(password);
 
@@ -300,13 +311,13 @@ public class DataSyncControllerService {
             return response;
         }else {
             Password password = passwords.get(0);
-            if(!password.getPassword().equals(MD5Utils.MD5Encode(oldPassword,"UTF-8"))){
+            if(!password.getPassword().equals(MD5Utils.parseStrToMd5L32(oldPassword))){
                 response.setCode(CODE.BIZ.PASSOWRD_NOT_MATCH);
                 response.setMsg("密码不匹配");
                 return response;
             }
 
-            password.setPassword(MD5Utils.MD5Encode(newPassword,"UTF-8"));
+            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
             passwordMapper.updateByPrimaryKey(password);
         }
 
@@ -362,7 +373,7 @@ public class DataSyncControllerService {
         List<Password> passwords = passwordMapper.selectByExample(pe);
         if(passwords == null || passwords.size() == 0){
             Password password = new Password();
-            password.setPassword(MD5Utils.MD5Encode(newPassword,"UTF-8"));
+            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
             password.setUserId(user.getId());
             passwordMapper.insert(password);
 
@@ -380,7 +391,7 @@ public class DataSyncControllerService {
             return response;
         }else {
             Password password = passwords.get(0);
-            password.setPassword(MD5Utils.MD5Encode(newPassword, "UTF-8"));
+            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
             passwordMapper.updateByPrimaryKey(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
@@ -553,6 +564,7 @@ public class DataSyncControllerService {
             return response;
         }
 
+        appSecretVerifyService.refreshAppList();
         response.setAppId(request.getApp().getId());
         response.setCode(CODE.SUCCESS);
         response.setMsg("成功");
@@ -604,6 +616,7 @@ public class DataSyncControllerService {
             return response;
         }
 
+        appSecretVerifyService.refreshAppList();
         response.setCode(CODE.SUCCESS);
         response.setMsg("成功");
         return response;
@@ -694,4 +707,25 @@ public class DataSyncControllerService {
         }
     }
 
+    @Transactional
+    public ModifyAppResponse modifyApp(ModifyAppRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
+        ipBlackCheckService.isBlackList(httpRequest);
+        appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
+
+        ModifyAppResponse response = new ModifyAppResponse();
+
+        AppExample ae = new AppExample();
+        ae.createCriteria().andIdEqualTo(request.getApp().getId());
+        int ret = appMapper.updateByExample(request.getApp(),ae);
+        if(ret == 0){
+            response .setCode(CODE.BIZ.FAIL_UPDATE_SQL);
+            response.setMsg("更新失败");
+            return response;
+        }
+
+        appSecretVerifyService.refreshAppList();
+        response.setCode(CODE.SUCCESS);
+        response.setMsg("成功");
+        return response;
+    }
 }

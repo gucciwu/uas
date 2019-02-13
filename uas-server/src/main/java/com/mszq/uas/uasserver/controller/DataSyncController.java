@@ -9,12 +9,7 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 
 @RestController
@@ -97,6 +92,13 @@ public class DataSyncController {
     public @ResponseBody
     AddAppResponse addApp(@RequestBody AddAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
         return service.addApp(request,httpRequest);
+    }
+
+    @ApiOperation(value="修改应用", notes="对接统一认证的应用系统，都需要在统一认证系统中注册")
+    @RequestMapping(value="/datasync/modify_app",method = RequestMethod.POST)
+    public @ResponseBody
+    ModifyAppResponse addApp(@RequestBody ModifyAppRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+        return service.modifyApp(request,httpRequest);
     }
 
     @ApiOperation(value="查询应用", notes="对接统一认证的应用系统，都需要在统一认证系统中注册")
