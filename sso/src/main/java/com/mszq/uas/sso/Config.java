@@ -13,6 +13,15 @@ public class Config {
     private long appId;
     private String secret;
     private boolean debug;
+    private String[] fonts;
+
+    public String[] getFonts() {
+        return fonts;
+    }
+
+    public void setFonts(String[] fonts) {
+        this.fonts = fonts;
+    }
 
     public boolean isDebug() {
         return debug;

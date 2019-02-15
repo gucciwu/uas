@@ -14,6 +14,8 @@ import com.mszq.uas.sso.model.App;
 import com.mszq.uas.sso.model.Org;
 import com.mszq.uas.sso.model.User;
 import org.apache.commons.codec.binary.Base64;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,7 +39,7 @@ import java.util.Random;
 
 @RestController
 public class Controller {
-
+    private static Logger logger = LoggerFactory.getLogger(Controller.class);
     /**
      * 统一登陆界面
      */
@@ -68,9 +70,7 @@ public class Controller {
     public static final String PARAM_SERVICE = "service";
 
     public static final Random random = new Random();
-    public static final Font[] dFont = new Font[]{
-            new Font("nyala", Font.BOLD, 24), new Font("Bell MT", Font.PLAIN, 24),
-            new Font("Credit valley", Font.BOLD, 24)};
+    public Font[] dFont = null;
 
     @Autowired
     private UasService uasService;
@@ -145,6 +145,13 @@ public class Controller {
     }
 
     private Font getRandomFont() {
+        if(dFont == null){
+            dFont = new Font[config.getFonts().length];
+            for(int i=0;i<config.getFonts().length;i++){
+                dFont[i] = new Font(config.getFonts()[i], Font.BOLD, 24);
+            }
+        }
+
         return dFont[random.nextInt(dFont.length)];
     }
 
@@ -193,9 +200,7 @@ public class Controller {
             graphics.setFont(getRandomFont());
             String content = new String(getRandomNumber(4));
             request.getSession().setAttribute(Constants.SESSION_YZM, content);
-//            String retUrl = request.getHeader("Referer");
-//            System.err.println("Last Url:" + retUrl);
-//            System.err.println("Set YZM:" + request.getSession().getAttribute(Constants.SESSION_YZM)+" Session ID:"+request.getSession().getId());
+            logger.trace("Created verify code:"+request.getSession().getAttribute(Constants.SESSION_YZM)+" Session ID:"+request.getSession().getId());
             graphics.drawString(content, 16, 24);
 
             //释放资源
