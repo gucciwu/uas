@@ -76,13 +76,16 @@ public class AuthFilter implements Filter {
 							session.setAttribute(SESSION_OBJECT, r);  //TODO 这里讲登录成功后的数据写入了会话中。
 							String msg = r.toJSONString();
 							((HttpServletResponse) response).sendRedirect(config.getHostUrl());
+							return;
 						} else {                    //失败
 							String msg = r.toJSONString();
 							((HttpServletResponse) response).sendRedirect(config.getSsoPortalUrl() + "?msg=" + Base64.encodeBase64String(msg.getBytes()));
+							return ;
 						}
 					} catch (Exception e) {
 						e.printStackTrace();
 						((HttpServletResponse) response).sendRedirect(config.getSsoPortalUrl() + "?msg=" + Base64.encodeBase64String(e.getMessage().getBytes()));
+						return;
 					}
 
 				}

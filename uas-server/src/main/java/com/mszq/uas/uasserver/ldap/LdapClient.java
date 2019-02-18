@@ -50,6 +50,12 @@ public class LdapClient {
                 if (a != null) person.setUsername((String)a.get());
                 a = attributes.get("sn");
                 if (a != null) person.setName((String)a.get());
+                a = attributes.get("displayName");
+                if (a != null) person.setDisplayName((String)a.get());
+                a = attributes.get("mail");
+                if (a != null) person.setEmail((String)a.get());
+                a = attributes.get("mobile");
+                if (a != null) person.setMobile((String)a.get());
                 return person;
             }
         });
@@ -70,10 +76,19 @@ public class LdapClient {
             Attributes attrs = new BasicAttributes();
             attrs.put(ocattr);
             attrs.put("cn", username);
-            attrs.put("sn", fullname);
-            attrs.put("displayName", fullname);
-            attrs.put("mail", email);
-            attrs.put("mobile", mobile);
+            if (fullname != null && !"".equals(fullname)) {
+                attrs.put("sn", fullname);
+                attrs.put("displayName", fullname);
+            }
+
+            if (email != null && !"".equals(email)) {
+                attrs.put("mail", email);
+            }
+
+            if (mobile != null && !"".equals(mobile)){
+                attrs.put("mobile", mobile);
+            }
+
             attrs.put("userPassword", digestSHA(password));
             ldapTemplate.bind("cn=" + username+",ou="+groupName, null, attrs);
             return true;
@@ -86,7 +101,6 @@ public class LdapClient {
     public boolean modify(final String username, final String fullname, final String password, final String email, final String mobile) {
         try {
             List<ModificationItem> list = new ArrayList<ModificationItem>();
-
             if(fullname != null) {
                 list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("displayName", fullname)));
                 list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("sn", fullname)));

@@ -307,7 +307,7 @@ public class Controller {
                             return data;
                         }else{
                             data.setCode(-1);
-                            data.setMsg("发送密码短信失败，请联系系统管理员！");
+                            data.setMsg("发送密码短信失败("+res+")，请联系系统管理员！");
                             return data;
                         }
                     }else if( resp != null && resp.getCode() != 0) {
