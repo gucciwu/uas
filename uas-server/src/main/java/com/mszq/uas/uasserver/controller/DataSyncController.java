@@ -63,6 +63,13 @@ public class DataSyncController {
     ResetPasswordResponse resetPassword(@RequestBody ResetPasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
         return service.resetPassword(request,httpRequest);
     }
+    @ApiOperation(value="重置密码1", notes="密码采用32位md5码加密")
+    @RequestMapping(value="/datasync/reset_password1",method = RequestMethod.POST)
+    public @ResponseBody
+    ResetPasswordResponse resetPassword1(@RequestBody ResetPasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
+        return service.resetPassword1(request,httpRequest);
+    }
+
     @ApiOperation(value="查询用户信息", notes="根据查询条件全量返回用户信息，目前没有实现分页")
     @RequestMapping(value="/datasync/get_users",method = RequestMethod.POST)
     public @ResponseBody

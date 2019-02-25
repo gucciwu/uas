@@ -380,7 +380,7 @@ public class DataSyncControllerService {
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
                 if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(), null, newPassword,null,null);
+                    ldapClient.modify(request.getJobNumber(), null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();
@@ -397,7 +397,83 @@ public class DataSyncControllerService {
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
                 if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(),null, request.getNewPassword(),null,null);
+                    ldapClient.modify(request.getJobNumber(),null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
+                }
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("成功");
+            return response;
+        }
+    }
+
+    @Transactional
+    public ResetPasswordResponse resetPassword1(ResetPasswordExRequest request, HttpServletRequest httpRequest) throws Exception {
+
+        ipBlackCheckService.isBlackList(httpRequest);
+        appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
+
+        ResetPasswordResponse response = new ResetPasswordResponse();
+
+        //判断用户是否存在
+        UserExample ue = new UserExample();
+        UserExample.Criteria c = ue.createCriteria();
+        if(request.getUserId() != 0)
+            c.andIdEqualTo(request.getUserId());
+
+        if(request.getJobNumber() != null && !"".equals(request.getJobNumber()))
+            c.andJobNumberEqualTo(request.getJobNumber());
+
+        List<User> userList = userMapper.selectByExample(ue);
+        if(userList == null || userList.size() == 0){
+            response.setCode(CODE.BIZ.USER_NOT_EXIST);
+            response.setMsg("用户不存在");
+            return response;
+        }
+        User user = userList.get(0);
+
+        //密码解密
+        String newPassword = request.getNewPassword();
+
+        PasswordExample pe = new PasswordExample();
+        long userId = 0;
+        if(request.getUserId() == 0) {
+            userId = findUserIdByJobNumber(request.getJobNumber());
+            pe.createCriteria().andUserIdEqualTo(userId);
+        }else{
+            pe.createCriteria().andUserIdEqualTo(request.getUserId());
+        }
+
+        List<Password> passwords = passwordMapper.selectByExample(pe);
+        if(passwords == null || passwords.size() == 0){
+            Password password = new Password();
+            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            password.setUserId(user.getId());
+            passwordMapper.insert(password);
+
+            //同步ldap数据，如果失败则记录信息，不影响正常运行
+            try{
+                if(request.getUserId() == 0 && request.getJobNumber() != null) {
+                    ldapClient.modify(request.getJobNumber(), null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
+                }
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("未设置密码，直接重置密码成功");
+            return response;
+        }else {
+            Password password = passwords.get(0);
+            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            passwordMapper.updateByPrimaryKey(password);
+
+            //同步ldap数据，如果失败则记录信息，不影响正常运行
+            try{
+                if(request.getUserId() == 0 && request.getJobNumber() != null) {
+                    ldapClient.modify(request.getJobNumber(),null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();

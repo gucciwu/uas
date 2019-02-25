@@ -1,11 +1,13 @@
 package com.mszq.uas.uasserver.ldap;
 
+import com.mszq.uas.uasserver.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.core.*;
 import org.springframework.ldap.support.LdapNameBuilder;
+import sun.misc.BASE64Encoder;
 
 import javax.naming.Name;
 import javax.naming.NamingException;
@@ -89,7 +91,42 @@ public class LdapClient {
                 attrs.put("mobile", mobile);
             }
 
-            attrs.put("userPassword", digestSHA(password));
+            attrs.put("userPassword", digestMD5(password));
+            ldapTemplate.bind("cn=" + username+",ou="+groupName, null, attrs);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean create1(final String username, final String fullname, final String password, final String email, final String mobile) {
+
+        try {
+            // 基类设置
+            BasicAttribute ocattr = new BasicAttribute("objectClass");
+            ocattr.add("top");
+            ocattr.add("person");
+            ocattr.add("inetOrgPerson");
+            ocattr.add("organizationalPerson");
+            // 用户属性
+            Attributes attrs = new BasicAttributes();
+            attrs.put(ocattr);
+            attrs.put("cn", username);
+            if (fullname != null && !"".equals(fullname)) {
+                attrs.put("sn", fullname);
+                attrs.put("displayName", fullname);
+            }
+
+            if (email != null && !"".equals(email)) {
+                attrs.put("mail", email);
+            }
+
+            if (mobile != null && !"".equals(mobile)){
+                attrs.put("mobile", mobile);
+            }
+
+            attrs.put("userPassword", digestMD5(password));
             ldapTemplate.bind("cn=" + username+",ou="+groupName, null, attrs);
             return true;
         } catch (Exception ex) {
@@ -110,7 +147,36 @@ public class LdapClient {
             }
 
             if(password != null){
-                list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("userPassword", digestSHA(password))));
+                list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("userPassword", digestMD5(password))));
+            }
+
+            if(mobile != null){
+                list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("mobile", mobile)));
+            }
+
+            ModificationItem[] items = new ModificationItem[list.size()];
+            list.toArray(items);
+            ldapTemplate.modifyAttributes("cn=" + username+",ou="+groupName, items);
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean modify1(final String username, final String fullname, final String password, final String email, final String mobile) {
+        try {
+            List<ModificationItem> list = new ArrayList<ModificationItem>();
+            if(fullname != null) {
+                list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("displayName", fullname)));
+                list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("sn", fullname)));
+            }
+            if(email!= null){
+                list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("mail", email)));
+            }
+
+            if(password != null){
+                list.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute("userPassword", digestMD5(password))));
             }
 
             if(mobile != null){
@@ -137,17 +203,27 @@ public class LdapClient {
         }
     }
 
-    private String digestSHA(final String password) {
-        String base64;
-        try {
-            MessageDigest digest = MessageDigest.getInstance("SHA");
-            digest.update(password.getBytes());
-            base64 = Base64
-                    .getEncoder()
-                    .encodeToString(digest.digest());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+    public static String digestMD5(String _md5pass){
+        String md5pass = MD5Utils.parseStrToMd5L32(_md5pass);
+
+        BASE64Encoder base64en = new BASE64Encoder();
+        byte[] baKeyword = new byte[md5pass.length() / 2];
+        for (int i = 0; i < baKeyword.length; i++) {
+            try {
+                baKeyword[i] = (byte) (0xff & Integer.parseInt(md5pass.substring(i * 2, i * 2 + 2), 16));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return "{SHA}" + base64;
+        String newstr = base64en.encode(baKeyword);
+        return "{MD5}"+newstr;
+    }
+
+    public static void main(String[] args){
+        String pwd = "Liu_Guo_1982";
+        String md5 = MD5Utils.parseStrToMd5L32(pwd);
+        System.out.println(md5);
+        String s = digestMD5(md5);
+        System.out.println(s);
     }
 }

@@ -41,8 +41,8 @@ public class DataSyncControllerTest {
 
     private HttpHeaders headers = new HttpHeaders();
 
-    final long APPID=1L;
-    final String SECRET="1";
+    final long APPID=0L;
+    final String SECRET="sso.mszq.com";
     @Before
     public void setUp() throws Exception {
         String url = String.format("http://localhost:%d/", port);
