@@ -31,6 +31,6 @@ public class DemoController {
     void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
         javax.servlet.http.HttpServletResponse res = (javax.servlet.http.HttpServletResponse) response;
         request.getSession().invalidate();
-        res.sendRedirect(config.getSsoPortalUrl()+"?service="+config.getHostUrl()+"&appid="+config.getAppid());
+        res.sendRedirect(config.getSsoLogoutUrl()+"?service="+config.getHostUrl()+"&appid="+config.getAppid());
     }
 }

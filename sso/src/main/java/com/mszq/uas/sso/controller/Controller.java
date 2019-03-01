@@ -287,8 +287,26 @@ public class Controller {
         String username=request.getParameter("username");   //用户姓名
         String sfzh=request.getParameter("sfzh");   //证件号码
         String sjhm=request.getParameter("sjhm");   //手机号
+        String yzm=request.getParameter("yzm");   //手机号
 
         ResetPasswordData data = new ResetPasswordData();
+
+        if ((yzm == null || request.getSession().getAttribute(Constants.SESSION_YZM) == null)&& !config.isDebug()) {
+            System.err.println("请输入验证码！" + "Get:" + yzm + ",Session:" + request.getSession().getAttribute("Constants.SESSION_YZM"));
+            data.setCode(-1);
+            data.setMsg("请输入验证码！");
+            return data;
+        }
+
+        if(!config.isDebug()) {
+            String sessionYZM = request.getSession().getAttribute(Constants.SESSION_YZM).toString();
+            if (!yzm.equals(sessionYZM)) {
+                System.err.println("验证码有误！" + "Get:" + yzm + ",Session:" + request.getSession().getAttribute("Constants.SESSION_YZM"));
+                data.setCode(-1);
+                data.setMsg("验证码有误！");
+                return data;
+            }
+        }
 
         User user = uasService.getUser(userid);
         if(user != null) {
