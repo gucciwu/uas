@@ -16,10 +16,7 @@ import com.mszq.uas.uasserver.dao.model.UserExample;
 import com.mszq.uas.uasserver.exception.IpForbbidenException;
 import com.mszq.uas.uasserver.redis.model.Session;
 import com.mszq.uas.uasserver.redis.storage.DAO;
-import com.mszq.uas.uasserver.util.AESCoder;
 import com.mszq.uas.uasserver.util.MD5Utils;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,13 +24,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.InvalidKeyException;
 import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Random;
 
@@ -72,7 +64,7 @@ public class AuthControllerService {
         String password = null;
         try {
             id = request.getJobNumber();
-            password = AESCoder.decrypt(request.getPassword(), config.getAesKey());
+            password = request.getPassword();
         } catch (Exception e) {
             e.printStackTrace();
             response.setCode(CODE.BIZ.AUTH_FAIL);

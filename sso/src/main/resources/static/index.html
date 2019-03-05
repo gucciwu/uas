@@ -125,22 +125,6 @@
             $("#msg").text("");
         }
 
-        $('#forgotpass').tooltipster({
-            content: $("<p style='text-align:left;'>点击进入找回密码界面</p>")
-        });
-
-        $('#systemtip').tooltipster({
-            content: $("<p style='text-align:left;'>选择需要登录的目标系统</p>")
-        });
-
-        $('#useridtip').tooltipster({
-            content: $("<p style='text-align:left;'>1.正式员工的用户账号与公司 OA 系统的用户名相同<br>2.非员工的经纪人（及非全日制员工）的用户账号是其经纪人编号</p>")
-        });
-
-        $('#passwordtip').tooltipster({
-            content: $("<p style='text-align:left;'>初始密码为用户身份证号后 6 位</p>")
-        });
-
         if (!CookieEnable()) {
             $('#infobarNoCookie').attr("style", "");
         }

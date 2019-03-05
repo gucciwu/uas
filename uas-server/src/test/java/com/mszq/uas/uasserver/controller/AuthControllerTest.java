@@ -6,7 +6,6 @@ import com.mszq.uas.uasserver.Config;
 import com.mszq.uas.uasserver.UasServerApplication;
 import com.mszq.uas.uasserver.bean.*;
 import com.mszq.uas.uasserver.dao.model.User;
-import com.mszq.uas.uasserver.util.AESCoder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,14 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-
-import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = UasServerApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -135,7 +127,7 @@ public class AuthControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setNewPassword("123456");
 
             ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -147,7 +139,7 @@ public class AuthControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_2);
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setNewPassword("123456");
 
             ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -159,7 +151,7 @@ public class AuthControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_3);
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setNewPassword("123456");
 
             ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -203,7 +195,7 @@ public class AuthControllerTest {
         {
             AuthExRequest request = new AuthExRequest();
             request.setJobNumber(JOB_NUMBER_1);
-            request.setPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setPassword("123456");
             ResponseEntity<AuthResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/ua/auth", request, AuthResponse.class, "");
             System.out.println(String.format("测试结果为：%s", resp.getBody()));
             Assert.assertEquals(0, resp.getBody().getCode());
@@ -212,7 +204,7 @@ public class AuthControllerTest {
         {
             AuthExRequest request = new AuthExRequest();
             request.setJobNumber(JOB_NUMBER_2);
-            request.setPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setPassword("123456");
             ResponseEntity<AuthResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/ua/auth", request, AuthResponse.class, "");
             System.out.println(String.format("测试结果为：[%s]%s", resp.getBody().getCode(), resp.getBody().getMsg()));
             Assert.assertEquals(CODE.BIZ.AUTH_FAIL, resp.getBody().getCode());
@@ -223,7 +215,7 @@ public class AuthControllerTest {
             for(int i=0;i<config.getErrorTry()-1;i++) {
                 AuthExRequest request = new AuthExRequest();
                 request.setJobNumber(JOB_NUMBER_3);
-                request.setPassword(AESCoder.encrypt("12345611", "SMW+RuTwO5ObncmeF5NjMA=="));
+                request.setPassword("12345611");
                 ResponseEntity<AuthResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/ua/auth", request, AuthResponse.class, "");
                 System.out.println(String.format("测试结果为：[%s]%s", resp.getBody().getCode(), resp.getBody().getMsg()));
                 Assert.assertEquals(resp.getBody().getMsg().contains(""+(config.getErrorTry()-i-1)), true);
@@ -231,7 +223,7 @@ public class AuthControllerTest {
 
             AuthExRequest request = new AuthExRequest();
             request.setJobNumber(JOB_NUMBER_3);
-            request.setPassword(AESCoder.encrypt("12345611", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setPassword("12345611");
             ResponseEntity<AuthResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/ua/auth", request, AuthResponse.class, "");
             System.out.println(String.format("测试结果为：[%s]%s", resp.getBody().getCode(), resp.getBody().getMsg()));
             Assert.assertEquals(resp.getBody().getMsg().contains("锁定"), true);

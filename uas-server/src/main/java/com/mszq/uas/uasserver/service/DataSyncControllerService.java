@@ -12,19 +12,13 @@ import com.mszq.uas.uasserver.exception.AppSecretMatchException;
 import com.mszq.uas.uasserver.exception.IpForbbidenException;
 import com.mszq.uas.uasserver.ldap.LdapClient;
 import com.mszq.uas.uasserver.ldap.Person;
-import com.mszq.uas.uasserver.util.AESCoder;
 import com.mszq.uas.uasserver.util.MD5Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import javax.servlet.http.HttpServletRequest;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -287,8 +281,6 @@ public class DataSyncControllerService {
         User user = userList.get(0);
 
         //密码解密
-        String oldPassword = AESCoder.decrypt(request.getOldPassword(), config.getAesKey());
-        String newPassword = AESCoder.decrypt(request.getNewPassword(), config.getAesKey());
 
         PasswordExample pe = new PasswordExample();
         long userId = 0;
@@ -302,7 +294,7 @@ public class DataSyncControllerService {
         List<Password> passwords = passwordMapper.selectByExample(pe);
         if(passwords == null || passwords.size() == 0){
             Password password = new Password();
-            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
             password.setUserId(user.getId());
             passwordMapper.insert(password);
 
@@ -311,20 +303,20 @@ public class DataSyncControllerService {
             return response;
         }else {
             Password password = passwords.get(0);
-            if(!password.getPassword().equals(MD5Utils.parseStrToMd5L32(oldPassword))){
+            if(!password.getPassword().equals(MD5Utils.parseStrToMd5L32(request.getOldPassword()))){
                 response.setCode(CODE.BIZ.PASSOWRD_NOT_MATCH);
                 response.setMsg("密码不匹配");
                 return response;
             }
 
-            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
             passwordMapper.updateByPrimaryKey(password);
         }
 
         //同步ldap数据，如果失败则记录信息，不影响正常运行
         try{
             if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                ldapClient.modify(request.getJobNumber(),null, newPassword,null,null);
+                ldapClient.modify(request.getJobNumber(),null, MD5Utils.parseStrToMd5L32(request.getNewPassword()),null,null);
             }
         }catch(Exception ex){
             ex.printStackTrace();
@@ -358,9 +350,6 @@ public class DataSyncControllerService {
         }
         User user = userList.get(0);
 
-        //密码解密
-        String newPassword = AESCoder.decrypt(request.getNewPassword(), config.getAesKey());
-
         PasswordExample pe = new PasswordExample();
         long userId = 0;
         if(request.getUserId() == 0) {
@@ -368,19 +357,20 @@ public class DataSyncControllerService {
             pe.createCriteria().andUserIdEqualTo(userId);
         }else{
             pe.createCriteria().andUserIdEqualTo(request.getUserId());
+            request.setJobNumber(user.getJobNumber());
         }
 
         List<Password> passwords = passwordMapper.selectByExample(pe);
         if(passwords == null || passwords.size() == 0){
             Password password = new Password();
-            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
             password.setUserId(user.getId());
             passwordMapper.insert(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
-                if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(), null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
+                if(request.getJobNumber() != null) {
+                    ldapClient.modify(request.getJobNumber(), null, MD5Utils.parseStrToMd5L32(request.getNewPassword()),null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();
@@ -391,13 +381,13 @@ public class DataSyncControllerService {
             return response;
         }else {
             Password password = passwords.get(0);
-            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
             passwordMapper.updateByPrimaryKey(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
-                if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(),null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
+                if(request.getJobNumber() != null) {
+                    ldapClient.modify(request.getJobNumber(),null, MD5Utils.parseStrToMd5L32(request.getNewPassword()),null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();
@@ -444,19 +434,20 @@ public class DataSyncControllerService {
             pe.createCriteria().andUserIdEqualTo(userId);
         }else{
             pe.createCriteria().andUserIdEqualTo(request.getUserId());
+            request.setJobNumber(user.getJobNumber());
         }
 
         List<Password> passwords = passwordMapper.selectByExample(pe);
         if(passwords == null || passwords.size() == 0){
             Password password = new Password();
-            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            password.setPassword(newPassword);
             password.setUserId(user.getId());
             passwordMapper.insert(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
-                if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(), null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
+                if(request.getJobNumber() != null) {
+                    ldapClient.modify(request.getJobNumber(), null, newPassword,null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();
@@ -467,13 +458,13 @@ public class DataSyncControllerService {
             return response;
         }else {
             Password password = passwords.get(0);
-            password.setPassword(MD5Utils.parseStrToMd5L32(newPassword));
+            password.setPassword(newPassword);
             passwordMapper.updateByPrimaryKey(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
             try{
-                if(request.getUserId() == 0 && request.getJobNumber() != null) {
-                    ldapClient.modify(request.getJobNumber(),null, MD5Utils.parseStrToMd5L32(newPassword),null,null);
+                if(request.getJobNumber() != null) {
+                    ldapClient.modify(request.getJobNumber(),null, newPassword,null,null);
                 }
             }catch(Exception ex){
                 ex.printStackTrace();

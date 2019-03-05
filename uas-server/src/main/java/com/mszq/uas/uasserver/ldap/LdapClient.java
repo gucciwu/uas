@@ -203,8 +203,8 @@ public class LdapClient {
         }
     }
 
-    public static String digestMD5(String _md5pass){
-        String md5pass = MD5Utils.parseStrToMd5L32(_md5pass);
+    public static String digestMD5(String md5pass){
+//        String md5pass = MD5Utils.parseStrToMd5L32(_md5pass);
 
         BASE64Encoder base64en = new BASE64Encoder();
         byte[] baKeyword = new byte[md5pass.length() / 2];

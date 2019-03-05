@@ -8,7 +8,6 @@ import com.mszq.uas.uasserver.bean.*;
 import com.mszq.uas.uasserver.dao.model.App;
 import com.mszq.uas.uasserver.dao.model.Role;
 import com.mszq.uas.uasserver.dao.model.User;
-import com.mszq.uas.uasserver.util.AESCoder;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -124,7 +123,7 @@ public class SSOControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER);
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setNewPassword("123456");
 
             ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -158,7 +157,7 @@ public class SSOControllerTest {
         {
             AuthExRequest request = new AuthExRequest();
             request.setJobNumber(JOB_NUMBER);
-            request.setPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setPassword("123456");
             ResponseEntity<AuthResponse> resp = this.restTemplate.postForEntity(this.base.toString() + "/ua/auth", request, AuthResponse.class, "");
             System.out.println(String.format("测试结果为：%s", resp.getBody()));
             Assert.assertEquals(0, resp.getBody().getCode());

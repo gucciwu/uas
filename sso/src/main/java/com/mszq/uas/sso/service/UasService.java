@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.sso.Config;
 import com.mszq.uas.sso.bean.*;
-import com.mszq.uas.sso.util.AESCoder;
 import com.mszq.uas.sso.model.App;
 import com.mszq.uas.sso.model.Org;
 import com.mszq.uas.sso.model.User;
@@ -15,11 +14,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -82,8 +76,8 @@ public class UasService {
         request.set_appId(config.getAppId());
         request.set_secret(config.getSecret());
         request.setJobNumber(jobNumber);
-        request.setOldPassword(AESCoder.encrypt(oldPassword, config.getAesKey()));
-        request.setNewPassword(AESCoder.encrypt(newPassword, config.getAesKey()));
+        request.setOldPassword(oldPassword);
+        request.setNewPassword(newPassword);
 
         ResponseEntity<ChangePasswordResponse> response = this.restTemplate.postForEntity(config.getHostUrl() + "/datasync/change_password", request, ChangePasswordResponse.class, "");
         if (response.getBody().getCode() != CODE.SUCCESS) {
@@ -101,7 +95,7 @@ public class UasService {
         request.setJobNumber(jobNumber);
         AuthResponse response = new AuthResponse();
         try {
-            request.setPassword(AESCoder.encrypt(password, config.getAesKey()));
+            request.setPassword(password);
             ResponseEntity<AuthResponse> resp = this.restTemplate.postForEntity(config.getHostUrl() + "/ua/auth", request, AuthResponse.class, "");
             return resp.getBody();
         } catch (Exception e) {
@@ -132,7 +126,7 @@ public class UasService {
         request.set_appId(config.getAppId());
         request.set_secret(config.getSecret());
         request.setJobNumber(jobNumber);
-        request.setNewPassword(AESCoder.encrypt(password, config.getAesKey()));
+        request.setNewPassword(password);
         ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(config.getHostUrl() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
         if(response.getStatusCodeValue() != 200){
             return null;

@@ -8,7 +8,6 @@ import com.mszq.uas.basement.Constant;
 import com.mszq.uas.uasserver.UasServerApplication;
 import com.mszq.uas.uasserver.bean.*;
 import com.mszq.uas.uasserver.dao.model.*;
-import com.mszq.uas.uasserver.util.AESCoder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,12 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.net.URL;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @RunWith(SpringRunner.class)
@@ -338,7 +332,7 @@ public class DataSyncControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setNewPassword("123456");
 
             ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -349,8 +343,8 @@ public class DataSyncControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setOldPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setOldPassword("123456");
+            request.setNewPassword("123456");
 
             ResponseEntity<ChangePasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/change_password", request, ChangePasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -362,8 +356,8 @@ public class DataSyncControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setOldPassword(AESCoder.encrypt("654321", "SMW+RuTwO5ObncmeF5NjMA=="));
-            request.setNewPassword(AESCoder.encrypt("111111", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setOldPassword("654321");
+            request.setNewPassword("111111");
 
             ResponseEntity<ChangePasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/change_password", request, ChangePasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -375,8 +369,8 @@ public class DataSyncControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setOldPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setOldPassword("123456");
+            request.setNewPassword("123456");
 
             ResponseEntity<ChangePasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/change_password", request, ChangePasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -387,8 +381,8 @@ public class DataSyncControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setOldPassword(AESCoder.encrypt("654321", "SMW+RuTwO5ObncmeF5NjMA=="));
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setOldPassword("654321");
+            request.setNewPassword("123456");
 
             ResponseEntity<ChangePasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/change_password", request, ChangePasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -434,7 +428,7 @@ public class DataSyncControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setNewPassword(AESCoder.encrypt("123456", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setNewPassword("123456");
 
             ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
@@ -446,7 +440,7 @@ public class DataSyncControllerTest {
             request.set_appId(APPID);
             request.set_secret(SECRET);
             request.setJobNumber(JOB_NUMBER_1);
-            request.setNewPassword(AESCoder.encrypt("654321", "SMW+RuTwO5ObncmeF5NjMA=="));
+            request.setNewPassword("654321");
 
             ResponseEntity<ResetPasswordResponse> response = this.restTemplate.postForEntity(this.base.toString() + "/datasync/reset_password", request, ResetPasswordResponse.class, "");
             System.out.println(String.format("测试结果为：%s", response.getBody()));
