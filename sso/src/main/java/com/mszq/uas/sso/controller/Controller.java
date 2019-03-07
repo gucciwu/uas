@@ -215,13 +215,13 @@ public class Controller {
 
     @RequestMapping("/login")
     public void login(HttpServletRequest request, HttpServletResponse response) throws ServletException, NumberFormatException, IOException {
-        // TODO Auto-generated method stub
 
         String sessionId = null;
         HttpSession session = request.getSession();
         Object obj = session.getAttribute(Constants.SESSION_SESSIONID);
         String service = request.getParameter(PARAM_SERVICE);
         String targetAppid = request.getParameter(PARAM_APPID);
+
         service = request.getParameter("service") == null?(String)session.getAttribute(Constants.SESSION_SERVICE):request.getParameter("service");
         targetAppid = request.getParameter("appid") == null?(String)session.getAttribute(Constants.SESSION_APPID):request.getParameter("appid");;
         service = service == null ? "" : service.replaceAll("[\r]|[\n]|[<]|[>]|[(]|[)]|[']||[\"]", "");
@@ -255,7 +255,6 @@ public class Controller {
         request.setAttribute(Constants.SESSION_SERVICE, service);
 
         if (obj != null) sessionId = obj.toString();
-        System.out.println("3:" + sessionId);
         if (sessionId != null) {//已经登陆过
             StringBuilder url = new StringBuilder();
             RequireTokenResponse resp = uasService.getToken(targetAppid, sessionId);//申请子令牌
