@@ -82,7 +82,7 @@ public class DataSyncController {
     GetAppAccountIdResponse getAppAccountId(@RequestBody GetAppAccountIdExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
         return service.getAppAccountId(request,httpRequest);
     }
-    @ApiOperation(value="更新组织机构信息", notes="组织机构信息如果不存在则创建，否则更新")
+    @ApiOperation(value="更新组织机构信息", notes="组织机构信息如果不存在则创建，否则更新", response = UpdateOrgResponse.class)
     @RequestMapping(value="/datasync/update_org",method = RequestMethod.POST)
     public @ResponseBody
     UpdateOrgResponse addOrg(@RequestBody UpdateOrgRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {

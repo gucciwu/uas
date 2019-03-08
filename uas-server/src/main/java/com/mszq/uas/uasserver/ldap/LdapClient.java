@@ -220,7 +220,7 @@ public class LdapClient {
     }
 
     public static void main(String[] args){
-        String pwd = "Liu_Guo_1982";
+        String pwd = "abcd123";
         String md5 = MD5Utils.parseStrToMd5L32(pwd);
         System.out.println(md5);
         String s = digestMD5(md5);
