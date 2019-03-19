@@ -10,6 +10,24 @@ public class GetUsersExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
     private String jobNumber;
     private String idNumber;
     private Short idType;
+    private int pageNum;
+    private int pageSize;
+
+    public int getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
 
     public void setOrgType(short orgType) {
         this.orgType = orgType;

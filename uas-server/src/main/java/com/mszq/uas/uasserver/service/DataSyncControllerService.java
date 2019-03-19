@@ -1,5 +1,7 @@
 package com.mszq.uas.uasserver.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.basement.Constant;
 import com.mszq.uas.uasserver.Config;
@@ -13,6 +15,8 @@ import com.mszq.uas.uasserver.exception.IpForbbidenException;
 import com.mszq.uas.uasserver.ldap.LdapClient;
 import com.mszq.uas.uasserver.ldap.Person;
 import com.mszq.uas.uasserver.util.MD5Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -22,11 +26,13 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class DataSyncControllerService {
+    private static Logger logger = LoggerFactory.getLogger(DataSyncControllerService.class);
 
     @Autowired
     @Qualifier("config")
@@ -296,6 +302,7 @@ public class DataSyncControllerService {
             Password password = new Password();
             password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
             password.setUserId(user.getId());
+            password.setModifyTime(new Date());
             passwordMapper.insert(password);
 
             response.setCode(CODE.SUCCESS);
@@ -310,6 +317,7 @@ public class DataSyncControllerService {
             }
 
             password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
+            password.setModifyTime(new Date());
             passwordMapper.updateByPrimaryKey(password);
         }
 
@@ -365,6 +373,7 @@ public class DataSyncControllerService {
             Password password = new Password();
             password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
             password.setUserId(user.getId());
+            password.setModifyTime(new Date());
             passwordMapper.insert(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
@@ -381,6 +390,7 @@ public class DataSyncControllerService {
             return response;
         }else {
             Password password = passwords.get(0);
+            password.setModifyTime(new Date());
             password.setPassword(MD5Utils.parseStrToMd5L32(request.getNewPassword()));
             passwordMapper.updateByPrimaryKey(password);
 
@@ -442,6 +452,7 @@ public class DataSyncControllerService {
             Password password = new Password();
             password.setPassword(newPassword);
             password.setUserId(user.getId());
+            password.setModifyTime(new Date());
             passwordMapper.insert(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
@@ -459,6 +470,7 @@ public class DataSyncControllerService {
         }else {
             Password password = passwords.get(0);
             password.setPassword(newPassword);
+            password.setModifyTime(new Date());
             passwordMapper.updateByPrimaryKey(password);
 
             //同步ldap数据，如果失败则记录信息，不影响正常运行
@@ -479,6 +491,10 @@ public class DataSyncControllerService {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
+
+        if(request.getPageSize() != 0){
+            PageHelper.startPage(request.getPageNum(), request.getPageSize());
+        }
 
         GetUsersResponse response = new GetUsersResponse();
 
@@ -509,9 +525,26 @@ public class DataSyncControllerService {
             c.andModifyTimeGreaterThanOrEqualTo(dateFormat.parse(request.getStartUpdateTime()));
 
         List<User> userList = userMapper.selectByExample(ue);
-        response.setData(userList);
-        response.setCode(CODE.SUCCESS);
-        response.setMsg("成功");
+        if(request.getPageSize() != 0) {
+            PageInfo<User> pageInfo = new PageInfo<User>(userList);
+
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("成功");
+
+            response.setData(pageInfo.getList());
+            response.setPageNum(pageInfo.getPageNum());
+            response.setPageSize(pageInfo.getPageSize());
+            response.setPages(pageInfo.getPages());
+            response.setTotal(pageInfo.getTotal());
+        }else {
+            response.setData(userList);
+            response.setPageNum(0);
+            response.setPageSize(userList.size());
+            response.setPages(1);
+            response.setTotal((long)userList.size());
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("成功");
+        }
         return response;
     }
     public GetAppAccountIdResponse getAppAccountId(GetAppAccountIdExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
@@ -543,7 +576,7 @@ public class DataSyncControllerService {
 
     }
     @Transactional
-    public UpdateOrgResponse addOrg(UpdateOrgRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+    public UpdateOrgResponse updateOrg(UpdateOrgRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
@@ -557,6 +590,7 @@ public class DataSyncControllerService {
         if(orgList!= null && orgList.size()>0) {
             Org org = orgList.get(0);
             request.getOrg().setId(org.getId());
+            request.getOrg().setModifyTime(new Date());
 
             int ret = orgMapper.updateByExample(request.getOrg(), oe);
             if (ret == 0) {
@@ -571,6 +605,7 @@ public class DataSyncControllerService {
             }
         }else{
             //记录不存在，则插入
+            request.getOrg().setModifyTime(new Date());
             int ret = orgMapper.insert(request.getOrg());
             if(ret == 0){
                 response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
@@ -605,6 +640,7 @@ public class DataSyncControllerService {
 
         Org org = orgs.get(0);
         org.setStatus((short)Constant.ORG_STATUS.UNSIGNED);
+        org.setModifyTime(new Date());
         int ret = orgMapper.updateByExample(org,oe);
         if(ret == 0){
             response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);

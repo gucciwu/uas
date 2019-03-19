@@ -85,8 +85,8 @@ public class DataSyncController {
     @ApiOperation(value="更新组织机构信息", notes="组织机构信息如果不存在则创建，否则更新", response = UpdateOrgResponse.class)
     @RequestMapping(value="/datasync/update_org",method = RequestMethod.POST)
     public @ResponseBody
-    UpdateOrgResponse addOrg(@RequestBody UpdateOrgRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
-        return  service.addOrg(request,httpRequest);
+    UpdateOrgResponse updateOrg(@RequestBody UpdateOrgRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+        return  service.updateOrg(request,httpRequest);
     }
     @ApiOperation(value="删除组织机构信息", notes="并不删除组织机构信息，而是在数据库中将该组织机构信息的记录设置为注销状态")
     @RequestMapping(value="/datasync/del_org",method = RequestMethod.POST)

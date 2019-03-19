@@ -10,10 +10,17 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.map.repository.config.EnableMapRepositories;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import javax.annotation.PostConstruct;
+import java.util.TimeZone;
+
 @SpringBootApplication
 @EnableSwagger2
 @MapperScan("com.mszq.uas.uasserver.dao.mapper")
 public class UasServerApplication {
+    @PostConstruct
+    void setDefaultTimezone() {
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT+8"));
+    }
 
     @Bean
     public FilterRegistrationBean filterRegistry(){
