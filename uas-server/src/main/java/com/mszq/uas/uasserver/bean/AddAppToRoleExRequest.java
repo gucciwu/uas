@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class AddAppToRoleExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class AddAppToRoleExRequest extends ExRequest {
 
     private long roleId;
     private long appId;

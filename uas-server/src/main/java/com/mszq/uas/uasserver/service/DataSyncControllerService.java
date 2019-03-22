@@ -6,8 +6,8 @@ import com.mszq.uas.basement.CODE;
 import com.mszq.uas.basement.Constant;
 import com.mszq.uas.uasserver.Config;
 import com.mszq.uas.uasserver.bean.*;
-import com.mszq.uas.uasserver.controller.ModifyAppRequest;
-import com.mszq.uas.uasserver.controller.ModifyAppResponse;
+import com.mszq.uas.uasserver.bean.ModifyAppRequest;
+import com.mszq.uas.uasserver.bean.ModifyAppResponse;
 import com.mszq.uas.uasserver.dao.mapper.*;
 import com.mszq.uas.uasserver.dao.model.*;
 import com.mszq.uas.uasserver.exception.AppSecretMatchException;
@@ -26,7 +26,6 @@ import javax.servlet.http.HttpServletRequest;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 

@@ -2,7 +2,7 @@ package com.mszq.uas.uasserver.bean;
 
 import com.mszq.uas.uasserver.dao.model.User;
 
-public class UpdateUserExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class UpdateUserExRequest extends ExRequest {
 
     private User user;
 

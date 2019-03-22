@@ -1,4 +1,4 @@
 package com.mszq.uas.uasserver.bean;
 
-public class DelRoleResponse extends com.mszq.uas.uasserver.bean.Response {
+public class DelRoleResponse extends Response {
 }

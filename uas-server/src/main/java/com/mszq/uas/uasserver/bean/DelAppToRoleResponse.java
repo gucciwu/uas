@@ -1,5 +1,5 @@
 package com.mszq.uas.uasserver.bean;
 
-public class DelAppToRoleResponse extends com.mszq.uas.uasserver.bean.Response {
+public class DelAppToRoleResponse extends Response {
 
 }

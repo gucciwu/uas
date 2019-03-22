@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class DelRoleTypeExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class DelRoleTypeExRequest extends ExRequest {
     private long roleType;
 
     public long getRoleType() {

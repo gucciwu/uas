@@ -1,4 +1,4 @@
 package com.mszq.uas.uasserver.bean;
 
-public class DelOrgResponse extends com.mszq.uas.uasserver.bean.Response {
+public class DelOrgResponse extends Response {
 }

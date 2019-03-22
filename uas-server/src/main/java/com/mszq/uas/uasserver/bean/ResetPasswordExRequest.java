@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class ResetPasswordExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class ResetPasswordExRequest extends ExRequest {
     private long userId;
     private String jobNumber;
     private String newPassword;

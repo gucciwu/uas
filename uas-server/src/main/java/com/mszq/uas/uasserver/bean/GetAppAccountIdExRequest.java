@@ -2,7 +2,7 @@ package com.mszq.uas.uasserver.bean;
 
 import java.util.List;
 
-public class GetAppAccountIdExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class GetAppAccountIdExRequest extends ExRequest {
     private long userId;
     private String jobNumber;
     private long appId;

@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class UpdateUserResponse extends com.mszq.uas.uasserver.bean.Response {
+public class UpdateUserResponse extends Response {
     private long userId;
 
     public long getUserId() {

@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class GetOrgsExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class GetOrgsExRequest extends ExRequest {
 
     private int grade;
     private String name;

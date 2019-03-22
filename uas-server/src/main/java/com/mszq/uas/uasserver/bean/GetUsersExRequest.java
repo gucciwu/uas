@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class GetUsersExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class GetUsersExRequest extends ExRequest {
 
     private String startUpdateTime;
     private String endUpdateTime;

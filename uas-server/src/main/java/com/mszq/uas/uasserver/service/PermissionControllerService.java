@@ -1,6 +1,7 @@
 package com.mszq.uas.uasserver.service;
 
 import com.mszq.uas.basement.CODE;
+import com.mszq.uas.basement.Constant;
 import com.mszq.uas.uasserver.bean.*;
 import com.mszq.uas.uasserver.dao.mapper.*;
 import com.mszq.uas.uasserver.dao.model.*;
@@ -11,10 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PermissionControllerService {
@@ -83,7 +81,8 @@ public class PermissionControllerService {
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
         AddRoleResponse response = new AddRoleResponse();
-
+        request.getRole().setModifyTime(new Date());
+        request.getRole().setStatus(Constant.ROLE_STATUS.OK);
         int ret = roleMapper.insert(request.getRole());
         if(ret == 0){
             response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
@@ -101,13 +100,21 @@ public class PermissionControllerService {
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
         DelRoleResponse response = new DelRoleResponse();
-        int ret = roleMapper.deleteByPrimaryKey(request.getRoleId());
+
+        Role role = roleMapper.selectByPrimaryKey(request.getRoleId());
+        if(role == null){
+            response.setCode(CODE.BIZ.NOT_EXIST_RECORD);
+            response.setMsg("删除失败");
+            return response;
+        }
+
+        role.setStatus(Constant.ROLE_STATUS.UNSIGNED);
+        role.setModifyTime(new Date());
+        int ret = roleMapper.updateByPrimaryKey(role);
         if(ret == 0){
-            response.setCode(CODE.BIZ.FAIL_DELETE_SQL);
+            response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);
             response.setMsg("删除失败");
         }else{
-            //根据角色删除对应的应用系统子账号
-
             response.setCode(CODE.SUCCESS);
             response.setMsg("成功");
         }
@@ -133,6 +140,18 @@ public class PermissionControllerService {
         if(request.getStatus() != 0)
             c.andStatusEqualTo(request.getStatus());
 
+        if(request.getRoleCode() != null && !"".equals(request.getRoleCode()))
+            c.andRoleCodeEqualTo(request.getRoleCode());
+
+        if(request.getOrgId() != 0)
+            c.andOrgIdEqualTo(request.getOrgId());
+
+        if(request.getOrgType() != 0)
+            c.andOrgTypeEqualTo((short)request.getOrgType());
+
+        if(request.getComment() != null && !"".equals(request.getComment()))
+            c.andCommentLike(request.getComment());
+
         List<Role> roleList = roleMapper.selectByExample(re);
         response.setData(roleList);
         response.setCode(CODE.SUCCESS);
@@ -148,6 +167,7 @@ public class PermissionControllerService {
 
         RoleExample re = new RoleExample();
         re.createCriteria().andIdEqualTo(request.getRole().getId());
+        request.getRole().setModifyTime(new Date());
         int ret = roleMapper.updateByExample(request.getRole(),re);
         if(ret == 0){
             response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);

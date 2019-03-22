@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class RequireTokenExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class RequireTokenExRequest extends ExRequest {
     private String sessionId;
     private long appId;
 

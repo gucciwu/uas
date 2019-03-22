@@ -1,4 +1,4 @@
-package com.mszq.uas.uasserver.controller;
+package com.mszq.uas.uasserver.bean;
 
 import com.mszq.uas.uasserver.bean.ExRequest;
 import com.mszq.uas.uasserver.dao.model.App;

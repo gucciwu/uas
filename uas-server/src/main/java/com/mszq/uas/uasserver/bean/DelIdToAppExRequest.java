@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class DelIdToAppExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class DelIdToAppExRequest extends ExRequest {
 
     private long userId;
     private long appId;

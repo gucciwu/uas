@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class DelOrgTypeExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class DelOrgTypeExRequest extends ExRequest {
     private short orgType;
 
     public short getOrgType() {

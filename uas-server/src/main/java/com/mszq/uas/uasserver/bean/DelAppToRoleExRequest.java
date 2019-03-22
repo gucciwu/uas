@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class DelAppToRoleExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class DelAppToRoleExRequest extends ExRequest {
 
     private long roleAppId;
 

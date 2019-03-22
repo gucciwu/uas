@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class AddOrgTypeResponse extends com.mszq.uas.uasserver.bean.Response {
+public class AddOrgTypeResponse extends Response {
     private short orgTypeId;
 
     public short getOrgTypeId() {

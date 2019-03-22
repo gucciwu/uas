@@ -2,7 +2,7 @@ package com.mszq.uas.uasserver.bean;
 
 import com.mszq.uas.uasserver.dao.model.AppAccount;
 
-public class AddIdToAppExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class AddIdToAppExRequest extends ExRequest {
     private AppAccount appAccount;
 
     public AppAccount getAppAccount() {

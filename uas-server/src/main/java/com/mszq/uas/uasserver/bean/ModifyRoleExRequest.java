@@ -2,7 +2,7 @@ package com.mszq.uas.uasserver.bean;
 
 import com.mszq.uas.uasserver.dao.model.Role;
 
-public class ModifyRoleExRequest extends com.mszq.uas.uasserver.bean.ExRequest {
+public class ModifyRoleExRequest extends ExRequest {
     private Role role;
 
     public Role getRole() {

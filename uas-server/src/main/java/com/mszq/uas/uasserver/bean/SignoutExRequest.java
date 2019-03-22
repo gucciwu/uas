@@ -1,6 +1,6 @@
 package com.mszq.uas.uasserver.bean;
 
-public class SignoutExRequest extends com.mszq.uas.uasserver.bean.Request {
+public class SignoutExRequest extends Request {
     private String sessionId;
 
     public String getSessionId() {
