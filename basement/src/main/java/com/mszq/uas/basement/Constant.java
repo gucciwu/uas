@@ -127,6 +127,20 @@ public class Constant {
     }
 
     /**
+     * 角色状态
+     */
+    public class ROLE_STATUS {
+        /**
+         * 正常
+         */
+        public static final short OK = 0;
+        /**
+         * 注销
+         */
+        public static final short UNSIGNED = 1;
+    }
+
+    /**
      * 组织架构类型
      */
     public class ORG_TYPE {
