@@ -101,6 +101,7 @@ public class DataSyncControllerService {
                 Password password = new Password();
                 password.setPassword(MD5Utils.parseStrToMd5L32(initPassword));
                 password.setUserId(user.getId());
+                password.setModifyTime(new Date());
                 passwordMapper.insert(password);
             }
         }else{
