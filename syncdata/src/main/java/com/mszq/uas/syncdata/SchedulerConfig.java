@@ -69,28 +69,28 @@ public class SchedulerConfig {
         return factoryBean;
     }
 
-//    @Bean
-//    public CronTriggerFactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
-//                                                     @Value("${syncHrDataJob.cronExpression}") String cronExpression) {
-//        logger.info("Synchronize organization job.");
-//        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
-//        factoryBean.setJobDetail(jobDetail);
-//        factoryBean.setStartDelay(0L);
-//        factoryBean.setCronExpression(cronExpression);
-//        return factoryBean;
-//    }
-
     @Bean
-    public SimpleTriggerFactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
-                                                         @Value("${syncHrDataJob.cronExpression}") String cronExpression) {
+    public CronTriggerFactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
+                                                     @Value("${syncHrDataJob.cronExpression}") String cronExpression) {
         logger.info("Synchronize organization job.");
-        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
         factoryBean.setJobDetail(jobDetail);
         factoryBean.setStartDelay(0L);
-        factoryBean.setRepeatCount(0);
-        factoryBean.setRepeatInterval(5000);
+        factoryBean.setCronExpression(cronExpression);
         return factoryBean;
     }
+
+//    @Bean
+//    public SimpleTriggerFactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
+//                                                         @Value("${syncHrDataJob.cronExpression}") String cronExpression) {
+//        logger.info("Synchronize organization job.");
+//        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+//        factoryBean.setJobDetail(jobDetail);
+//        factoryBean.setStartDelay(0L);
+//        factoryBean.setRepeatCount(0);
+//        factoryBean.setRepeatInterval(5000);
+//        return factoryBean;
+//    }
 
     @Bean
     public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, Trigger passwordChangeCatcherJobTrigger)
