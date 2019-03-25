@@ -12,7 +12,7 @@ create table UAS_USER
   NAME             VARCHAR(120),
   ORG_ID           BIGINT not null,
   ORG_TYPE         SMALLINT NULL DEFAULT 1,
-  TEL              VARCHAR(20),
+  TEL              VARCHAR(40),
   MOBILE           VARCHAR(15),
   EMAIL            VARCHAR(50),
   LOGIN_COUNT       INT default 0,

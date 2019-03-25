@@ -81,6 +81,18 @@ public class PermissionControllerService {
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
         AddRoleResponse response = new AddRoleResponse();
+
+        RoleExample re = new RoleExample();
+        re.createCriteria().andRoleCodeEqualTo(request.getRole().getRoleCode())
+                .andOrgIdEqualTo(request.getRole().getOrgId()==null?0:request.getRole().getOrgId())
+                .andOrgTypeEqualTo(request.getRole().getOrgType()==null?0:request.getRole().getOrgType());
+        List<Role> isRoleExist = roleMapper.selectByExample(re);
+        if(isRoleExist != null && isRoleExist.size() > 0){
+            response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
+            response.setMsg("角色以存在，创建失败");
+            return response;
+        }
+
         request.getRole().setModifyTime(new Date());
         request.getRole().setStatus(Constant.ROLE_STATUS.OK);
         int ret = roleMapper.insert(request.getRole());
@@ -88,6 +100,20 @@ public class PermissionControllerService {
             response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
             response.setMsg("插入失败");
         }else{
+            Set<Long> appIds = findAllAppIdsOfRole(request.getRole().getId());
+            for(Long appId:appIds){
+                RoleApp r = new RoleApp();
+                r.setAppId(appId);
+                r.setRoleId(request.getRole().getId());
+
+                ret = roleAppMapper.insert(r);
+                if(ret == 0) {
+                    response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
+                    response.setMsg("插入角色的应用失败");
+                    return response;
+                }
+            }
+
             response.setRoleId(request.getRole().getId());
             response.setCode(CODE.SUCCESS);
             response.setMsg("成功");
@@ -100,7 +126,6 @@ public class PermissionControllerService {
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
 
         DelRoleResponse response = new DelRoleResponse();
-
         Role role = roleMapper.selectByPrimaryKey(request.getRoleId());
         if(role == null){
             response.setCode(CODE.BIZ.NOT_EXIST_RECORD);
@@ -115,6 +140,27 @@ public class PermissionControllerService {
             response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);
             response.setMsg("删除失败");
         }else{
+            //需要删除角色分配的应用，需要区分给该角色单独分配的应用以及该角色继承的父角色分配的应用
+            Set<Long> roleAppsOfthisRole = findAllAppIdsOfRole(role.getId());
+            Set<Long> roleAppsOfParentRole = findAllAppIdsOfRole(role.getParentId());
+
+            //如果待删除角色分配的应用不在继承的父角色范围内，则删除
+            for(Long appId:roleAppsOfthisRole){
+                if(!roleAppsOfParentRole.contains(appId)){
+                    RoleAppExample rae = new RoleAppExample();
+                    rae.createCriteria().andRoleIdEqualTo(request.getRoleId()).andAppIdEqualTo(appId);
+                    List<RoleApp> list = roleAppMapper.selectByExample(rae);
+                    for(RoleApp rr:list) {
+                        int returnCode = roleAppMapper.deleteByPrimaryKey(rr.getId());
+                        if (returnCode == 0) {
+                            response.setCode(CODE.BIZ.FAIL_DELETE_SQL);
+                            response.setMsg("删除角色分配的应用失败");
+                            return response;
+                        }
+                    }
+                }
+            }
+
             response.setCode(CODE.SUCCESS);
             response.setMsg("成功");
         }
@@ -159,11 +205,50 @@ public class PermissionControllerService {
         return response;
 
     }
+
+    private Set<Long> findAllAppIdsOfRole(long roleId){
+        List<Long> ids = findAllParentRoleIds(roleId);
+        ids.add(roleId);
+
+        RoleAppExample rae = new RoleAppExample();
+        rae.createCriteria().andRoleIdIn(ids);
+        List<RoleApp> list = roleAppMapper.selectByExample(rae);
+
+        Set<Long> appIds = new HashSet<Long>();
+        for(RoleApp ra:list)
+            appIds.add(ra.getAppId());
+
+        return appIds;
+    }
+
+    private List<Long> findAllParentRoleIds(long roleId){
+        List<Long> ids = new ArrayList<Long>();
+        Role role = roleMapper.selectByPrimaryKey(roleId);
+
+        if(role == null){
+            return ids;
+        }else{
+            ids.add(role.getId());
+            if(role.getParentId() != null && role.getParentId() != 0) {
+                return findAllParentRoleIds(role.getParentId());
+            }else{
+                return ids;
+            }
+        }
+    }
+
     @Transactional
     public ModifyRoleResponse modifyRole(ModifyRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
         ModifyRoleResponse response = new ModifyRoleResponse();
+
+        Role role = roleMapper.selectByPrimaryKey(request.getRole().getId());
+        if(role == null){
+            response.setCode(CODE.BIZ.NOT_EXIST_RECORD);
+            response.setMsg("角色不存在，更新失败");
+            return response;
+        }
 
         RoleExample re = new RoleExample();
         re.createCriteria().andIdEqualTo(request.getRole().getId());
@@ -173,6 +258,42 @@ public class PermissionControllerService {
             response.setCode(CODE.BIZ.FAIL_UPDATE_SQL);
             response.setMsg("更新失败");
         }else{
+            //如果角色更新了父角色，则需要调整其所有分配的应用
+            if(request.getRole().getParentId() != null && request.getRole().getParentId() != 0){
+                if(role.getParentId() != request.getRole().getParentId()){
+                    //需要将重新分配所有的父角色所拥有的应用
+                    //老的父角色所拥有的应用列表
+                    Set<Long> roleAppIdsOfOldParentRole = findAllAppIdsOfRole(role.getParentId());
+                    for(Long appId:roleAppIdsOfOldParentRole){
+                        RoleAppExample rae = new RoleAppExample();
+                        rae.createCriteria().andRoleIdEqualTo(role.getId()).andAppIdEqualTo(appId);
+                        List<RoleApp> list = roleAppMapper.selectByExample(rae);
+                        for(RoleApp rr:list){
+                            ret = roleAppMapper.deleteByPrimaryKey(rr.getId());
+                            if(ret == 0) {
+                                response.setCode(CODE.BIZ.FAIL_DELETE_SQL);
+                                response.setMsg("删除原有父角色的应用失败");
+                                return response;
+                            }
+                        }
+                    }
+                    //新的父角色所拥有的应用列表
+                    Set<Long> roleAppIdsOfNewParentRole = findAllAppIdsOfRole(request.getRole().getParentId());
+                    for(Long appId:roleAppIdsOfNewParentRole){
+                        RoleApp r = new RoleApp();
+                        r.setAppId(appId);
+                        r.setRoleId(request.getRole().getId());
+
+                        ret = roleAppMapper.insert(r);
+                        if(ret == 0) {
+                            response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
+                            response.setMsg("插入角色的应用失败");
+                            return response;
+                        }
+                    }
+                }
+            }
+
             response.setCode(CODE.SUCCESS);
             response.setMsg("成功");
         }
