@@ -90,6 +90,27 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>2.6</version>
+                <executions>
+                    <execution>
+                        <id>make-runtime-environment</id>
+                        <!-- 绑定到package生命周期阶段上 -->
+                        <phase>package</phase>
+                        <goals>
+                            <!-- 绑定到package生命周期阶段上 -->
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>syncdata</finalName>
+                            <descriptors> <!--描述文件路径-->
+                                <descriptor>src/main/resources/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 

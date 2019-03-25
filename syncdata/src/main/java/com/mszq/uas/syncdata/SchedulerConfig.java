@@ -7,6 +7,7 @@ import org.quartz.Trigger;
 import org.quartz.spi.JobFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.PropertiesFactoryBean;
@@ -69,47 +70,59 @@ public class SchedulerConfig {
         return factoryBean;
     }
 
-    @Bean
-    public CronTriggerFactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
-                                                     @Value("${syncHrDataJob.cronExpression}") String cronExpression) {
-        logger.info("Synchronize organization job.");
-        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
-        factoryBean.setJobDetail(jobDetail);
-        factoryBean.setStartDelay(0L);
-        factoryBean.setCronExpression(cronExpression);
-        return factoryBean;
-    }
-
 //    @Bean
-//    public SimpleTriggerFactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
-//                                                         @Value("${syncHrDataJob.cronExpression}") String cronExpression) {
+//    public CronTriggerFactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
+//                                                     @Value("${syncHrDataJob.cronExpression}") String cronExpression) {
 //        logger.info("Synchronize organization job.");
-//        SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+//        CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
 //        factoryBean.setJobDetail(jobDetail);
 //        factoryBean.setStartDelay(0L);
-//        factoryBean.setRepeatCount(0);
-//        factoryBean.setRepeatInterval(5000);
+//        factoryBean.setCronExpression(cronExpression);
 //        return factoryBean;
 //    }
 
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, Trigger passwordChangeCatcherJobTrigger)
+    public FactoryBean syncHrDataJobTrigger(@Qualifier("syncHrDataJobDetail") JobDetail jobDetail,
+                                            @Value("${syncHrDataJob.cronExpression}") String cronExpression, @Value("${syncHrDataJob.interval}") long millionSecond) {
+        logger.info("Synchronize organization job.");
+        if(cronExpression != null && !cronExpression.isEmpty()){
+            CronTriggerFactoryBean factoryBean = new CronTriggerFactoryBean();
+            factoryBean.setJobDetail(jobDetail);
+            factoryBean.setStartDelay(0L);
+            factoryBean.setCronExpression(cronExpression);
+            return factoryBean;
+        }else{
+            SimpleTriggerFactoryBean factoryBean = new SimpleTriggerFactoryBean();
+            factoryBean.setJobDetail(jobDetail);
+            factoryBean.setStartDelay(0L);
+            factoryBean.setRepeatCount(0);
+            factoryBean.setRepeatInterval(5000);
+            return factoryBean;
+        }
+    }
+
+    @Bean
+    public SchedulerFactoryBean schedulerFactoryBean(JobFactory jobFactory, Trigger passwordChangeCatcherJobTrigger, @Value("${sync.sync-oa-password}") boolean needSync)
             throws IOException {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setJobFactory(jobFactory);
         factory.setQuartzProperties(quartzProperties());
-        factory.setTriggers(passwordChangeCatcherJobTrigger);
+        if(needSync) {
+            factory.setTriggers(passwordChangeCatcherJobTrigger);
+        }
         logger.info("Start job scheduler");
         return factory;
     }
 
     @Bean
-    public SchedulerFactoryBean schedulerFactoryBean1(JobFactory jobFactory, Trigger syncHrDataJobTrigger)
+    public SchedulerFactoryBean schedulerFactoryBean1(JobFactory jobFactory, Trigger syncHrDataJobTrigger, @Value("${sync.sync-hr-data}") boolean needSync)
             throws IOException {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
         factory.setJobFactory(jobFactory);
         factory.setQuartzProperties(quartzProperties());
-        factory.setTriggers(syncHrDataJobTrigger);
+        if(needSync) {
+            factory.setTriggers(syncHrDataJobTrigger);
+        }
         logger.info("Start job scheduler");
         return factory;
     }
