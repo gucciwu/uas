@@ -515,6 +515,9 @@ public class DataSyncControllerService {
         if(request.getUserId() != 0)
             c.andIdEqualTo(request.getUserId());
 
+        if(request.getStatus() != 0)
+            c.andStatusEqualTo(request.getStatus());
+
         if(request.getJobNumber() != null && !"".equals(request.getJobNumber()))
             c.andJobNumberEqualTo(request.getJobNumber());
 
@@ -724,10 +727,14 @@ public class DataSyncControllerService {
         response.setMsg("成功");
         return response;
     }
-    public GetOrgsResponse getOrgs(GetOrgsExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+    public GetOrgsResponse getOrgs(GetOrgsExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException, ParseException {
 
         ipBlackCheckService.isBlackList(httpRequest);
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
+
+        if(request.getPageSize() != 0){
+            PageHelper.startPage(request.getPageNum(), request.getPageSize());
+        }
 
         GetOrgsResponse response = new GetOrgsResponse();
 
@@ -751,10 +758,37 @@ public class DataSyncControllerService {
         if(request.getStatus() != 0)
             c.andStatusEqualTo((short)request.getStatus());
 
+        if(request.getEndUpdateTime() != null && !"".equals(request.getEndUpdateTime()))
+            c.andModifyTimeLessThanOrEqualTo(dateFormat.parse(request.getEndUpdateTime()));
+
+        if(request.getStartUpdateTime() != null && !"".equals(request.getStartUpdateTime()))
+            c.andModifyTimeGreaterThanOrEqualTo(dateFormat.parse(request.getStartUpdateTime()));
+
         List<Org> orgList = orgMapper.selectByExample(oe);
-        response.setData(orgList);
-        response.setCode(CODE.SUCCESS);
-        response.setMsg("成功");
+        if(request.getPageSize() != 0) {
+            PageInfo<Org> pageInfo = new PageInfo<Org>(orgList);
+
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("成功");
+
+            response.setData(pageInfo.getList());
+            response.setPageNum(pageInfo.getPageNum());
+            response.setPageSize(pageInfo.getPageSize());
+            response.setPages(pageInfo.getPages());
+            response.setTotal(pageInfo.getTotal());
+        }else {
+            response.setData(orgList);
+            response.setPageNum(0);
+            response.setPageSize(orgList.size());
+            response.setPages(1);
+            response.setTotal((long)orgList.size());
+            response.setCode(CODE.SUCCESS);
+            response.setMsg("成功");
+        }
+
+
+
+
         return response;
     }
     @Transactional

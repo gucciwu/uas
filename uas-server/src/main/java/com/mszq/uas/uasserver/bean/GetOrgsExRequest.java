@@ -8,6 +8,42 @@ public class GetOrgsExRequest extends ExRequest {
     private long orgId;
     private int status;
     private long parentOrgId;
+    private int pageNum;
+    private int pageSize;
+    private String startUpdateTime;
+    private String endUpdateTime;
+
+    public int getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(int pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public int getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(int pageSize) {
+        this.pageSize = pageSize;
+    }
+
+    public String getStartUpdateTime() {
+        return startUpdateTime;
+    }
+
+    public void setStartUpdateTime(String startUpdateTime) {
+        this.startUpdateTime = startUpdateTime;
+    }
+
+    public String getEndUpdateTime() {
+        return endUpdateTime;
+    }
+
+    public void setEndUpdateTime(String endUpdateTime) {
+        this.endUpdateTime = endUpdateTime;
+    }
 
     public int getGrade() {
         return grade;

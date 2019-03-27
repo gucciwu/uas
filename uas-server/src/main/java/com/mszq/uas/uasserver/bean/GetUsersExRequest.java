@@ -7,11 +7,20 @@ public class GetUsersExRequest extends ExRequest {
     private short orgType;
     private long orgId;
     private long userId;
+    private Short status;
     private String jobNumber;
     private String idNumber;
     private Short idType;
     private int pageNum;
     private int pageSize;
+
+    public Short getStatus() {
+        return status;
+    }
+
+    public void setStatus(Short status) {
+        this.status = status;
+    }
 
     public int getPageNum() {
         return pageNum;

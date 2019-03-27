@@ -124,7 +124,7 @@ public class DataSyncController {
     @ApiOperation(value="查询组织机构信息", notes="条件查询组织机构信息，未实现分页功能")
     @RequestMapping(value="/datasync/get_orgs",method = RequestMethod.POST)
     public @ResponseBody
-    GetOrgsResponse getOrgs(@RequestBody GetOrgsExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException {
+    GetOrgsResponse getOrgs(@RequestBody GetOrgsExRequest request, HttpServletRequest httpRequest) throws AppSecretMatchException, IpForbbidenException, ParseException {
         return service.getOrgs(request,httpRequest);
     }
     @ApiOperation(value="添加组织机构分类", notes="组织机构分类的目的是为了应对不同应用系统中存在不同结构的组织机构，默认情况下组织机构应该完全依据HR系统的组织机构")
