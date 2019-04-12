@@ -347,6 +347,18 @@ public class SyncHrDataJob implements Job {
                         }
                         long userId = updateUserResponse.getLong("userId");
 
+                        //添加员工角色（每个正式员工都必须添加）
+                        JSONObject addEmployeeRoleReq = new JSONObject();
+                        addEmployeeRoleReq.put("_appId",uasAppId);
+                        addEmployeeRoleReq.put("_secret",uasSecret);
+                        addEmployeeRoleReq.put("autoAddAccount", true);
+                        addEmployeeRoleReq.put("roleId", employeeRoleId);
+                        addEmployeeRoleReq.put("userId", userId);
+                        JSONObject addEmployeeRoleResponse = post(uasApiUrl + "/permission/add_role_to_user", addEmployeeRoleReq);
+                        if(addEmployeeRoleResponse.getInteger("code") != CODE.SUCCESS){
+                            logger.error(addEmployeeRoleResponse.getString("msg"));
+                        }
+
                         //添加主岗角色
                         //查找角色是否存在
                         JSONObject findMainRoleReq = new JSONObject();
