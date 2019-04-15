@@ -4,6 +4,7 @@ import com.mszq.uas.uasserver.dao.model.RoleApp;
 import com.mszq.uas.uasserver.dao.model.RoleAppExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -95,4 +96,19 @@ public interface RoleAppMapper {
      * @mbg.generated Wed Nov 28 15:48:47 CST 2018
      */
     int updateByPrimaryKey(RoleApp record);
+
+    @Select({
+            "<script>",
+            "select",
+            "distinct app_id",
+            "from uas_role_app",
+            "where role_id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"})
+    List<Long> findAllRoleAppByRoleIds(@Param("ids") List<Long> ids);
+
+    @Select("INSERT INTO UAS_ROLE_APP (ROLE_ID,APP_ID) VALUES (#{roleId}, #{appId})")
+    void insertAppToRole(@Param("roleId") long roleId, @Param("appId") long appId);
 }

@@ -3,6 +3,7 @@ package com.mszq.uas.uasserver.aspect;
 import com.mszq.uas.basement.CODE;
 import com.mszq.uas.uasserver.exception.AppSecretMatchException;
 import com.mszq.uas.uasserver.exception.IpForbbidenException;
+import com.mszq.uas.uasserver.exception.OperationFailureException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -25,6 +26,14 @@ public class ControllerExceptionAdvice {
         com.mszq.uas.uasserver.bean.Response result = new com.mszq.uas.uasserver.bean.Response();
         result.setCode(CODE.BIZ.ILLEGAL_REMOTE_IP);
         result.setMsg("IP请求不合法，请检查IP黑名单");
+        return result;
+    }
+
+    @ExceptionHandler(OperationFailureException.class)
+    public @ResponseBody com.mszq.uas.uasserver.bean.Response handleOperationFailureException(OperationFailureException ex) {
+        com.mszq.uas.uasserver.bean.Response result = new com.mszq.uas.uasserver.bean.Response();
+        result.setCode(ex.getResponse().getCode());
+        result.setMsg(ex.getResponse().getMsg());
         return result;
     }
 

@@ -1,9 +1,11 @@
 package com.mszq.uas.uasserver.dao.mapper;
 
+import com.mszq.uas.uasserver.dao.model.Role;
 import com.mszq.uas.uasserver.dao.model.UserRole;
 import com.mszq.uas.uasserver.dao.model.UserRoleExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -95,4 +97,16 @@ public interface UserRoleMapper {
      * @mbg.generated Wed Nov 28 15:48:47 CST 2018
      */
     int updateByPrimaryKey(UserRole record);
+
+    @Select({
+            "<script>",
+            "select",
+            "distinct user_id",
+            "from uas_user_role",
+            "where role_id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"})
+    List<Long> selectUserIdByRoleId(@Param("ids") List<Long> ids);
 }

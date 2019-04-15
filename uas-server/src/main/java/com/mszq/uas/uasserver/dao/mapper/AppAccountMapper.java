@@ -4,6 +4,7 @@ import com.mszq.uas.uasserver.dao.model.AppAccount;
 import com.mszq.uas.uasserver.dao.model.AppAccountExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -95,4 +96,21 @@ public interface AppAccountMapper {
      * @mbg.generated Wed Nov 28 15:48:47 CST 2018
      */
     int updateByPrimaryKey(AppAccount record);
+
+    @Select("INSERT INTO UAS_APP_ACCOUNT (APP_ID, ORG_ID,ORG_TYPE,USER_ID,JOB_NUMBER,ACCOUNT) " +
+            "SELECT #{appId}, ORG_ID, ORG_TYPE, ID, JOB_NUMBER, JOB_NUMBER FROM UAS_USER WHERE ID = #{userId}")
+    void insertAppAccount(@Param("appId") Long appId, @Param("userId") long userId);
+
+
+    @Select({"<script>",
+            "delete",
+            "from uas_app_account",
+            "where app_id = #{appId}",
+            "and user_id in",
+            "<foreach collection='ids' item='id' open='(' separator=',' close=')'>",
+            "#{id}",
+            "</foreach>",
+            "</script>"})
+    void removeAppAccountByUserId(@Param("ids") List<Long> ids, @Param("appId") long appId);
+
 }

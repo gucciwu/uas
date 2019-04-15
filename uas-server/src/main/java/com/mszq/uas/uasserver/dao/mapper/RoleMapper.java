@@ -4,6 +4,7 @@ import com.mszq.uas.uasserver.dao.model.Role;
 import com.mszq.uas.uasserver.dao.model.RoleExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -95,4 +96,13 @@ public interface RoleMapper {
      * @mbg.generated Fri Mar 22 13:43:44 CST 2019
      */
     int updateByPrimaryKey(Role record);
+
+    @Select("SELECT * FROM UAS_ROLE WHERE FIND_IN_SET(ID, getChildList(#{roleId}))")
+    List<Role> selectAllChildrenRole(@Param("roleId") Long roleId);
+
+    @Select("SELECT * FROM UAS_ROLE WHERE FIND_IN_SET(ID, getParentList(#{roleId}))")
+    List<Role> selectAllParentRole(@Param("roleId") Long roleId);
+
+    @Select("SELECT ID FROM UAS_ROLE WHERE FIND_IN_SET(ID, getParentList(#{roleId}))")
+    List<Long> selectAllParentRoleIds(@Param("roleId") Long roleId);
 }

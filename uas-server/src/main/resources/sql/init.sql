@@ -181,7 +181,50 @@ create table UAS_ORG_TYPE
 );
 
 ---------------------------------------------------------------------------------------
--- Initialize date
+-- 构造获取某个父节点下面的所有子节点的函数
+DROP FUNCTION IF EXISTS getChildList;
+CREATE FUNCTION getChildList(roleId INT)
+RETURNS VARCHAR(4000)
+BEGIN
+DECLARE sTemp  VARCHAR(4000);
+DECLARE sTempChd VARCHAR(4000);
+
+SET sTemp ='$';
+SET sTempChd = CAST(roleId AS CHAR);
+
+WHILE sTempChd IS NOT NULL DO
+SET sTemp= CONCAT(sTemp,',',sTempChd);
+SELECT GROUP_CONCAT(id) INTO sTempChd FROM uas_role WHERE FIND_IN_SET(PARENT_ID,sTempChd)>0;
+END WHILE;
+RETURN sTemp;
+END;
+
+---------------------------------------------------------------------------------------
+-- 构造获取子节点上的所有父节点函数
+CREATE FUNCTION `getParList`(rootId INT)
+RETURNS varchar(1000)
+BEGIN
+    DECLARE sTemp VARCHAR(1000);
+    DECLARE sTempPar VARCHAR(1000);
+    SET sTemp = '';
+    SET sTempPar =rootId;
+
+    #循环递归
+    WHILE sTempPar is not null DO
+        #判断是否是第一个，不加的话第一个会为空
+        IF sTemp != '' THEN
+            SET sTemp = concat(sTemp,',',sTempPar);
+        ELSE
+            SET sTemp = sTempPar;
+        END IF;
+        SET sTemp = concat(sTemp,',',sTempPar);
+        SELECT group_concat(pid) INTO sTempPar FROM treenodes where pid<>id and FIND_IN_SET(id,sTempPar)>0;
+    END WHILE;
+
+RETURN sTemp;
+
+---------------------------------------------------------------------------------------
+-- 初始化数据
 INSERT INTO UAS_APP(NAME,SECRET,ORG_TYPE,PATH,COMMENT) VALUE ('统一认证系统','sso.mszq.com',1,'','');
 INSERT INTO UAS_ROLE_TYPE(NAME,COMMENT) VALUE ('公司岗位','公司岗位');
 INSERT INTO UAS_ROLE(ROLE_NAME, STATUS, ROLE_TYPE_ID, COMMENT) SELECT '员工',0, ID,'' FROM UAS_ROLE_TYPE WHERE NAME='公司岗位' LIMIT 1,1;
