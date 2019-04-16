@@ -18,6 +18,10 @@ public class LastSyncRemarkService {
 
     private Date lastSyncDate = null;
 
+    public String getLastSyncDateStr(){
+        return df.format(getLastSyncDate());
+    }
+
     public Date getLastSyncDate() {
 
         if(lastSyncDate == null) {

@@ -4,5 +4,8 @@
     <facet type="Spring" name="Spring">
       <configuration />
     </facet>
+    <facet type="WebServicesClient" name="WebServices Client">
+      <configuration ws.engine="Glassfish / JAX-WS 2.2 RI / Metro 1.X / JWSDP 2.2" />
+    </facet>
   </component>
 </module>
