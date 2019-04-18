@@ -209,6 +209,7 @@ public class PermissionControllerService {
         }
         return response;
     }
+
     public GetRoleResponse getRoles(GetRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
 
         ipBlackCheckService.isBlackList(httpRequest);
@@ -488,7 +489,7 @@ public class PermissionControllerService {
         RoleAppExample.Criteria c = rae.createCriteria();
         if(request.getRoleAppId() != 0){
             c.andIdEqualTo(request.getRoleAppId());
-        }if(request.getAppId() != 0 && request.getRoleId() != 0){
+        }else if(request.getAppId() != 0 && request.getRoleId() != 0){
             c.andAppIdEqualTo(request.getAppId()).andRoleIdEqualTo(request.getRoleId());
         }else{
             response.setCode(CODE.BIZ.NOT_QUERY_CONDITION);
