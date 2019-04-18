@@ -2,7 +2,7 @@ package com.mszq.uas.uasserver.exception;
 
 import com.mszq.uas.uasserver.bean.Response;
 
-public class OperationFailureException extends Exception {
+public class OperationFailureException extends RuntimeException {
 
     private Response response;
 

@@ -77,6 +77,38 @@ public class PermissionControllerService {
         }
         return response;
     }
+
+    public GetRoleAppsResponse getRoleApps(GetRoleAppsRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
+        ipBlackCheckService.isBlackList(httpRequest);
+        appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
+        GetRoleAppsResponse response = new GetRoleAppsResponse();
+
+        response.setCode(CODE.SUCCESS);
+        response.setMsg("成功");
+        response.setData(getRoleAllApps(request.getRoleId()));
+        return response;
+    }
+
+    private List<App> getRoleAllApps(Long roleId){
+        List<Long> roleIds = roleMapper.selectAllParentRoleIds(roleId);
+        if(roleIds.size() == 0){
+            roleIds.add(0L);
+        }
+        List<Long> appIds = roleAppMapper.findAllRoleAppByRoleIds(roleIds);
+
+        List<App> apps = appMapper.selectAll();
+        List<App> roleApps = new ArrayList<App>();
+        for(Long id:appIds){
+            for(App app:apps){
+                if(app.getId() == id) {
+                    roleApps.add(app);
+                    break;
+                }
+            }
+        }
+        return roleApps;
+    }
+
     @Transactional
     public AddRoleResponse addRole(AddRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException, OperationFailureException {
 
@@ -250,47 +282,6 @@ public class PermissionControllerService {
 
     }
 
-//    /**
-//     * 根据角色ID找到该角色分配的所有应用ID
-//     * @param roleId
-//     * @return
-//     */
-//    private Set<Long> findAllAppIdsOfRole(long roleId){
-//        List<Long> ids = findAllParentRoleIds(roleId);
-//        ids.add(roleId);
-//
-//        RoleAppExample rae = new RoleAppExample();
-//        rae.createCriteria().andRoleIdIn(ids);
-//        List<RoleApp> list = roleAppMapper.selectByExample(rae);
-//
-//        Set<Long> appIds = new HashSet<Long>();
-//        for(RoleApp ra:list)
-//            appIds.add(ra.getAppId());
-//
-//        return appIds;
-//    }
-//
-//    /**
-//     * 根据角色ID找到该角色所有的父角色ID
-//     * @param roleId
-//     * @return
-//     */
-//    private List<Long> findAllParentRoleIds(long roleId){
-//        List<Long> ids = new ArrayList<Long>();
-//        Role role = roleMapper.selectByPrimaryKey(roleId);
-//
-//        if(role == null){
-//            return ids;
-//        }else{
-//            ids.add(role.getId());
-//            if(role.getParentId() != null && role.getParentId() != 0) {
-//                return findAllParentRoleIds(role.getParentId());
-//            }else{
-//                return ids;
-//            }
-//        }
-//    }
-
     @Transactional
     public ModifyRoleResponse modifyRole(ModifyRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException, OperationFailureException {
         ipBlackCheckService.isBlackList(httpRequest);
@@ -430,13 +421,13 @@ public class PermissionControllerService {
         appSecretVerifyService.verifyAppSecret(request.get_appId(),request.get_secret());
         AddAppToRoleResponse response = new AddAppToRoleResponse();
 
-        RoleAppExample re = new RoleAppExample();
-        re.createCriteria().andIdEqualTo(request.getRoleId()).andAppIdEqualTo(request.getAppId());
-        List<RoleApp> roleApps = roleAppMapper.selectByExample(re);
-        if(roleApps != null && roleApps.size() > 0){
-            response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
-            response.setMsg("该角色已经分配了改应用的访问权限，添加失败");
-            throw new OperationFailureException(response);
+        List<App> haveApps = this.getRoleAllApps(request.getRoleId());
+        for(App a: haveApps){
+            if(a.getId() == request.getAppId()){
+                response.setCode(CODE.BIZ.FAIL_INSERT_SQL);
+                response.setMsg("该角色已经分配了该应用的访问权限，添加失败");
+                return response;
+            }
         }
 
         RoleApp roleApp = new RoleApp();
@@ -466,6 +457,7 @@ public class PermissionControllerService {
             }
         }
         List<Long> roleIds = new ArrayList<Long>();
+        roleIds.add(0L);//to avoid null
         for(Role r:childrenRoles) {
             roleIds.add(r.getId());
         }
@@ -487,42 +479,64 @@ public class PermissionControllerService {
 
         RoleAppExample rae = new RoleAppExample();
         RoleAppExample.Criteria c = rae.createCriteria();
+        Role role = null;
+        Long appId = request.getAppId();
         if(request.getRoleAppId() != 0){
             c.andIdEqualTo(request.getRoleAppId());
-        }else if(request.getAppId() != 0 && request.getRoleId() != 0){
-            c.andAppIdEqualTo(request.getAppId()).andRoleIdEqualTo(request.getRoleId());
+            RoleApp roleApp = roleAppMapper.selectByPrimaryKey(request.getRoleAppId());
+            if(roleApp == null){
+                response.setCode(CODE.BIZ.NOT_EXIST_RECORD);
+                response.setMsg("找不到角色");
+                return response;
+            }
+            appId = roleApp.getAppId();
+            role = roleMapper.selectByPrimaryKey(roleApp.getRoleId());
         }else{
-            response.setCode(CODE.BIZ.NOT_QUERY_CONDITION);
-            response.setMsg("条件不足");
-            throw new OperationFailureException(response);
+            c.andRoleIdEqualTo(request.getRoleId()).andAppIdEqualTo(request.getAppId());
+            role = roleMapper.selectByPrimaryKey((request.getRoleId()));
         }
 
-        int ret = roleAppMapper.deleteByExample(rae);
-        if(ret == 0){
-            response.setCode(CODE.BIZ.FAIL_DELETE_SQL);
-            response.setMsg("删除失败");
-            throw new OperationFailureException(response);
-        }else{
-            List<Role> childrenRoles = roleMapper.selectAllChildrenRole(request.getRoleId());
-            for(Role r:childrenRoles){
-                if(r.getId().longValue() == request.getRoleId())
+        if(role == null){
+            response.setCode(CODE.BIZ.NOT_EXIST_RECORD);
+            response.setMsg("找不到角色");
+            return response;
+        }
+
+        //父角色所拥有的应用列表
+        List<Long> parentRoleIds = roleMapper.selectAllParentRoleIds(role.getParentId());
+        if(parentRoleIds.size()==0){
+            parentRoleIds.add(0L);
+        }
+        List<Long> parentAppIds = roleAppMapper.findAllRoleAppByRoleIds(parentRoleIds);
+
+        boolean isParentApp = false;
+        for(Long id : parentAppIds){
+            if(id == appId){
+                isParentApp = true;
+                break;
+            }
+        }
+        if(!isParentApp) {
+            //只有当父角色不拥有改应用时才删除该记录
+            roleAppMapper.deleteByExample(rae);
+            List<Role> childrenRoles = roleMapper.selectAllChildrenRole(role.getId());
+            for (Role r : childrenRoles) {
+                if (r.getId().longValue() == request.getRoleId())
                     continue;
 
                 RoleAppExample eae = new RoleAppExample();
-                eae.createCriteria().andRoleIdEqualTo(r.getId()).andAppIdEqualTo(request.getAppId());
-                if(roleAppMapper.deleteByExample(eae) == 0){
-                    response.setCode(CODE.BIZ.FAIL_DELETE_SQL);
-                    response.setMsg("删除子角色的应用失败");
-                    throw new OperationFailureException(response);
-                }
+                eae.createCriteria().andRoleIdEqualTo(r.getId()).andAppIdEqualTo(appId);
+                roleAppMapper.deleteByExample(eae);
             }
 
             List<Long> roleIds = new ArrayList<Long>();
-            for(Role r:childrenRoles) {
+            roleIds.add(0L);//to avoid null.
+            for (Role r : childrenRoles) {
                 roleIds.add(r.getId());
             }
             List<Long> relativedUserIds = userRoleMapper.selectUserIdByRoleId(roleIds);
-            appAccountMapper.removeAppAccountByUserId(relativedUserIds,request.getAppId());
+            relativedUserIds.add(0L);//to avoid
+            appAccountMapper.removeAppAccountByUserId(relativedUserIds, appId);
         }
 
         response.setCode(CODE.SUCCESS);

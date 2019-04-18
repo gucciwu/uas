@@ -67,6 +67,12 @@ public class PermissionController {
     DelAppToRoleResponse delAppToRole(@RequestBody DelAppToRoleExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException, OperationFailureException {
         return service.delAppToRole(request,httpRequest);
     }
+    @ApiOperation(value="查询角色拥有的应用访问权限", notes="")
+    @RequestMapping(value="/permission/get_role_apps",method = RequestMethod.POST)
+    public @ResponseBody
+    GetRoleAppsResponse getRoleApps(@RequestBody GetRoleAppsRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException {
+        return service.getRoleApps(request,httpRequest);
+    }
     @ApiOperation(value="为用户分配角色", notes="用户分配角色后才能够访问该角色下的应用。该接口在分配和可以通过autoAddAccount参数自动为用户添加相应应用系统的账户ID（规则为：ID=工号）。")
     @RequestMapping(value="/permission/add_role_to_user",method = RequestMethod.POST)
     public @ResponseBody
