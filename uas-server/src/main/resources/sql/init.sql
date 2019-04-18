@@ -201,27 +201,26 @@ END;
 
 ---------------------------------------------------------------------------------------
 -- 构造获取子节点上的所有父节点函数
-CREATE FUNCTION `getParList`(rootId INT)
-RETURNS varchar(1000)
+DROP FUNCTION IF EXISTS getParentList;
+CREATE FUNCTION `getParentList`(rootId INT)
+RETURNS varchar(4000)
 BEGIN
-    DECLARE sTemp VARCHAR(1000);
-    DECLARE sTempPar VARCHAR(1000);
+    DECLARE sTemp VARCHAR(4000);
+    DECLARE sTempPar VARCHAR(4000);
     SET sTemp = '';
     SET sTempPar =rootId;
 
-    #循环递归
     WHILE sTempPar is not null DO
-        #判断是否是第一个，不加的话第一个会为空
         IF sTemp != '' THEN
             SET sTemp = concat(sTemp,',',sTempPar);
         ELSE
             SET sTemp = sTempPar;
         END IF;
         SET sTemp = concat(sTemp,',',sTempPar);
-        SELECT group_concat(pid) INTO sTempPar FROM treenodes where pid<>id and FIND_IN_SET(id,sTempPar)>0;
+        SELECT group_concat(parent_id) INTO sTempPar FROM uas_role where parent_id<>id and FIND_IN_SET(id,sTempPar)>0;
     END WHILE;
-
 RETURN sTemp;
+END;
 
 ---------------------------------------------------------------------------------------
 -- 初始化数据
