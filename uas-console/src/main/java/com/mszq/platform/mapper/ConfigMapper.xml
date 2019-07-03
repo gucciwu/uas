@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.config.dao.IConfigDAO">                                                     
+    
+  <select id="queryAll" parameterType="Map" resultType="com.mszq.platform.entity.Config">
+		SELECT
+			id,name,code,value,create_time,update_time
+		FROM
+			pf_sm_config
+			where status=1
+			 <if test="_parameter.containsKey('name')">  AND name = #{name,jdbcType=VARCHAR}</if>
+			 <if test="_parameter.containsKey('code')">  AND code = #{code,jdbcType=VARCHAR}</if>
+  </select>
+  
+  <select id="getConfigByCode" parameterType="String" resultType="com.mszq.platform.entity.Config">
+		SELECT
+			id,name,code,value
+		FROM
+			pf_sm_config
+			where 
+			code=#{code}
+  </select>
+  
+   <select id="getConfigValueByCode" parameterType="String" resultType="String">
+		SELECT
+			value
+		FROM
+			pf_sm_config
+			where 
+			code=#{code}
+  </select>
+ 
+  
+  
+  
+   <insert id="create" parameterType="com.mszq.platform.entity.Config" keyProperty="id" useGeneratedKeys="true">
+  	insert ignore into pf_sm_config(name,code,value,status,create_time,update_time,creator_id)
+  	values (#{name},#{code},#{value},#{status},#{createTime},#{updateTime},#{creatorID})
+  </insert>
+  
+  <update id="update" parameterType="com.mszq.platform.entity.Config" >
+    update pf_sm_config
+    set   name = #{name},
+	      code = #{code},
+	      value = #{value},
+	      update_time = #{updateTime}
+    where id = #{id}
+  </update>
+  <update id="updateValueBycode" parameterType="com.mszq.platform.entity.Config" >
+  	update pf_sm_config
+    set   value = #{value},
+	      update_time = #{updateTime}
+    where code = #{code}
+  </update>
+  
+  <delete id="deleteBatch">
+  	 delete from pf_sm_config where id IN
+     <foreach collection="array" item="id" open="(" close=")" separator=",">
+     	#{id}
+     </foreach>
+  </delete>
+  
+</mapper>

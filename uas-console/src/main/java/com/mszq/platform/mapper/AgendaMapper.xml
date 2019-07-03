@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.agenda.dao.IAgendaDAO">
+  <resultMap id="BaseResultMap" type="com.mszq.platform.entity.Agenda">
+  
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="start" jdbcType="VARCHAR" property="start" />
+    <result column="end" jdbcType="VARCHAR" property="end" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="is_remind" jdbcType="TINYINT" property="isRemind" />
+    <result column="remind_time" jdbcType="VARCHAR" property="remindTime" />
+    <result column="creator_id" jdbcType="INTEGER" property="creatorId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="upadte_time" jdbcType="TIMESTAMP" property="upadteTime" />
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, type, title, start, end, status, is_remind, remind_time, creator_id, create_time, upadte_time
+  </sql>
+   <select id="queryUserAll" parameterType="com.mszq.platform.entity.Agenda" resultMap="BaseResultMap">
+    select 
+	    id, type,title, start, end, status, is_remind, remind_time, creator_id, 
+	    create_time, upadte_time
+    from pf_agenda s
+    WHERE  type = 1 or s.creator_id = #{userID,jdbcType=INTEGER}
+  </select>
+   <select id="queryAll" parameterType="com.mszq.platform.entity.Agenda" resultMap="BaseResultMap">
+    select 
+        id, type,title, start, end, status, is_remind, remind_time, creator_id, 
+        create_time, upadte_time
+    from pf_agenda s
+     WHERE 1=1
+  </select>
+    <select id="getAgendaList" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+        id, type,title, start, end, status, is_remind, remind_time, creator_id, 
+        create_time, upadte_time
+    from pf_agenda s
+    WHERE  type = 1
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from pf_agenda
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from pf_agenda
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.Agenda" keyProperty="id" useGeneratedKeys="true">
+    insert into pf_agenda (id, type, title, 
+      start, end, status, 
+      is_remind, remind_time, creator_id, 
+      create_time, upadte_time
+      )
+    values (#{id,jdbcType=BIGINT}, #{type,jdbcType=VARCHAR}, #{title,jdbcType=VARCHAR}, 
+      #{start,jdbcType=VARCHAR}, #{end,jdbcType=VARCHAR}, #{status,jdbcType=CHAR}, 
+      #{isRemind,jdbcType=TINYINT}, #{remindTime,jdbcType=VARCHAR}, #{creatorId,jdbcType=INTEGER}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{upadteTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.Agenda">
+    update pf_agenda
+    <set>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="start != null">
+        start = #{start,jdbcType=VARCHAR},
+      </if>
+      <if test="end != null">
+        end = #{end,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="isRemind != null">
+        is_remind = #{isRemind,jdbcType=VARCHAR},
+      </if>
+      <if test="remindTime != null">
+        remind_time = #{remindTime,jdbcType=VARCHAR},
+      </if>
+      <if test="creatorId != null">
+        creator_id = #{creatorId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="upadteTime != null">
+        upadte_time = #{upadteTime,jdbcType=VARCHAR},
+      </if>
+
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.Agenda">
+    update pf_agenda
+    set type = #{type,jdbcType=VARCHAR},
+      title = #{title,jdbcType=VARCHAR},
+      start = #{start,jdbcType=VARCHAR},
+      end = #{end,jdbcType=VARCHAR},
+      status = #{status,jdbcType=CHAR},
+      is_remind = #{isRemind,jdbcType=VARCHAR},
+      remind_time = #{remindTime,jdbcType=TIMESTAMP},
+      creator_id = #{creatorId,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      upadte_time = #{upadteTime,jdbcType=VARCHAR},
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

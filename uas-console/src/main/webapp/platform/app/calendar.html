@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>日程安排</title>
+    <link rel="stylesheet" href="/platform/static/darkblue/css/base.css" >
+    <link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+     <link href="/platform/css/public.css" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="/platform/css/spectrum.css">
+     <script type="text/javascript" src="/platform/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/js/spectrum.js"></script>
+    <script type='text/javascript' src='/platform/js/docs/toc.js'></script>
+    <script type='text/javascript' src='/platform/js/docs/docs.js'></script>
+    <script type="text/javascript" src="/platform/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/platform/js/base.js"></script>
+    <script src='/platform/js/fullcalendar.min.js'></script>
+</head>
+<body>
+<div class="container" id="catainer-id"> 
+     <div class="container-calendar"><a class='items' href='workbench.html'>首页&nbsp;>&nbsp;</a>日常安排</div>
+      <div id="mycalendar"></div> 
+ </div>     
+     <!-- 增、改的dialog -->
+   <div  id="addCalendarWin" class="easyui-dialog" title="新增日程"  style="height:500px;"
+      data-options="closed:true,modal:true,resizeble:false"  buttons="#dlg-buttons">
+        <div class="easyui-layout" data-options="fit:true,border:false">
+            <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+                <form id="scheduleForm" method="post">
+                  <label class="id-data_label">  <input id="id_data" class="easyui-textbox" type="hidden" type="text" name="id" ></input></label>
+                    <table>
+                      <tbody>                  
+                        <tr class="schedule-tr">
+                            <td class="field-label">日程内容：</td>
+                            <td>
+                                <input class="easyui-textbox" data-options="required:true,multiline:true" type="text" name="title" id="title"  style="height:82px;width:320px;"></input>
+                            </td>
+                        </tr>
+                        <tr class="schedule-tr">
+                            <td class="field-label">开始时间：</td>
+                            <td >
+                                <input class="easyui-datetimebox"  data-options="required:true,showSeconds:false"  type="text" name="start" id="start" style="width:320px;height:35px;line-height:35px;"></input>
+                            </td>
+                        </tr>   
+                        <tr class="schedule-tr">
+                            <td class="field-label">结束时间：</td>
+                            <td >
+                                <input class="easyui-datetimebox" data-options="required:true,showSeconds:false"  type="text"name="end" id="end" style="width:320px;height:35px;line-height:35px;"></input>
+                            </td>
+                        </tr>   
+                   </table>
+                    <div class="color-div">
+                        <label for="type" class="type-form radio-form">
+                                                                    活动性质：
+                            <label><input name="type" type="radio" id="type" value="1"/>公共 </label>
+                            <label><input name="type" type="radio" id="type" value="2"/>私人 </label>
+                       </label>
+                         <label for="type" class="type-form color-form"> 
+                                                                   显示颜色：<input name="status" style="text" id="full" />
+                          </label>
+                    </div>          
+                   <div class="remind-div">
+                        <label for="isRemind" class="type-form isRemind">
+                                                                        提醒设置：
+                            <label><input name="isRemind" type="radio" id="isRemind" value="1"  onclick="checking()"/>是  </label>
+                            <label style="margin-left:12px;"><input name="isRemind" type="radio" id="isRemind" value="2"  onclick="checking()"/>否 </label>
+                       </label> 
+                    <label class="tixingshezhi"> 
+                                            提前<input class="easyui-textbox" type="text" name="advanceTime" id="advanceTime" style="width:60px;margin-right:0;" form="scheduleForm"></input>
+                       <select id="timeType" name="timeType" form="scheduleForm">
+                                        <option value="1" selected="selected">分钟</option>
+                                        <option value="2">小时</option>
+                                        <option value="3">天</option>
+                                        <option value="4">周</option>
+                        </select> 发送提醒      
+                      </label>
+                  </div>
+                 <label for="creatorName" class="type-form creatorName-form">
+                                                      创建人：
+                    <label>&nbsp;<input name="creatorName" type="text" id="creatorName"/></label>                   
+                 </label> 
+                </form>
+            </div>
+           
+        </div>
+            <div id="dlg-buttons"> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="saveSchedule()" data-options="selected:true">保存</a> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="delSchedule()" data-options="selected:true">删除</a> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#addCalendarWin').dialog('close')" iconcls="icon-cancel">取消</a> 
+            </div> 
+        </div> 
+    <script type="text/javascript"> 
+/*     var $ = jQuery.noConflict(); */
+    $(".id-data_label").hide();
+    var url;
+    var eventUrl="/agenda/list";
+    Date.prototype.pattern=function(fmt) {         
+        var o = {         
+        "M+" : this.getMonth()+1, //月份         
+        "d+" : this.getDate(), //日         
+        "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时         
+        "H+" : this.getHours(), //小时         
+        "m+" : this.getMinutes(), //分         
+        "s+" : this.getSeconds(), //秒         
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度         
+        "S" : this.getMilliseconds() //毫秒         
+        };         
+        var week = {         
+        "0" : "/u65e5",         
+        "1" : "/u4e00",         
+        "2" : "/u4e8c",         
+        "3" : "/u4e09",         
+        "4" : "/u56db",         
+        "5" : "/u4e94",         
+        "6" : "/u516d"        
+        };         
+        if(/(y+)/.test(fmt)){         
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));         
+        }         
+        if(/(E+)/.test(fmt)){         
+            fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "/u661f/u671f" : "/u5468") : "")+week[this.getDay()+""]);         
+        }         
+        for(var k in o){         
+            if(new RegExp("("+ k +")").test(fmt)){         
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));         
+            }         
+        }         
+        return fmt;         
+    } 
+
+    function delSchedule(){
+        $('#addCalendarWin').dialog('close');
+        $.ajax({
+            type:"post",
+            dataType:"json",
+            url:urldel,
+            error:function(request) {
+                $.messager.alert("操作提示", "发生异常！", "error"); 
+            },
+            success:function(result) {
+                if (result.status == 1) {
+                    $('#mycalendar').fullCalendar( 'refetchEvents' );
+                    $.messager.alert("操作信息", result.msg,"info");
+                } else {
+                    $.messager.alert("操作信息", result.msg,"error");
+                }
+            }
+        });
+    }
+    function checking(evt){
+         var evt=evt || window.event;   
+         var e =evt.srcElement || evt.target;
+         if(e.value==1){
+            $(".tixingshezhi").show(); 
+            $("#advanceTime").textbox({ required:true });
+             document.getElementsByName("timeType")[0][0].selected=true;
+         }else{
+            $(".tixingshezhi").hide();
+         }
+    }
+
+    function refreshPage(){
+         var events = {
+                   url:  eventUrl,
+                   type: 'POST',
+                  }         
+    $('#mycalendar').fullCalendar( 'removeEventSource', events); 
+      var json_data = $('#searchScheduleForm').serialize();
+      eventUrl="/agenda/list?"+json_data;
+      var events2 = {
+               url:  eventUrl,
+               type: 'POST',
+              }          
+      $('#mycalendar').fullCalendar( 'addEventSource', events2);
+      $('#mycalendar').fullCalendar( 'refetchEvents' );
+    }
+    function  creatSchedule(start, end){
+        $("#addCalendarWin").dialog("open").dialog('setTitle', '新增日程');
+        $("#scheduleForm").form("clear");
+        $(".creatorName-form").css("display","none");
+        var $win = $('#addCalendarWin');      
+        //初始化日期控件 
+       document.getElementsByName("isRemind")[1].checked="checked"; 
+       $(".tixingshezhi").hide(); 
+        document.getElementsByName("type")[1].checked="checked";
+        document.getElementsByName("timeType")[0][0].selected=true;
+        var startTime=start.pattern('yyyy-MM-dd HH:mm');
+        $("#start").datetimebox('setValue',startTime);
+        $("#end").datetimebox('setValue',end.pattern('yyyy-MM-dd HH:mm'));  
+        $("#full").val(document.getElementsByClassName("sp-preview-inner")[0].style.backgroundColor);
+        url= "/agenda/create";
+        } 
+    function editEvent(data){
+        $("#scheduleForm").form("clear"); 
+       //清楚缓存
+       $("#title").textbox('readonly',false);
+       $("#start").datetimebox('readonly',false);
+       $("#end").datetimebox('readonly',false);
+       $("#advanceTime").textbox('readonly',false);
+       $("input[name=type]").attr("disabled", false);
+       $("input[name=isRemind]").attr("disabled", false);
+       $("#timeType").attr("disabled", false);
+       $(".creatorName-form").css("display","block");
+       $("#creatorName").val(data.creatorName);
+       $("#creatorName").attr("readOnly","true");
+       $("#id_data").textbox('setValue',data.id);
+       $("#title").textbox('setValue',data.title);
+       $("#advanceTime").textbox('setValue',data.advanceTime);
+       $("#start").datetimebox('setValue',data.start.pattern('yyyy-MM-dd HH:mm'));
+       $("#end").datetimebox('setValue',data.end.pattern('yyyy-MM-dd HH:mm'));
+       document.getElementsByClassName("sp-preview-inner")[0].style.backgroundColor=data.status;
+       $("#full").val(data.status);
+       if(data.type==1){
+             document.getElementsByName("type")[0].checked="checked";
+       }else{
+          document.getElementsByName("type")[1].checked="checked";
+       }
+        if(data.isRemind==1){
+             document.getElementsByName("isRemind")[0].checked="checked";       
+             objTimeType=document.getElementsByName("timeType")[0];
+             for(i=0;i<objTimeType.length;i++){
+                 if(objTimeType[i].value==data.timeType){ 
+                     objTimeType[i].selected=true;
+                         break;
+                     }
+             }
+             $(".tixingshezhi").show(); 
+        }else{
+             document.getElementsByName("isRemind")[1].checked="checked"; 
+             $(".tixingshezhi").hide(); 
+        }
+        if(data.creatorId==-768){
+            $("#title").textbox('readonly',true);
+            $(".sp-preview-inner").click(function(){return false;});
+            $(".sp-dd").click(function(){return false;});
+            $("#start").datetimebox('readonly',true);
+            $("#end").datetimebox('readonly',true);
+            $("#advanceTime").textbox('readonly',true);
+            $("input[name=type]").attr("disabled", true);
+            $("input[name=isRemind]").attr("disabled", true);
+            $("#timeType").attr("disabled", true);
+      }
+        $("#addCalendarWin").dialog("open").dialog('setTitle', '修改日程');
+         url= "/agenda/update";
+         urldel="/agenda/delete?id="+data.id;
+    }
+    function saveSchedule(){
+        $("#scheduleForm").form("submit", {
+            url: url,
+            onSubmit: function () {
+                return $(this).form("validate");
+            },
+            success: function (result) {
+                result = $.parseJSON(result);
+                if (result.status == 1) {
+                    $('#mycalendar').fullCalendar( 'refetchEvents' );
+                    $("#addCalendarWin").dialog("close");
+                    $.messager.alert("操作信息", result.msg,"info");
+                }
+                else {
+                    $.messager.alert("操作信息", result.msg,"error");
+
+                }
+            }
+        });
+    }  
+    $(function(){  
+            //初始化FullCalendar  
+            $('#mycalendar').fullCalendar({  
+                //日历初始化默认视图，可选agendaWeek、agendaDay、month  
+                defaultView: 'month',  
+                  
+                /*  
+                            设置日历头部信息  
+                            头部信息包括left、center、right三个位置，分别对应头部左边、头部中间和头部右边。  
+                            头部信息每个位置可以对应以下配置：  
+                                title: 显示当前月份/周/日信息  
+                                prev: 用于切换到上一月/周/日视图的按钮  
+                                next: 用于切换到下一月/周/日视图的按钮  
+                                prevYear: 用于切换到上一年视图的按钮  
+                                nextYear: 用于切换到下一年视图的按钮  
+                            如果不想显示头部信息，可以设置header为false  
+                */  
+                header: {  
+                    left: 'prev,next today',  
+                    center: 'title',  
+                    right: 'month,agendaWeek,agendaDay'  
+                },  
+                  
+                //设置日历头部的日期格式  
+               /*  titleFormat: {  
+                    month: 'YYYY年MM月',  
+                    week: 'YYYY年MM月DD日',  
+                    day: 'YYYY年MM月DD日 dddd'  
+                },  */ 
+                  
+                //日历高度  
+                height: $(window).height() - 40,  
+                  
+                //显示周末，设为false则不显示周六和周日。  
+                weekends: true,  
+                  
+                /*  
+                    在月视图里显示周的模式，因为每月周数可能不同，所以月视图高度不一定。  
+                    fixed：固定显示6周高，日历高度保持不变  
+                    liquid：不固定周数，高度随周数变化  
+                    variable：不固定周数，但高度固定  
+                */  
+                weekMode: 'liquid',  
+                  
+                //日历上显示全天的文本  
+                //allDayText: '全天',  
+                //allDayDefault默认情况是true,全天显示
+                  allDayDefault: false,
+                //允许用户通过单击或拖动选择日历中的对象，包括天和时间。  
+                selectable: true,  
+                  
+                //当点击或拖动选择时间时，显示默认加载的提示信息，该属性只在周/天视图里可用。  
+                selectHelper: true,  
+                  
+                //当点击页面日历以外的位置时，自动取消当前的选中状态。  
+                unselectAuto: true,                         
+           /*       events: {  
+                   url: eventUrl, 
+                   backgroundColor:"red",
+                   type: 'post'                
+                },   */
+                events:function(start, end, callback) {  
+                    var urlR =eventUrl ;  
+                    $.ajax({  
+                     url: urlR,  
+                     cache:false,  
+                     success:function(data) {  
+                     //给日历增加事件  
+                         var events = [];  
+                         var info = eval(data);  
+                         for (var i = 0; i < info.length; i++) {  
+                            var ev = info[i];  
+                            var evtstart=new Date(ev.start.replace(/-/,"/"));  
+                            var evtend=new Date(ev.end.replace(/-/,"/")); 
+                            events.push({  
+                              title:ev.title,  
+                              start:evtstart, 
+                              end:evtend, 
+                              id:ev.id,
+                              creatorId:ev.creatorId,
+                              creatorName:ev.creatorName,
+                              isRemind:ev.isRemind,
+                              type:ev.type, 
+                              advanceTime:ev.advanceTime,
+                              timeType:ev.timeType,
+                              status:ev.status,
+                              //这里换事件的背景颜色  
+                               backgroundColor:ev.status 
+                            });   
+                         }    
+                         callback(events);   
+                       }  
+                   })  
+                },
+                  /*  添加日程事件  
+                    start: 被选中区域的开始时间  
+                    end: 被选中区域的结束时间  
+                    jsEvent: jascript对象  
+                    view: 当前视图对象  
+                */  
+                select: function(start, end, jsEvent, view){  
+                      creatSchedule(start, end); 
+                },  
+                  
+                /*  
+                    修改日程事件  
+                    当点击日历中的某一日程时，触发此事件  
+                    data: 日程信息  
+                    jsEvent: jascript对象  
+                    view: 当前视图对象  
+                */  
+                eventClick: function(data, jsEvent, view){  
+                    //修改日程事件 
+                    editEvent(data);
+                } 
+               
+            });  
+        });
+    </script>  
+</body>  
+</html>

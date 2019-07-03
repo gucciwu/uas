@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.workflow.dao.IWorkflowDAO">                                                     
+   
+   <select id="queryUsers" parameterType="com.mszq.platform.app.workflow.dto.UserDto"  resultType="java.util.Map">
+		SELECT
+			t1.id as "id",
+		 	t1.account as "account",
+		 	t1.name as "name",
+		 	t1.pinyin as "pinyin",
+		 	t1.photo as "photo",
+		 	t1.mobile as "mobile",
+		 	t1.telephone as "telephone",
+		 	t1.email as "email",
+		 	t1.orgnization_id as "orgnizationId",
+		 	t1.orgnization_name as "orgnizationName",
+		 	t1.status as "status",
+		 	t1.type as "type",
+		 	t1.sort as "sort",
+		 	t1.creator_id as "creatorId",
+		 	t1.create_time as "createTime",
+		 	t1.update_time as "updateTime"
+		FROM
+			pf_sm_employee t1,
+			act_id_user t2
+		WHERE
+			t1.account = t2.ID_
+		 <if test=" name != null and !&quot;&quot;.equals(name.trim())">
+	           and t1.name like '%${name}%'
+	      </if>
+  </select>
+  
+  
+   <select id="queryProcessInstanceId"  resultType="String">
+		SELECT
+			process_instance_id
+		FROM
+			pf_workflow_business
+			where business_table_name=#{businessTableName} and business_data_id=#{businessDataId}
+  </select>
+  
+  
+  <select id="queryWorkflowBusinessData"  parameterType="Map" resultType="com.mszq.platform.entity.WorkflowBusinessData">
+	  	 select * from pf_workflow_business 
+	  	 where 1=1
+	  	 <if test="_parameter.containsKey('businessTableName')">and business_table_name=#{businessTableName}  </if>
+	  	 <if test="_parameter.containsKey('processInstanceId')">and process_instance_id=#{processInstanceId}  </if>
+	  	 <if test="_parameter.containsKey('businessDataIds')">   
+		 	 and business_data_id IN
+		    <foreach collection="businessDataIds" item="bids" open="(" close=")" separator=",">
+		    	#{bids}
+		    </foreach>
+	     </if>
+	     order by create_time asc
+  </select>
+   
+   <insert id="addWorkflowBusinessData" parameterType="com.mszq.platform.entity.WorkflowBusinessData" keyProperty="id">
+  	insert ignore into pf_workflow_business(id,process_instance_id,business_data_id,business_table_name,create_time)
+  	values (#{id},#{processInstanceId},#{businessDataId},#{businessTableName},#{createTime})
+  </insert>
+  
+  <delete id="deleteWorkflowBusinessDataBatch">
+  	 delete from pf_workflow_business where id IN
+     <foreach collection="array" item="id" open="(" close=")" separator=",">
+     	#{id}
+     </foreach>
+  </delete>
+  
+  
+  
+</mapper>

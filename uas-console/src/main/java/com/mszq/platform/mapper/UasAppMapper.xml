@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasAppDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasAppDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="SECRET" property="secret" jdbcType="VARCHAR" />
+    <result column="ORG_TYPE" property="orgType" jdbcType="SMALLINT" />
+    <result column="ORG_TYPE_NAME" property="orgTypeName" jdbcType="VARCHAR"/>
+    <result column="PATH" property="path" jdbcType="VARCHAR" />
+    <result column="COMMENT" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, NAME, SECRET, ORG_TYPE, PATH, COMMENT
+  </sql>
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID, a.NAME, a.SECRET, a.ORG_TYPE, a.PATH, a.COMMENT, b.COMMENT ORG_TYPE_NAME
+    from uas_app a
+    inner join uas_org_type b on b.ID = a.ORG_TYPE
+    <where > 
+	    <if test="name != null and name != ''" >
+	        <bind name="name"  value="'%' + name + '%'"/>
+	        and a.NAME like #{name,jdbcType=VARCHAR}
+	    </if>
+	    <if test="secret != null and secret != ''" >
+	        <bind name="secret"  value="'%' + secret + '%'"/>
+	        and a.SECRET like #{secret,jdbcType=VARCHAR}
+	    </if>
+	    <if test="orgType != null and orgType != ''" >
+	        <bind name="orgType"  value="'%' + orgType + '%'"/>
+	        and a.ORG_TYPE like #{orgType,jdbcType=SMALLINT}
+	    </if>
+	    <if test="path != null and path != ''" >
+	        <bind name="path"  value="'%' + path + '%'"/>
+	        and a.PATH like #{path,jdbcType=VARCHAR}
+	    </if>
+	    <if test="comment != null and comment != ''" >
+	        <bind name="comment"  value="'%' + comment + '%'"/>
+	        and a.COMMENT = #{comment,jdbcType=VARCHAR}
+	    </if>
+    </where>
+  </select>
+  <select id="queryAll" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID, a.NAME, a.SECRET, a.ORG_TYPE, a.PATH, a.COMMENT, b.COMMENT ORG_TYPE_NAME
+    from uas_app a
+    inner join uas_org_type b on b.ID = a.ORG_TYPE
+    <where > 
+	    <if test="name != null and name != ''" >
+	        <bind name="name"  value="'%' + name + '%'"/>
+	        and a.NAME like #{name,jdbcType=VARCHAR}
+	    </if>
+	    <if test="secret != null and secret != ''" >
+	        <bind name="secret"  value="'%' + secret + '%'"/>
+	        and a.SECRET like #{secret,jdbcType=VARCHAR}
+	    </if>
+	    <if test="orgType != null and orgType != ''" >
+	        <bind name="orgType"  value="'%' + orgType + '%'"/>
+	        and a.ORG_TYPE like #{orgType,jdbcType=SMALLINT}
+	    </if>
+	    <if test="path != null and path != ''" >
+	        <bind name="path"  value="'%' + path + '%'"/>
+	        and a.PATH like #{path,jdbcType=VARCHAR}
+	    </if>
+	    <if test="comment != null and comment != ''" >
+	        <bind name="comment"  value="'%' + comment + '%'"/>
+	        and a.COMMENT = #{comment,jdbcType=VARCHAR}
+	    </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_app
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_app
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasApp" >
+    insert into uas_app (ID, NAME, SECRET, 
+      ORG_TYPE, PATH, COMMENT
+      )
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{secret,jdbcType=VARCHAR}, 
+      #{orgType,jdbcType=SMALLINT}, #{path,jdbcType=VARCHAR}, #{comment,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasApp" >
+    insert into uas_app
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="secret != null" >
+        SECRET,
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE,
+      </if>
+      <if test="path != null" >
+        PATH,
+      </if>
+      <if test="comment != null" >
+        COMMENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="secret != null" >
+        #{secret,jdbcType=VARCHAR},
+      </if>
+      <if test="orgType != null" >
+        #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="path != null" >
+        #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasApp" >
+    update uas_app
+    <set >
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="secret != null" >
+        SECRET = #{secret,jdbcType=VARCHAR},
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="path != null" >
+        PATH = #{path,jdbcType=VARCHAR},
+      </if>
+      <if test="comment != null" >
+        COMMENT = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasApp" >
+    update uas_app
+    set NAME = #{name,jdbcType=VARCHAR},
+      SECRET = #{secret,jdbcType=VARCHAR},
+      ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      PATH = #{path,jdbcType=VARCHAR},
+      COMMENT = #{comment,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>角色类型列表</title> 
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+</head> 
+<body>
+	<div id="loading"> 
+      <image src='/platform/image/loading3.gif'/>
+      <h1><font color="#15428B">页面载入中....</font></h1>   
+     </div>  
+    <div class="container" >
+       <table id="tg" class="easyui-datagrid"  title="角色类型列表"
+             url="/uasRoleType/list" data-options="
+               fitColumns:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                striped:true,
+                method:'get',
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10">
+            <thead>
+                <tr>
+                	<th field="id" width="10" halign="center" align="center" hidden="hidden">角色类型ID</th>
+                	<th field="name" width="100" halign="center" align="center">角色类型</th>
+                    <th field="comment" width="100" halign="center" align="center">描述</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+	      <form id="searchUasRoleTypeForm">
+		        <div class="opt-buttons">
+		            <a href="#" class="easyui-linkbutton" onclick ="newRoleType()" data-options="selected:true">新增</a>
+		            <a href="#" id="btn-edit" class="easyui-linkbutton" onclick ="editRoleType()" >修改</a>
+		            <a href="#" id="btn-delete" class="easyui-linkbutton" onclick ="deleteRoleType()">删除</a>
+		        </div>
+	        </form>
+      </div>
+      
+      
+      <div id="dlg" class="easyui-dialog roleType-dialog" title="增加角色类型" style="width:400px;height:360px;" data-options="closed:true,modal:true" buttons="#dlg-buttons">
+      	<div class="easyui-layout" data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <form id="roleTypeAddForm" method="post">
+		            <table class="kv-table">
+						<tbody>
+						    <tr>
+							    <td class="kv-content" hidden="hidden">
+								    <input class="easyui-textbox" type="text" id="roleTypeId"  name="id" style="width:200px;height:35px;line-height:35px;"></input>
+							    </td>
+						    </tr>
+						    <tr>
+								<td class="kv-label">角色类型名称</td>
+								<td class="kv-content">
+									<input class="easyui-textbox" type="text" data-options="required:true" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+								</td>
+						    </tr>
+							<tr>							
+								<td class="kv-label">备注</td>
+								<td class="kv-content">
+									<input class="easyui-textbox" type="text" name="comment" style="width:166px;height:35px;line-height:35px;"></input>
+								</td>
+							</tr>
+						</tbody>
+				    </table>
+		        </form>
+		    </div>
+		</div>
+	  </div>
+	  <div id="dlg-buttons"> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveRoleType()" data-options="selected:true">保存</a> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg').dialog('close')" iconcls="icon-cancel">取消</a> 
+      </div> 
+    </div>
+    
+    <script type="text/javascript">
+	    function closes() {  
+	        $('#loading').fadeOut('normal', function () {  
+	            $(this).remove();  
+	        });  
+	    }  
+	    var pc;  
+	      
+	    $.parser.onComplete = function () {  
+	        if (pc) clearTimeout(pc);  
+	        pc = setTimeout(closes, 1000);  
+	    }  
+    
+        var url;
+        var type;
+        
+        function newRoleType() {
+        	$("#roleTypeAddForm").form("clear");
+            $("#dlg").dialog("open").dialog('setTitle', '增加角色类型');
+            url = "/uasRoleType/insert";
+            $('#roleTypeId').textbox('textbox').attr('readonly',false);
+            $('#roleTypeId').textbox('textbox').css('background-color','#fff');
+        }
+        function editRoleType() {
+        	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+        	if(ids.length == 0){
+        		$.messager.alert("操作信息", "请选择一行数据","warning");
+        		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+	    	if(ids.indexOf(',') > 0){
+	    		$.messager.alert("操作信息", "只能选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+        	var row = $("#tg").datagrid("getSelected");
+            if (row) {
+            	$("#roleTypeAddForm").form("clear");
+                $("#dlg").dialog("open").dialog('setTitle', '编辑角色类型');
+                $("#roleTypeAddForm").form("load", row);
+                url = "/uasRoleType/update";
+                
+                $('#roleTypeId').textbox('textbox').attr('readonly',true);
+                $('#roleTypeId').textbox('textbox').css('background-color','#ccc');
+            }
+        }
+        function saveRoleType() {
+            $("#roleTypeAddForm").form("submit", {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form("validate");
+                },
+                success: function (result) {
+                	try {
+                		result = $.parseJSON(result);
+                	}catch (e){
+                		$.messager.alert("操作信息", "后台出现异常！","error");
+                		  setTimeout(function(){
+                              $(".messager-body").window('close');  
+                            },2000);
+                		return;
+                	}
+                    if (result.status == 1) {
+                    	$("#tg").datagrid("reload");
+                        $("#dlg").dialog("close");
+                        $.messager.alert("操作信息", "成功","info");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                    else {
+                        $.messager.alert("操作信息", result.msg,"error");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                },
+                error : function(XmlHttpRequest,textStatus, errorThrown){
+                	$.messager.alert("操作信息", XmlHttpRequest.responseText,"error");
+                	  setTimeout(function(){
+                          $(".messager-body").window('close');  
+                        },2000);
+                }
+            });
+        }
+        function deleteRoleType() {
+        	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+	    	if(ids.length == 0){
+	    		$.messager.alert("操作信息", "请至少选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+                $.messager.confirm('操作确认', '确认要删除角色类型吗？', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type:"post",
+                            dataType:"json",
+                            url:"/uasRoleType/deleteBatch",
+                            data:{ "ids":ids },
+                            error:function(request) {
+                            	$.messager.alert("操作提示", "发生异常！", "error"); 
+                            	  setTimeout(function(){
+                                      $(".messager-body").window('close');  
+                                    },2000);
+                            },
+                            success:function(result) {
+                            	if (result.status == 1) {
+                                    $('#tg').datagrid('reload');
+                                    $.messager.alert("操作信息", "成功","info");
+                                    setTimeout(function(){
+                                        $(".messager-body").window('close');  
+                                      },2000);
+                                } else {
+                                	$.messager.alert("操作信息", result.msg,"error");
+                                	  setTimeout(function(){
+                                          $(".messager-body").window('close');  
+                                        },2000);
+                                }
+                            }
+                        });
+                    }
+                });
+        }
+        function getSelectionsIds(customList){
+    		var sels = customList.datagrid("getSelections");
+    		var ids = [];
+    		for(var i in sels){
+    			ids.push(sels[i].id);
+    		}
+    		ids = ids.join(","); 
+    		
+    		return ids;
+    	}
+    </script>
+</body> 
+</html>

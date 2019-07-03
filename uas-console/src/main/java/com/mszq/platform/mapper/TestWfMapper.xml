@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.testwf.dao.ITestWfDAO">                                                     
+    
+  <select id="queryWF" parameterType="Map" resultType="com.mszq.platform.entity.TestWF">
+		SELECT
+			id,name,code,value,status,create_time,update_time
+		FROM
+			pp_testwf where 1=1
+			 <if test="_parameter.containsKey('id')">  AND id = #{id}</if>
+			 <if test="_parameter.containsKey('name')">  AND name = #{name,jdbcType=VARCHAR}</if>
+			 <if test="_parameter.containsKey('code')">  AND code = #{code,jdbcType=VARCHAR}</if>
+  </select>
+  
+   <select id="queryById" parameterType="Long" resultType="com.mszq.platform.entity.TestWF">
+		SELECT
+			id,name,code,value,create_time,update_time
+		FROM
+			pp_testwf
+			where id=#{id}
+			 <if test="_parameter.containsKey('name')">  AND name = #{name,jdbcType=VARCHAR}</if>
+			 <if test="_parameter.containsKey('code')">  AND code = #{code,jdbcType=VARCHAR}</if>
+  </select>
+  
+  <select id="getConfigByCode" parameterType="String" resultType="com.mszq.platform.entity.TestWF">
+		SELECT
+			id
+		FROM
+			pp_testwf
+			where 
+			code=#{code}
+  </select>
+  
+   <insert id="create" parameterType="com.mszq.platform.entity.TestWF" keyProperty="id" useGeneratedKeys="true">
+  	insert ignore into pp_testwf(name,code,value,status,create_time,update_time,creator_id)
+  	values (#{name},#{code},#{value},#{status},#{createTime},#{updateTime},#{creatorID})
+  </insert>
+  
+  <update id="update" parameterType="com.mszq.platform.entity.TestWF" >
+    update pp_testwf
+    set   name = #{name},
+	      code = #{code},
+	      value = #{value},
+	      status=#{status},
+	      update_time = #{updateTime}
+    where id = #{id}
+  </update>
+  
+  <delete id="deleteBatch">
+  	 delete from pp_testwf where id IN
+     <foreach collection="array" item="id" open="(" close=")" separator=",">
+     	#{id}
+     </foreach>
+  </delete>
+  
+</mapper>

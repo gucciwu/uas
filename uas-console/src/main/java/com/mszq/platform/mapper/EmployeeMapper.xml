@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.employee.dao.IEmployeeDAO">                                                     
+  <select id="getEmployeeByAccount" parameterType="java.lang.String" resultType="com.mszq.platform.entity.Employee">
+    select * from pf_sm_employee where account= #{account}
+  </select>
+  
+  <select id="getRolesByEmployeeID" parameterType="java.lang.String" resultType="java.lang.String">
+    select group_concat(o.code) AS roleCodes from pf_sm_employee t 
+    left join pf_sm_employee_role r on t.id = r.employee_id
+    LEFT JOIN pf_sm_role o ON r.role_id = o.id
+    where t.id= #{employeeID}
+    GROUP BY t.id
+  </select>
+  
+  <select id="queryByPrimaryKey" parameterType="java.lang.String" resultType="com.mszq.platform.entity.Employee">
+    select * from pf_sm_employee where id= #{id}
+  </select>
+    <select id="selectEmployeeByKey" parameterType="java.lang.Long" resultType="com.mszq.platform.entity.Employee">
+    select *
+      from pf_sm_employee
+    where id = #{id}
+  </select>
+  <select id="queryAll" parameterType="java.util.Map" resultType="com.mszq.platform.entity.Employee">
+		<if test=" condition.roleIds == null">
+				SELECT
+				t.*, group_concat(o.`id`) AS roleIds, group_concat(o.`name`) AS roleNames
+			FROM
+				pf_sm_employee t
+				LEFT JOIN pf_sm_employee_role r ON t.id = r.employee_id
+	            LEFT JOIN pf_sm_role o ON r.role_id = o.id
+			<where>
+				<if test=" condition.orgnizationId != null">
+	                and t.orgnization_id IN
+				     <foreach collection="condition.orgnizationId" item="index" open="(" close=")" separator=",">
+				     	#{index}
+				     </foreach>
+	            </if>
+				<if test=" condition.name != null and !&quot;&quot;.equals(condition.name.trim()) ">
+	                and t.name like '%${condition.name}%'
+	            </if>
+	            <if test=" condition.account != null and !&quot;&quot;.equals(condition.account.trim())">
+	                and t.account like '%${condition.account}%'
+	            </if>
+			</where>
+			GROUP BY t.id
+			ORDER BY t.account
+		</if>
+		<if test=" condition.roleIds != null">
+				select t.*, group_concat(o.`id`) as roleIds, group_concat(o.`name`) as roleNames
+				from pf_sm_employee t 
+				left join pf_sm_employee_role r on t.id = r.employee_id
+				left join pf_sm_role o on r.role_id = o.id
+			    where exists (select 1 from pf_sm_employee aa,pf_sm_employee_role bb where aa.id = bb.employee_id and 
+			    bb.role_id in
+			    <foreach collection="condition.roleIds" item="index" open="(" close=")" separator=",">
+				     	#{index}
+				</foreach>
+			    and aa.id = t.id )
+				<if test=" condition.orgnizationId != null">
+	                and t.orgnization_id IN
+				     <foreach collection="condition.orgnizationId" item="index" open="(" close=")" separator=",">
+				     	#{index}
+				     </foreach>
+	            </if>
+				<if test=" condition.name != null and !&quot;&quot;.equals(condition.name.trim()) ">
+	                and t.name like '%${condition.name}%'
+	            </if>
+	            <if test=" condition.account != null and !&quot;&quot;.equals(condition.account.trim())">
+	                and t.account like '%${condition.account}%'
+	            </if>
+				group by t.id
+				order by t.account
+		</if>
+	</select>
+	
+	<select id="queryByOrgnizationIds" resultType="com.mszq.platform.entity.Employee">
+  	 select id,name,orgnization_id from pf_sm_employee where orgnization_id IN
+     <foreach collection="array" item="index" open="(" close=")" separator=",">
+     	#{index}
+     </foreach>
+  	</select>
+  	
+  	<select id="queryEmployeeHasAdminRole" resultType="com.mszq.platform.entity.Employee">
+  	 select a.id,a.orgnization_id,c.id as roleIds from pf_sm_employee a 
+  	 left join pf_sm_employee_role b on a.id=b.employee_id
+  	 left join pf_sm_role c on b.role_id=c.id 	 
+  	 where employee_id IN
+     <foreach collection="employeeIds" item="index" open="(" close=")" separator=",">
+     	#{index}
+     </foreach>
+     and c.code=#{adminRole}
+  	</select>
+	
+  <insert id="insert" parameterType="com.mszq.platform.entity.Employee" keyProperty="id" useGeneratedKeys="true">
+  	insert ignore into pf_sm_employee(account,password,name,mobile,email,orgnization_id,orgnization_name,status,type,update_time)
+  	values (#{account},#{password},#{name},#{mobile},#{email},#{orgnizationId},#{orgnizationName},#{status},#{type},#{updateTime})
+  </insert>
+  
+  <insert id="insertEmployeeRoleBatch" parameterType="com.mszq.platform.entity.EmployeeRole"
+		keyProperty="id" useGeneratedKeys="true">
+		insert ignore into pf_sm_employee_role(employee_id,role_id)
+		values 
+		 <foreach collection="list" item="item" separator="," >  
+	        (#{item.employeeId},#{item.roleId})
+	    </foreach>  
+	</insert>
+  
+  <delete id="deleteBatch">
+  	 delete from pf_sm_employee where id IN
+     <foreach collection="array" item="id" open="(" close=")" separator=",">
+     	#{id}
+     </foreach>
+  </delete>
+  
+  <delete id="deleteRoleMappingBatch">
+  	 delete from pf_sm_employee_role where employee_id IN
+     <foreach collection="array" item="id" open="(" close=")" separator=",">
+     	#{id}
+     </foreach>
+  </delete>
+  
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.Employee" >
+    update pf_sm_employee
+    set   name = #{name},
+	      mobile = #{mobile},
+	      email = #{email},
+	      orgnization_id = #{orgnizationId},
+	      orgnization_name = #{orgnizationName},
+	      status = #{status},
+	      type = #{type},
+	      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id}
+  </update>
+  
+  	 <update id="updateByParams" parameterType="Map" >
+	  	update pf_sm_employee
+	  	 <trim prefix="set" suffixOverrides=",">
+		  	 <if test="_parameter.containsKey('name')">  name = #{name},</if>
+		  	 <if test="_parameter.containsKey('password')">  password = #{password},</if>
+		     <if test="_parameter.containsKey('mobile')"> mobile = #{mobile},</if>
+		     <if test="_parameter.containsKey('updateTime')"> update_time = #{updateTime,jdbcType=TIMESTAMP},</if>
+		 </trim>
+	  	 where id in
+	  	  <foreach collection="ids"  item="ite"  open="(" close=")" separator=",">
+     	#{ite,jdbcType=BIGINT}
+     </foreach>
+	  </update>
+  <select id="queryForCombo" parameterType="java.lang.String" resultType="com.mszq.platform.util.ComboOption">
+    select  mm.id value,
+    		mm.name text
+			from pf_sm_employee mm
+				where mm.name like '%${text}%'
+				  and mm.status=1
+  </select> 
+</mapper>

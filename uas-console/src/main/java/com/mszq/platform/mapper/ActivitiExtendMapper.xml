@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.workflow.dao.IActivitiExtendDao">
+	<resultMap id="HisTaskResultMap" type="org.activiti.engine.impl.persistence.entity.HistoricTaskInstanceEntity">
+	    <id column="ID_" jdbcType="VARCHAR" property="id" />
+	    <result column="PROC_DEF_ID_" jdbcType="VARCHAR" property="processDefinitionId" />
+	    <result column="TASK_DEF_KEY_" jdbcType="VARCHAR" property="taskDefinitionKey" />
+	    <result column="PROC_INST_ID_" jdbcType="VARCHAR" property="processInstanceId" />
+	    <result column="EXECUTION_ID_" jdbcType="VARCHAR" property="executionId" />
+	    <result column="NAME_" jdbcType="VARCHAR" property="name" />
+	    <result column="PARENT_TASK_ID_" jdbcType="VARCHAR" property="parentTaskId" />
+	    <result column="DESCRIPTION_" jdbcType="VARCHAR" property="description" />
+	    <result column="OWNER_" jdbcType="VARCHAR" property="owner" />
+	    <result column="ASSIGNEE_" jdbcType="VARCHAR" property="assignee" />
+	    <result column="START_TIME_" jdbcType="TIMESTAMP" property="startTime" />
+	    <result column="CLAIM_TIME_" jdbcType="TIMESTAMP" property="claimTime" />
+	    <result column="END_TIME_" jdbcType="TIMESTAMP" property="endTime" />
+	    <result column="DURATION_" jdbcType="BIGINT" property="durationInMillis" />
+	    <result column="DELETE_REASON_" jdbcType="VARCHAR" property="deleteReason" />
+	    <result column="PRIORITY_" jdbcType="INTEGER" property="priority" />
+	    <result column="DUE_DATE_" jdbcType="TIMESTAMP" property="dueDate" />
+	    <result column="FORM_KEY_" jdbcType="VARCHAR" property="formKey" />
+	    <result column="CATEGORY_" jdbcType="VARCHAR" property="category" />
+	    <result column="TENANT_ID_" jdbcType="VARCHAR" property="tenantId" />
+ 	</resultMap>
+ 	
+ 	
+ 	<resultMap id="TaskResultMap" type="org.activiti.engine.impl.persistence.entity.TaskEntity">
+	    <id column="ID_" jdbcType="VARCHAR" property="id" />
+	    <id column="REV_" jdbcType="INTEGER" property="revision" />
+	    <result column="PROC_DEF_ID_" jdbcType="VARCHAR" property="processDefinitionId" />
+	    <result column="TASK_DEF_KEY_" jdbcType="VARCHAR" property="taskDefinitionKey" />
+	    <result column="PROC_INST_ID_" jdbcType="VARCHAR" property="processInstanceId" />
+	    <result column="EXECUTION_ID_" jdbcType="VARCHAR" property="executionId" />
+	    <result column="NAME_" jdbcType="VARCHAR" property="name" />
+	    <result column="PARENT_TASK_ID_" jdbcType="VARCHAR" property="parentTaskId" />
+	    <result column="DESCRIPTION_" jdbcType="VARCHAR" property="description" />
+	    <result column="OWNER_" jdbcType="VARCHAR" property="owner" />
+	    <result column="ASSIGNEE_" jdbcType="VARCHAR" property="assignee" />
+	    <result column="DELEGATION_" jdbcType="VARCHAR" property="delegation" />
+	    <result column="PRIORITY_" jdbcType="INTEGER" property="priority" />
+	    <result column="CREATE_TIME_" jdbcType="TIMESTAMP" property="createTime" />
+	    <result column="DUE_DATE_" jdbcType="TIMESTAMP" property="dueDate" />
+	    <result column="CATEGORY_" jdbcType="VARCHAR" property="category" />
+	    <result column="SUSPENSION_STATE_" jdbcType="INTEGER" property="suspensionState" />
+	    <result column="TENANT_ID_" jdbcType="VARCHAR" property="tenantId" />
+	    <result column="FORM_KEY_" jdbcType="VARCHAR" property="formKey" />
+ 	</resultMap>
+ 	
+ 	
+   <select id="querySingleHiTask"  parameterType="java.util.Map" resultMap="HisTaskResultMap">  
+		  SELECT DISTINCT
+			RES.*
+		FROM
+			ACT_HI_TASKINST RES
+		WHERE
+			RES.ASSIGNEE_ = #{assignee}
+		AND RES.END_TIME_ IS NOT NULL
+		AND res.id_ = (
+			SELECT
+				max(id_)
+			FROM
+				ACT_HI_TASKINST tx
+			WHERE
+				tx.PROC_INST_ID_ = RES.PROC_INST_ID_
+			AND tx.ASSIGNEE_ = #{assignee}
+			AND tx.END_TIME_ IS NOT NULL
+		)
+		ORDER BY
+			RES.START_TIME_ DESC
+   </select>
+   
+   
+    <select id="queryUserTask"  parameterType="com.mszq.platform.app.workflow.dto.ParamsDto" resultMap="TaskResultMap">  
+		 select distinct RES.*
+			from ACT_RU_TASK RES
+				left join ACT_RU_IDENTITYLINK I on I.TASK_ID_ = RES.ID_
+				left join act_re_procdef pd ON RES.PROC_DEF_ID_  = pd.id_
+			where ( RES.ASSIGNEE_ = #{assignee}
+				or
+				( RES.ASSIGNEE_ is null
+				and I.TYPE_ = 'candidate'
+				and (I.USER_ID_ = #{assignee}
+					or I.GROUP_ID_ in (
+					select group_id_ from act_id_membership where user_id_= #{assignee}
+					))
+				))
+				and (1=1
+				<if test=" pdName != null and !&quot;&quot;.equals(pdName.trim())">
+			          and pd.name_ like '%${pdName}$}
+			    </if>
+	  			 )
+			order by RES.ID_ asc
+   </select>
+
+</mapper>

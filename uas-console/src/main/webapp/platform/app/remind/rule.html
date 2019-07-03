@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>提醒管理-规则管理</title> 
+<link rel="stylesheet" href="/platform/static/darkblue/css/base.css" >
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+</head> 
+<body>
+	<div id="loading"> 
+	     <image src='/platform/image/loading3.gif'/>
+	     <h1><font color="#15428B">页面载入中....</font></h1>  
+     </div>
+    <div class="container">
+       <table id="dg" class="easyui-datagrid"  title="规则信息" 
+            data-options="
+                url:'/remind/rule/list',
+                method:'get',
+                rownumbers:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10
+				">
+				<thead>
+		                <tr>
+		                    <th data-options="field:'tableName', width:200,align:'left' , halign: 'center'">表名</th>
+		                    <th data-options="field:'triggerRule', width:200,align:'left' , halign: 'center'">触发规则</th>
+		                    <th data-options="field:'contentRule', width:200,align:'left' , halign: 'center'">内容规则</th>
+		                    <th data-options="field:'targetRule', width:200,align:'left' , halign: 'center'">目标规则</th>
+		                </tr>
+		            </thead>
+        </table>
+	      <div id="tb">
+	        <div class="conditions">
+	            <span class="con-span">参数名称: </span><input id="search_name" class="easyui-textbox" type="text" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+	            <span class="con-span">参数代码: </span><input id="search_code" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;"></input>
+	            <a href="javascript:void(0);" onclick="searchConfig()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+	            <a href="javascript:void(0);" onclick="searchReset()"  class="easyui-linkbutton" iconCls="icon-reload">重置</a>
+	            <a href="javascript:void(0);" onclick="refreshPage()"  class="easyui-linkbutton" iconCls="icon-reload">刷新</a>
+	        </div>
+	        <div class="opt-buttons">
+	            <a href="javascript:void(0);" onclick="createConfig()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+	            <a href="javascript:void(0);" onclick="updateConfig()" class="easyui-linkbutton">修改</a>
+	            <a href="javascript:void(0);" onclick="deleteConfig()" class="easyui-linkbutton">删除</a>
+	        </div>
+	      </div>
+    </div>
+    
+    
+    
+    
+    
+    
+    <script type="text/javascript" src="../../custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="../../custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../../custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+    function closes() {  
+        $('#loading').fadeOut('normal', function () {  
+            $(this).remove();  
+        });  
+    }  
+    var pc;  
+      
+    $.parser.onComplete = function () {  
+        if (pc) clearTimeout(pc);  
+        pc = setTimeout(closes, 1000);  
+    }
+    </script>
+
+</body>
+</html>

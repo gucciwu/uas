@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasSessionDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasSessionDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="SESSION_ID" property="sessionId" jdbcType="VARCHAR" />
+    <result column="TICKET" property="ticket" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="USER_NAME" property="userName" jdbcType="BIGINT" />
+    <result column="JOB_NUMBER" property="jobNumber" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, SESSION_ID, TICKET, USER_ID, JOB_NUMBER
+  </sql>
+  
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID, a.SESSION_ID, a.TICKET, a.USER_ID, b.NAME USER_NAME, a.JOB_NUMBER
+    from uas_session a
+    inner join uas_user b on b.ID = a.USER_ID
+    <where > 
+	    <if test="userName != null and userName != ''" >
+	        <bind name="userName"  value="'%' + userName + '%'"/>
+	        and b.NAME like #{userName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="jobNumber != null and jobNumber != ''" >
+	        <bind name="jobNumber"  value="'%' + jobNumber + '%'"/>
+	        and a.JOB_NUMBER like #{jobNumber,jdbcType=VARCHAR}
+	    </if>
+    </where>
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_session
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_session
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasSession" >
+    insert into uas_session (ID, SESSION_ID, TICKET, 
+      USER_ID, JOB_NUMBER)
+    values (#{id,jdbcType=BIGINT}, #{sessionId,jdbcType=VARCHAR}, #{ticket,jdbcType=VARCHAR}, 
+      #{userId,jdbcType=BIGINT}, #{jobNumber,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasSession" >
+    insert into uas_session
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="sessionId != null" >
+        SESSION_ID,
+      </if>
+      <if test="ticket != null" >
+        TICKET,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="jobNumber != null" >
+        JOB_NUMBER,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="sessionId != null" >
+        #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="ticket != null" >
+        #{ticket,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="jobNumber != null" >
+        #{jobNumber,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasSession" >
+    update uas_session
+    <set >
+      <if test="sessionId != null" >
+        SESSION_ID = #{sessionId,jdbcType=VARCHAR},
+      </if>
+      <if test="ticket != null" >
+        TICKET = #{ticket,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="jobNumber != null" >
+        JOB_NUMBER = #{jobNumber,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasSession" >
+    update uas_session
+    set SESSION_ID = #{sessionId,jdbcType=VARCHAR},
+      TICKET = #{ticket,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=BIGINT},
+      JOB_NUMBER = #{jobNumber,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

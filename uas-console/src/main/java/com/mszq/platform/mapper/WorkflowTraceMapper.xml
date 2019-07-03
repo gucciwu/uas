@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.workflow.dao.IWorkflowTraceDAO">                                                     
+   
+     
+   <select id="queryWorkflowTrace"  parameterType="Map" resultType="java.util.Map">
+	  	 select a.id as "id",
+		 	a.process_instance_id as "processInstanceId",
+		 	a.task_id as "taskId",
+		 	a.task_name as "taskName",
+		 	a.op_time as "opTime",
+		 	a.op_user_id as "opUserId",
+		 	a.op_type as "opType",
+		 	a.op_comment as "opComment",
+		 	a.op_data_id as "opDataId",
+		 	a.proc_def_Key as "procDefKey",
+	  	 b.name as opUserName from pf_workflow_trace a
+	  	 left join pf_sm_employee b on a.op_user_id=b.account
+	  	 where 1=1
+	  	 <if test="_parameter.containsKey('processInstanceId')">
+	  	 	and process_instance_id=#{processInstanceId}  
+	  	 </if>
+	  	 <if test="_parameter.containsKey('opDataId')">
+	  	 	and op_data_id=#{opDataId}  
+	  	 </if>
+	  	 <if test="_parameter.containsKey('procDefKey')">
+	  	 	and proc_def_key=#{procDefKey}  
+	  	 </if>
+	  	 ORDER BY
+			a.op_time ASC ,a.task_id DESC
+  </select>
+  
+   <select id="getAllTraceInfo"  parameterType="java.lang.String" resultType="java.util.Map">
+	  	  select 
+	  	  		a.id as "id",
+			 	a.process_instance_id as "processInstanceId",
+			 	a.task_id as "taskId",
+			 	a.task_name as "taskName",
+			 	DATE_FORMAT(a.op_time,'%Y-%m-%d %H:%i:%s') as "opTime",
+			 	a.op_user_id as "opUserId",
+			 	a.op_type as "opType",
+			 	a.op_comment as "opComment",
+			 	a.op_data_id as "opDataId",
+			 	a.proc_def_key as "procDefKey",
+	  	  		b.name as "opUserName"
+	  	  from pf_workflow_trace a
+	  	  left join pf_sm_employee b on a.op_user_id=b.account
+	  	  where 1=1
+		  	  and a.op_data_id=#{bid}   
+		  	  and a.proc_def_key =#{procDefKey}
+		  	  and a.op_type not in('启动','结束')
+	  	  order by a.op_time asc,a.task_id DESC
+  </select>
+  
+   
+   <insert id="addWorkflowTrace" parameterType="com.mszq.platform.entity.WorkflowTrace">
+  	insert ignore into pf_workflow_trace(id,process_instance_id,task_id,task_name,op_time,
+  	op_user_id,op_type,op_comment,op_data_id,proc_def_key)
+  	values (#{id},#{processInstanceId},#{taskId},#{taskName},#{opTime},#{opUserId},#{opType},
+  	#{opComment},#{opDataId},#{procDefKey})
+  </insert>
+	  
+
+  
+
+</mapper>

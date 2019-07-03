@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.serialNo.dao.SerialNoDAO">                                                     
+
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.serialNo.dto.SerialNoDto">
+    <result column="v_code" jdbcType="VARCHAR" property="code" />
+    <result column="v_nowdate" jdbcType="VARCHAR" property="busiDate" />
+    <result column="result" jdbcType="VARCHAR" property="result" />
+  </resultMap>
+
+  <select id="getSerialNo" parameterType="com.mszq.platform.app.serialNo.dto.SerialNoDto" resultMap="BaseResultMap" useCache="false" statementType="CALLABLE">
+    call GetSerialNo(
+      #{code,mode=IN,jdbcType=VARCHAR},
+      #{busiDate,mode=IN,jdbcType=VARCHAR},
+      #{result,mode=OUT,jdbcType=VARCHAR}
+    )
+  </select>
+  
+  <insert id="insert" >
+    insert into test_serial_no(id, code) values(#{id,jdbcType=BIGINT}, #{code,jdbcType=VARCHAR})
+  </insert>
+  
+</mapper>

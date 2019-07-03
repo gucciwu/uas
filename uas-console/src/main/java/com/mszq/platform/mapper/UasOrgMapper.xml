@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasOrgDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasOrgDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="GRADE" property="grade" jdbcType="INTEGER" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="ORG_TYPE" property="orgType" jdbcType="SMALLINT" />
+    <result column="ORG_TYPE_NAME" property="orgTypeName" jdbcType="VARCHAR"/>
+    <result column="ORG_ID" property="orgId" jdbcType="BIGINT" />
+    <result column="STATUS" property="status" jdbcType="SMALLINT" />
+    <result column="STATUS_NAME" property="statusName" jdbcType="VARCHAR" />
+    <result column="PARENT_ORG_ID" property="parentOrgId" jdbcType="BIGINT" />
+    <result column="COMMENT" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, GRADE, NAME, ORG_TYPE, ORG_ID, STATUS, PARENT_ORG_ID, COMMENT
+  </sql>
+  <select id="queryAll" resultMap="BaseResultMap" parameterType="map">
+		SELECT
+		    a.ID
+		    , a.GRADE
+		    , a.NAME
+		    , a.ORG_TYPE
+		    , a.ORG_ID
+		    , a.STATUS
+		    , b.NAME STATUS_NAME
+		    , a.PARENT_ORG_ID
+		    , a.COMMENT
+		FROM uas_org a
+		left join pf_sm_dictionary_item b on b.value = a.STATUS and b.dic_id=135
+		where ORG_TYPE like #{orgType,jdbcType=SMALLINT}
+  </select>
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID, a.GRADE, a.NAME, a.ORG_TYPE, a.ORG_ID, a.STATUS, a.PARENT_ORG_ID, a.COMMENT, b.COMMENT ORG_TYPE_NAME
+    from uas_org a
+    left join uas_org_type b on b.ID = a.ORG_TYPE
+    <where > 
+        <if test="grade != null and grade != ''" >
+	        and a.GRADE like #{grade,jdbcType=VARCHAR}
+	    </if>
+	    <if test="name != null and name != ''" >
+	        <bind name="name"  value="'%' + name + '%'"/>
+	        and a.NAME like #{name,jdbcType=VARCHAR}
+	    </if>
+	    <if test="secret != null and secret != ''" >
+	        <bind name="secret"  value="'%' + secret + '%'"/>
+	        and a.SECRET like #{secret,jdbcType=VARCHAR}
+	    </if>
+	    <if test="orgType != null and orgType != ''" >
+	        <bind name="orgType"  value="'%' + orgType + '%'"/>
+	        and a.ORG_TYPE like #{orgType,jdbcType=SMALLINT}
+	    </if>
+	    <if test="path != null and path != ''" >
+	        <bind name="path"  value="'%' + path + '%'"/>
+	        and a.PATH like #{path,jdbcType=VARCHAR}
+	    </if>
+	    <if test="comment != null and comment != ''" >
+	        <bind name="comment"  value="'%' + comment + '%'"/>
+	        and a.COMMENT = #{comment,jdbcType=VARCHAR}
+	    </if>
+	    <if test="parentOrgId != null and parentOrgId != ''" >
+	        and a.PARENT_ORG_ID = #{parentOrgId,jdbcType=VARCHAR}
+	    </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_org
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_org
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasOrg" >
+    insert into uas_org (ID, GRADE, NAME, 
+      ORG_TYPE, ORG_ID, STATUS, 
+      PARENT_ORG_ID, COMMENT)
+    values (#{id,jdbcType=BIGINT}, #{grade,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR}, 
+      #{orgType,jdbcType=SMALLINT}, #{orgId,jdbcType=BIGINT}, #{status,jdbcType=SMALLINT}, 
+      #{parentOrgId,jdbcType=BIGINT}, #{comment,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasOrg" >
+    insert into uas_org
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="grade != null" >
+        GRADE,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE,
+      </if>
+      <if test="orgId != null" >
+        ORG_ID,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="parentOrgId != null" >
+        PARENT_ORG_ID,
+      </if>
+      <if test="comment != null" >
+        COMMENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="grade != null" >
+        #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="orgType != null" >
+        #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="parentOrgId != null" >
+        #{parentOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasOrg" >
+    update uas_org
+    <set >
+      <if test="grade != null" >
+        GRADE = #{grade,jdbcType=INTEGER},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="orgId != null" >
+        ORG_ID = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="parentOrgId != null" >
+        PARENT_ORG_ID = #{parentOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="comment != null" >
+        COMMENT = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasOrg" >
+    update uas_org
+    set GRADE = #{grade,jdbcType=INTEGER},
+      NAME = #{name,jdbcType=VARCHAR},
+      ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      ORG_ID = #{orgId,jdbcType=BIGINT},
+      STATUS = #{status,jdbcType=SMALLINT},
+      PARENT_ORG_ID = #{parentOrgId,jdbcType=BIGINT},
+      COMMENT = #{comment,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

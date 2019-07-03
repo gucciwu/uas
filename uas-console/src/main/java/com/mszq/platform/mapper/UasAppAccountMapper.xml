@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasAppAccountDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasAppAccountDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="APP_ID" property="appId" jdbcType="BIGINT" />
+    <result column="APP_NAME" property="appName" jdbcType="VARCHAR" />
+    <result column="ORG_ID" property="orgId" jdbcType="BIGINT" />
+    <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+    <result column="ORG_TYPE" property="orgType" jdbcType="SMALLINT" />
+    <result column="ORG_TYPE_NAME" property="orgTypeName" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="BIGINT" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="JOB_NUMBER" property="jobNumber" jdbcType="VARCHAR" />
+    <result column="ACCOUNT" property="account" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, APP_ID, ORG_ID, ORG_TYPE, USER_ID, JOB_NUMBER, ACCOUNT
+  </sql>
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID, a.APP_ID, b.NAME APP_NAME, a.ORG_TYPE, c.COMMENT ORG_TYPE_NAME, a.ORG_ID, d.NAME ORG_NAME, a.USER_ID, e.NAME USER_NAME, a.JOB_NUMBER, a.ACCOUNT
+    from uas_app_account a
+    left join uas_app b on b.ID = a.APP_ID
+    left join uas_org_type c on c.ID = a.ORG_TYPE
+    left join uas_org d on d.ORG_ID = a.ORG_ID and d.ORG_TYPE = a.ORG_TYPE
+    left join uas_user e on e.ID = a.USER_ID
+    <where > 
+	    <if test="appId != null and appId != ''" >
+	        and a.APP_ID like #{appId,jdbcType=VARCHAR}
+	    </if>
+	    <if test="orgType != null and orgType != ''" >
+	        and a.ORG_TYPE like #{orgType,jdbcType=SMALLINT}
+	    </if>
+	    <if test="jobNumber != null and jobNumber != ''" >
+	        <bind name="jobNumber"  value="'%' + jobNumber + '%'"/>
+	        and a.JOB_NUMBER like #{jobNumber,jdbcType=VARCHAR}
+	    </if>
+	    <if test="userName != null and userName != ''" >
+	        <bind name="userName"  value="'%' + userName + '%'"/>
+	        and e.NAME like #{userName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="orgName != null and orgName != ''" >
+	        <bind name="orgName"  value="'%' + orgName + '%'"/>
+	        and d.NAME like #{orgName,jdbcType=VARCHAR}
+	    </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_app_account
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_app_account
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasAppAccount" >
+    insert into uas_app_account (ID, APP_ID, ORG_ID, 
+      ORG_TYPE, USER_ID, JOB_NUMBER, 
+      ACCOUNT)
+    values (#{id,jdbcType=BIGINT}, #{appId,jdbcType=BIGINT}, #{orgId,jdbcType=BIGINT}, 
+      #{orgType,jdbcType=SMALLINT}, #{userId,jdbcType=BIGINT}, #{jobNumber,jdbcType=VARCHAR}, 
+      #{account,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasAppAccount" >
+    insert into uas_app_account
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="appId != null" >
+        APP_ID,
+      </if>
+      <if test="orgId != null" >
+        ORG_ID,
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="jobNumber != null" >
+        JOB_NUMBER,
+      </if>
+      <if test="account != null" >
+        ACCOUNT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=BIGINT},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="orgType != null" >
+        #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="jobNumber != null" >
+        #{jobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        #{account,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasAppAccount" >
+    update uas_app_account
+    <set >
+      <if test="appId != null" >
+        APP_ID = #{appId,jdbcType=BIGINT},
+      </if>
+      <if test="orgId != null" >
+        ORG_ID = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="jobNumber != null" >
+        JOB_NUMBER = #{jobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null" >
+        ACCOUNT = #{account,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasAppAccount" >
+    update uas_app_account
+    set APP_ID = #{appId,jdbcType=BIGINT},
+      ORG_ID = #{orgId,jdbcType=BIGINT},
+      ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      USER_ID = #{userId,jdbcType=BIGINT},
+      JOB_NUMBER = #{jobNumber,jdbcType=VARCHAR},
+      ACCOUNT = #{account,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasUserDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasUserDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="JOB_NUMBER" property="jobNumber" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="SMALLINT" />
+    <result column="STATUS_NAME" property="statusName" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="MODIFY_TIME" property="modifyTime" jdbcType="TIMESTAMP" />
+    <result column="ID_NUMBER" property="idNumber" jdbcType="VARCHAR" />
+    <result column="ID_TYPE" property="idType" jdbcType="SMALLINT" />
+    <result column="ID_TYPE_NAME" property="idTypeName" jdbcType="VARCHAR" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="ORG_ID" property="orgId" jdbcType="BIGINT" />
+    <result column="ORG_NAME" property="orgName" jdbcType="VARCHAR" />
+    <result column="ORG_TYPE" property="orgType" jdbcType="SMALLINT" />
+    <result column="ORG_TYPE_NAME" property="orgTypeName" jdbcType="VARCHAR" />
+    <result column="TEL" property="tel" jdbcType="VARCHAR" />
+    <result column="MOBILE" property="mobile" jdbcType="VARCHAR" />
+    <result column="EMAIL" property="email" jdbcType="VARCHAR" />
+    <result column="LOGIN_COUNT" property="loginCount" jdbcType="INTEGER" />
+    <result column="LAST_LOGIN_IP" property="lastLoginIp" jdbcType="VARCHAR" />
+    <result column="LAST_LOGIN_INFO" property="lastLoginInfo" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, JOB_NUMBER, USER_NAME, STATUS, CREATE_TIME, MODIFY_TIME, ID_NUMBER, ID_TYPE, 
+    NAME, ORG_ID, ORG_TYPE, TEL, MOBILE, EMAIL, LOGIN_COUNT, LAST_LOGIN_IP, LAST_LOGIN_INFO
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_user
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID
+       , a.JOB_NUMBER
+       , a.NAME
+       , a.STATUS, c.NAME STATUS_NAME
+       , a.CREATE_TIME
+       , a.MODIFY_TIME
+       , a.ID_NUMBER
+       , a.ID_TYPE, d.NAME ID_TYPE_NAME
+       , a.NAME
+       , a.ORG_ID, e.NAME ORG_NAME 
+       , a.ORG_TYPE, b.COMMENT ORG_TYPE_NAME
+       , a.TEL
+       , a.MOBILE
+       , a.EMAIL
+       , a.LOGIN_COUNT
+       , a.LAST_LOGIN_IP
+       , a.LAST_LOGIN_INFO
+    from uas_user a
+    left join uas_org_type b on b.ID = a.ORG_TYPE
+    left join pf_sm_dictionary_item c on c.value = a.STATUS and c.dic_id=196
+    left join pf_sm_dictionary_item d on d.value = a.ID_TYPE and d.dic_id=197
+    left join uas_org e on e.ORG_ID = a.ORG_ID and e.ORG_TYPE = a.ORG_TYPE
+    <where > 
+        <if test="jobNumber != null and jobNumber != ''" >
+            <bind name="jobNumber"  value="'%' + jobNumber + '%'"/>
+	        and a.JOB_NUMBER like #{jobNumber,jdbcType=VARCHAR}
+	    </if>
+	    <if test="name != null and name != ''" >
+	        <bind name="name"  value="'%' + name + '%'"/>
+	        and (a.NAME like #{name,jdbcType=VARCHAR} or a.JOB_NUMBER like #{name,jdbcType=VARCHAR})
+	    </if>
+	    <if test="status != null and status != ''" >
+	        and a.STATUS = #{status,jdbcType=SMALLINT}
+	    </if>
+	    <if test="orgType != null and orgType != ''" >
+	        and a.ORG_TYPE like #{orgType,jdbcType=SMALLINT}
+	    </if>
+	    <if test="orgName != null and orgName != ''" >
+	        <bind name="orgName"  value="'%' + orgName + '%'"/>
+	        and e.NAME like #{orgName,jdbcType=VARCHAR}
+	    </if>
+    </where>
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_user
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasUser" >
+    insert into uas_user (ID, JOB_NUMBER, USER_NAME, 
+      STATUS, CREATE_TIME, MODIFY_TIME, 
+      ID_NUMBER, ID_TYPE, NAME, 
+      ORG_ID, ORG_TYPE, TEL, 
+      MOBILE, EMAIL, LOGIN_COUNT, 
+      LAST_LOGIN_IP, LAST_LOGIN_INFO)
+    values (#{id,jdbcType=BIGINT}, #{jobNumber,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, 
+      #{status,jdbcType=SMALLINT}, #{createTime,jdbcType=TIMESTAMP}, #{modifyTime,jdbcType=TIMESTAMP}, 
+      #{idNumber,jdbcType=VARCHAR}, #{idType,jdbcType=SMALLINT}, #{name,jdbcType=VARCHAR}, 
+      #{orgId,jdbcType=BIGINT}, #{orgType,jdbcType=SMALLINT}, #{tel,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{loginCount,jdbcType=INTEGER}, 
+      #{lastLoginIp,jdbcType=VARCHAR}, #{lastLoginInfo,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasUser" >
+    insert into uas_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="jobNumber != null" >
+        JOB_NUMBER,
+      </if>
+      <if test="userName != null" >
+        USER_NAME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME,
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME,
+      </if>
+      <if test="idNumber != null" >
+        ID_NUMBER,
+      </if>
+      <if test="idType != null" >
+        ID_TYPE,
+      </if>
+      <if test="name != null" >
+        NAME,
+      </if>
+      <if test="orgId != null" >
+        ORG_ID,
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE,
+      </if>
+      <if test="tel != null" >
+        TEL,
+      </if>
+      <if test="mobile != null" >
+        MOBILE,
+      </if>
+      <if test="email != null" >
+        EMAIL,
+      </if>
+      <if test="loginCount != null" >
+        LOGIN_COUNT,
+      </if>
+      <if test="lastLoginIp != null" >
+        LAST_LOGIN_IP,
+      </if>
+      <if test="lastLoginInfo != null" >
+        LAST_LOGIN_INFO,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="jobNumber != null" >
+        #{jobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idNumber != null" >
+        #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="idType != null" >
+        #{idType,jdbcType=SMALLINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="orgType != null" >
+        #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="tel != null" >
+        #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="loginCount != null" >
+        #{loginCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastLoginIp != null" >
+        #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginInfo != null" >
+        #{lastLoginInfo,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasUser" >
+    update uas_user
+    <set >
+      <if test="jobNumber != null" >
+        JOB_NUMBER = #{jobNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="userName != null" >
+        USER_NAME = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="createTime != null" >
+        CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="modifyTime != null" >
+        MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="idNumber != null" >
+        ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      </if>
+      <if test="idType != null" >
+        ID_TYPE = #{idType,jdbcType=SMALLINT},
+      </if>
+      <if test="name != null" >
+        NAME = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="orgId != null" >
+        ORG_ID = #{orgId,jdbcType=BIGINT},
+      </if>
+      <if test="orgType != null" >
+        ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      </if>
+      <if test="tel != null" >
+        TEL = #{tel,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null" >
+        MOBILE = #{mobile,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null" >
+        EMAIL = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="loginCount != null" >
+        LOGIN_COUNT = #{loginCount,jdbcType=INTEGER},
+      </if>
+      <if test="lastLoginIp != null" >
+        LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginInfo != null" >
+        LAST_LOGIN_INFO = #{lastLoginInfo,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasUser" >
+    update uas_user
+    set JOB_NUMBER = #{jobNumber,jdbcType=VARCHAR},
+      USER_NAME = #{userName,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=SMALLINT},
+      CREATE_TIME = #{createTime,jdbcType=TIMESTAMP},
+      MODIFY_TIME = #{modifyTime,jdbcType=TIMESTAMP},
+      ID_NUMBER = #{idNumber,jdbcType=VARCHAR},
+      ID_TYPE = #{idType,jdbcType=SMALLINT},
+      NAME = #{name,jdbcType=VARCHAR},
+      ORG_ID = #{orgId,jdbcType=BIGINT},
+      ORG_TYPE = #{orgType,jdbcType=SMALLINT},
+      TEL = #{tel,jdbcType=VARCHAR},
+      MOBILE = #{mobile,jdbcType=VARCHAR},
+      EMAIL = #{email,jdbcType=VARCHAR},
+      LOGIN_COUNT = #{loginCount,jdbcType=INTEGER},
+      LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+      LAST_LOGIN_INFO = #{lastLoginInfo,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

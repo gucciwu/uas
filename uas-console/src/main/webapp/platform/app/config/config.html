@@ -1,0 +1,261 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>参数列表</title> 
+<link rel="stylesheet" href="/platform/static/darkblue/css/base.css" >
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+</head> 
+<body>
+	<div id="loading"> 
+	     <image src='/platform/image/loading3.gif'/>
+	     <h1><font color="#15428B">页面载入中....</font></h1>  
+     </div>
+    <div class="container">
+       <table id="dg" class="easyui-datagrid"  title="系统参数列表" 
+            data-options="
+                url:'/config/list',
+                method:'get',
+                rownumbers:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10"
+           >
+            <thead>
+                <tr>
+                    <th data-options="field:'name', width:80,align:'left' , halign: 'center'">名称</th>
+                    <th data-options="field:'code', width:80,align:'left' , halign: 'center'" >代码</th>
+                    <th data-options="field:'value', width:110,align:'left' , halign: 'center'">代码值</th>
+                    <th data-options="field:'createTime', width:60,align:'center' , halign: 'center'">创建时间</th>
+                    <th data-options="field:'updateTime', width:60,align:'center' , halign: 'center'">更新时间</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+        <div class="conditions">
+            <span class="con-span">参数名称: </span><input id="search_name" class="easyui-textbox" type="text" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+            <span class="con-span">参数代码: </span><input id="search_code" class="easyui-textbox" type="text" name="code" style="width:166px;height:35px;line-height:35px;"></input>
+            <a href="javascript:void(0);" onclick="searchConfig()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+            <a href="javascript:void(0);" onclick="searchReset()"  class="easyui-linkbutton" iconCls="icon-reload">重置</a>
+            <a href="javascript:void(0);" onclick="refreshPage()"  class="easyui-linkbutton" iconCls="icon-reload">刷新</a>
+        </div>
+        <div class="opt-buttons">
+            <a href="javascript:void(0);" onclick="createConfig()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+            <a href="javascript:void(0);" onclick="updateConfig()" class="easyui-linkbutton">修改</a>
+            <a href="javascript:void(0);" onclick="deleteConfig()" class="easyui-linkbutton">删除</a>
+        </div>
+      </div>
+    </div>
+   <!-- 增、改的dialog -->
+   <div id="dlg" class="easyui-dialog config-dialog" title="新增参数" 
+      data-options="closed:true,modal:true,resizeble:false"  buttons="#dlg-buttons">
+      	<div class="easyui-layout" data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <form id="configForm" method="post">
+		            <input id="id_data" type="hidden" type="text" name="id" ></input>
+		            <table class="kv-table">
+					  <tbody>                       
+						<tr>
+							<td class="kv-label">名称</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" id="name" name="name" style="width:480px;height:35px;line-height:35px;"></input>
+							</td>							
+						</tr>
+						<tr>
+							<td class="kv-label">代码</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" id="code" name="code" style="width:480px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">代码值</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" id="value" name="value" style="width:480px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>						
+					</tbody>
+				</table>
+		        </form>
+		    </div>
+		   
+		</div>
+		    <div id="dlg-buttons" style="text-align:center;"> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="saveConfig()" data-options="selected:true">保存</a> 
+               <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#dlg').dialog('close')" iconcls="icon-cancel">取消</a> 
+            </div> 
+	  </div>
+	 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script type="text/javascript" src="../../custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="../../custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="../../custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+    function closes() {  
+        $('#loading').fadeOut('normal', function () {  
+            $(this).remove();  
+        });  
+    }  
+    var pc;  
+      
+    $.parser.onComplete = function () {  
+        if (pc) clearTimeout(pc);  
+        pc = setTimeout(closes, 1000);  
+    }
+    
+    var url;
+    function refreshPage(){
+    	location.reload(true);   
+    }
+    
+    
+    function getSelectionsIds(dg){
+		var sels = dg.datagrid("getSelections");
+		var ids = [];
+		for(var i in sels){
+			ids.push(sels[i].id);
+		}
+		ids = ids.join(","); 
+		
+		return ids;
+	}    
+        function searchConfig(){
+            	var name=$("#search_name").val();
+            	var code=$("#search_code").val();
+            	if(name==""&&code==""){
+            		$.messager.alert("提示信息", "请至少输入一个查询条件！","info");
+            		  setTimeout(function(){
+                          $(".messager-body").window('close');  
+                        },2000);
+            	}else{
+            		$('#dg').datagrid('load',
+            			{
+            			   name: name,
+            			   code: code
+            			});
+            	}
+            }
+            function searchReset(){
+            	$("input").val("");
+            } 
+            function createConfig() {
+                $("#dlg").dialog("open").dialog('setTitle', '新增参数'); ;
+                $("#configForm").form("clear");
+                url= "/config/create";
+                $("#id_data").val("1");
+                //document.getElementById("hidtype").value="submit";
+            }
+            function saveConfig() {          	
+                $("#configForm").form("submit", {
+                    url: url,
+                    onSubmit: function () {
+                        return $(this).form("validate");
+                    },
+                    success: function (result) {
+                    	result = $.parseJSON(result);
+                        if (result.status == 1) {
+                        	$("#dg").datagrid("reload");
+                            $("#dlg").dialog("close");
+                            $.messager.alert("操作信息", result.msg,"info");
+                            setTimeout(function(){
+                                $(".messager-body").window('close');  
+                              },2000);
+                        }
+                        else {
+                            $.messager.alert("操作信息", result.msg,"error");
+                            setTimeout(function(){
+                                $(".messager-body").window('close');  
+                              },2000);
+                        }
+                    }
+                });
+            }
+            
+            function updateConfig() {
+            	var dgObject = $("#dg");
+            	var ids = getSelectionsIds(dgObject);
+            	if(ids.length == 0){
+            		$.messager.alert("操作信息", "请选择一行数据","warning");
+            		  setTimeout(function(){
+                          $(".messager-body").window('close');  
+                        },2000);
+    	    		return ;
+    	    	}
+    	    	if(ids.indexOf(',') > 0){
+    	    		$.messager.alert("操作信息", "只能选择一行数据","warning");
+    	    		  setTimeout(function(){
+                          $(".messager-body").window('close');  
+                        },2000);
+    	    		return ;
+    	    	}
+            	var row = $("#dg").datagrid("getSelected");
+                if (row) {
+                    $("#dlg").dialog("open").dialog('setTitle', '编辑参数');
+                    $("#configForm").form("load", row);
+                    url= "/config/update";
+                }
+            }
+            
+            function deleteConfig() {
+            	var dgObject = $("#dg");
+            	var ids = getSelectionsIds(dgObject);
+    	    	if(ids.length == 0){
+    	    		$.messager.alert("操作信息", "请至少选择一行数据","warning");
+    	    		  setTimeout(function(){
+                          $(".messager-body").window('close');  
+                        },2000);
+    	    		return ;
+    	    	}
+                    $.messager.confirm('操作确认', '确认要删除此参数吗？', function (r) {
+                        if (r) {
+                            $.ajax({
+                                type:"post",
+                                dataType:"json",
+                                url:"/config/deleteBatch",
+                                data:{ "ids":ids },
+                                error:function(request) {
+                                	$.messager.alert("操作提示", "发生异常！", "error"); 
+                                	  setTimeout(function(){
+                                          $(".messager-body").window('close');  
+                                        },2000);
+                                },
+                                success:function(result) {
+                                	if (result.status == 1) {
+                                        $('#dg').datagrid('reload');
+                                        $.messager.alert("操作信息", result.msg,"info");
+                                        setTimeout(function(){
+                                            $(".messager-body").window('close');  
+                                          },2000);
+                                    } else {
+                                    	$.messager.alert("操作信息", result.msg,"error");
+                                    	  setTimeout(function(){
+                                              $(".messager-body").window('close');  
+                                            },2000);
+                                    }
+                                }
+                            });
+                        }
+                    });
+            }
+            
+           
+    </script>
+</body> 
+</html>

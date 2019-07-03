@@ -1,0 +1,310 @@
+﻿<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>资源列表</title> 
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+</head> 
+<body>
+	<div id="loading"> 
+      <image src='/platform/image/loading3.gif'/>
+      <h1><font color="#15428B">页面载入中....</font></h1>   
+     </div>  
+    <div class="container" >
+       <table id="tg" class="easyui-treegrid" title="所有资源列表"
+             url="/permission/list" resultAsTree="true" data-options="
+                idField:'id',
+                treeField:'name',
+                  fitColumns:true,
+                   nowrap:false,
+                toolbar:'#tb',">
+            <thead>
+                <tr >
+                	<th field="id" width="10" hidden="hidden">隐藏id</th>
+                    <th field="name" halign="center" align="left" width="200" >资源名称</th>
+                    <th field="url" halign="center" align="left" width="420" >资源路径</th>
+                    <th field="description" halign="center" align="left" width="200">描述</th>
+                    <th field="icon" halign="center" align="left" width="120">图标</th>
+                    <th field="type" halign="center" align="center"  width="60" formatter="formatType">类型</th>
+                    <th field="sort" halign="center" align="center" width="60">排序号</th>
+                    <th field="status" halign="center" align="center" width="60" formatter="formatStatus" styler="cellStyler">状态</th>
+                    <th field="createTime" halign="center" align="center" width="145">创建时间</th>
+                    <th field="updateTime" halign="center" align="center" width="145">修改时间</th>
+                    <th field="parentId" halign="center" align="left" width="10" hidden="hidden">隐藏id</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+	      <form id="searchPermissionForm">
+		        <div class="opt-buttons">
+		            <a href="#" class="easyui-linkbutton" onclick ="newPermission()" data-options="selected:true">新增</a>
+		            <a href="#" class="easyui-linkbutton" onclick ="editPermission()" >修改</a>
+		            <a href="#" class="easyui-linkbutton" onclick ="deletePermission()">删除</a>
+		        </div>
+	        </form>
+      </div>
+      
+      
+      <div id="dlg" class="easyui-dialog permission-dialog" title="增加资源" 
+      data-options="closed:true,modal:true" buttons="#dlg-buttons">
+      	<div class="easyui-layout" data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <form id="permissionAddForm" method="post">
+		            <table class="kv-table">
+					<tbody>
+						<tr>
+							<td class="kv-label">资源名称</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" data-options="required:true" name="name" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+							<td class="kv-label">资源路径</td>
+								<td class="kv-content">
+									<input class="easyui-textbox" type="text" name="url" style="width:200px;height:35px;line-height:35px;"></input>
+								</td>
+						</tr>
+						<tr>
+							<td class="kv-content" hidden="hidden">
+								<input class="easyui-textbox" type="text" name="id" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+								<td class="kv-label">资源图标</td>
+								<td class="kv-content">
+									<input class="easyui-textbox" type="text" name="icon" style="width:200px;height:35px;line-height:35px;"></input>
+								</td>
+								<td class="kv-label">资源描述</td>
+								<td class="kv-content">
+									<input class="easyui-textbox" type="text" name="description" style="width:200px;height:35px;line-height:35px;"></input>
+								</td>
+						</tr>
+						<tr>
+							<td class="kv-label">类型</td>
+							<td class="kv-content">
+								<select name="type" class="easyui-combobox" data-options="required:true,width:200,height:35,editable:false,panelHeight:'auto'">
+		                                <option value="0" selected="selected">菜单</option>
+		                                <option value="1" >按钮</option>
+		                        </select>
+							</td>
+							<td class="kv-label">排序号</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" name="sort" data-options="required:true" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">上级资源</td>
+								<td class="kv-content">
+									<select id="permissionCombo" class="easyui-combotree"  name="parentId" style="width:200px;height: 35px;"
+									data-options="url:'/permission/tree',parentField:'pid'"></select>
+							</td>
+							<td class="kv-label">状态</td>
+							<td class="kv-content">
+								<select name="status" class="easyui-combobox" data-options="required:true, width:200,height:35,editable:false,panelHeight:'auto'">
+		                                <option value="0">停用</option>
+		                                <option value="1" selected="selected">正常</option>
+		                        </select>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+		        </form>
+		    </div>
+		   
+		</div>
+	  </div>
+	  <div id="dlg-buttons"> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveOrgnization()" data-options="selected:true">保存</a> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg').dialog('close')"
+            iconcls="icon-cancel">取消</a> 
+    </div> 
+    </div>
+    
+    
+    <script type="text/javascript">
+    function closes() {  
+        $('#loading').fadeOut('normal', function () {  
+            $(this).remove();  
+        });  
+    }  
+    var pc;  
+      
+    $.parser.onComplete = function () {  
+        if (pc) clearTimeout(pc);  
+        pc = setTimeout(closes, 1000);  
+    }  
+    $(function(){
+    	$('#permissionCombo').combotree({
+    	    	onLoadSuccess: function(){
+    	    		
+    	    	                       
+    	    		//$.messager.alert("操作信息", "只能选择一行数据","warning");
+    	    	             }});
+    	});
+    
+	    function formatStatus(val,row){
+	    	if (val == 0){
+	    		return '<span >停用</span>';
+	    	} else {
+	    		return '<span >正常</span>';
+	    		//return '<div><a href="javascript:void(0)"  class="easyui-linkbutton" iconcls="icon-cancel">取消</a> </div>';
+	    		
+	    	}
+	    }
+	    
+	    function cellStyler(value,row,index){
+			if (value == 0 ){
+				return 'background-color:red;';
+			}else{
+				return 'background-color:green;';
+			}
+		}
+	    
+	    function formatType(val,row){
+	    	if (val == 0){
+	    		return '<span >菜单</span>';
+	    	} else {
+	    		return '<span >按钮</span>';
+	    		
+	    	}
+	    }
+        
+        var url;
+        var type;
+        function newPermission() {
+        	$("#permissionAddForm").form("clear");
+        	$('#permissionCombo').combotree('reload');
+            $("#dlg").dialog("open").dialog('setTitle', '增加资源'); ;
+            url = "/permission/add";
+            $("#permissionCombo").combotree({readonly : false});
+        }
+        function editPermission() {
+        	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+        	if(ids.length == 0){
+        		$.messager.alert("操作信息", "请选择一行数据","warning");
+        	    setTimeout(function(){
+                    $(".messager-body").window('close');  
+                  },2000);
+	    		return ;
+	    	}
+	    	if(ids.indexOf(',') > 0){
+	    		$.messager.alert("操作信息", "只能选择一行数据","warning");
+	    		   setTimeout(function(){
+                       $(".messager-body").window('close');  
+                     },2000);
+	    		return ;
+	    	}
+        	var row = $("#tg").treegrid("getSelected");
+            if (row) {
+            	$("#permissionAddForm").form("clear");
+            	$('#permissionCombo').combotree('reload');
+                $("#dlg").dialog("open").dialog('setTitle', '编辑资源');
+                $("#permissionAddForm").form("load", row);
+                //node=$('#permissionCombo').combotree('tree').tree('find',3);
+                //$('#permissionCombo').combotree('tree').tree('check',node.target);
+                //$('#permissionCombo').combotree('tree').tree('expandAll', node.target);
+                $("#permissionCombo").combotree('setValue',row.parentId);
+                url = "/permission/update";
+                $("#permissionCombo").combotree('readonly');
+            }
+        }
+        function saveOrgnization() {
+            $("#permissionAddForm").form("submit", {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form("validate");
+                },
+                success: function (result) {
+                	try {
+                		result = $.parseJSON(result);
+                	}catch (e){
+                		$.messager.alert("操作信息", "后台出现异常！","error");
+                	    setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                		return;
+                	}
+                    if (result.status == 1) {
+                    	$("#tg").treegrid("reload");
+                        $("#dlg").dialog("close");
+                        $.messager.alert("操作信息", "成功","info");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                    else {
+                        $.messager.alert("操作信息", result.msg,"error");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                },
+                error : function(XmlHttpRequest,textStatus, errorThrown){
+                	$.messager.alert("操作信息", XmlHttpRequest.responseText,"error");
+                    setTimeout(function(){
+                        $(".messager-body").window('close');  
+                      },2000);
+                }
+            });
+        }
+        function deletePermission() {
+        	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+	    	if(ids.length == 0){
+	    		$.messager.alert("操作信息", "请至少选择一行数据","warning");
+	    		   setTimeout(function(){
+                       $(".messager-body").window('close');  
+                     },2000);
+	    		return ;
+	    	}
+                $.messager.confirm('操作确认', '确认要删除资源吗？', function (r) {
+                    if (r) {
+                         $.ajax({
+                            type:"post",
+                            dataType:"json",
+                            url:"/permission/deleteBatch",
+                            data:{ "ids":ids },
+                            error:function(request) {
+                            	$.messager.alert("操作提示", "发生异常！", "error"); 
+                                setTimeout(function(){
+                                    $(".messager-body").window('close');  
+                                  },2000);
+                            },
+                            success:function(result) {
+                            	if (result.status == 1) {
+                                    $('#tg').treegrid('reload');
+                                    $.messager.alert("操作信息", "成功","info");
+                                    setTimeout(function(){
+                                        $(".messager-body").window('close');  
+                                      },2000);
+                                } else {
+                                	$.messager.alert("操作信息", result.msg,"error");
+                                    setTimeout(function(){
+                                        $(".messager-body").window('close');  
+                                      },2000);
+                                }
+                            }
+                        }); 
+                    }
+                });
+        }
+        function getSelectionsIds(customList){
+    		var sels = customList.treegrid("getSelections");
+    		var ids = [];
+    		for(var i in sels){
+    			ids.push(sels[i].id);
+    		}
+    		ids = ids.join(","); 
+    		
+    		return ids;
+    	}
+    </script>
+</body> 
+</html>

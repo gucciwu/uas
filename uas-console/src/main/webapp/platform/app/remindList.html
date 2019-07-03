@@ -1,0 +1,98 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+  <link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+    <link href="/platform/static/darkblue/css/platform.css" rel="stylesheet">
+    <link href="/platform/css/public.css" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+    <link href="/platform/js/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+<script type="text/javascript" charset="utf-8" src="/platform/js/jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="/platform/js/umeditor/umeditor.config.js"></script>
+<script type="text/javascript" charset="utf-8" src="/platform/js/umeditor/umeditor.js"></script>
+<script type="text/javascript" src="/platform/js/umeditor/lang/zh-cn/zh-cn.js"></script>
+</head>
+<body>
+    <div class="container">
+       <table id="dg" class="easyui-datagrid"  title="<a class='items' href='workbench.html'>首页&nbsp;>&nbsp;</a>提醒事件列表" 
+            data-options="
+                url:'/remind/titleList',
+                rownumbers:true,
+                singleSelect:false,
+                autoRowHeight:false,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                method:'get',
+                checkOnSelect:true,
+                selectOnCheck:true,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10"     
+           >
+            <thead>
+                <tr>
+                   <th  field="ck" checkbox="true"></th>
+                    <th data-options="field:'title', width:110,align:'left' , halign: 'center'">标题</th>
+                    <th data-options="field:'sendTime', width:110,align:'center' , halign: 'center'">提醒时间</th>                    
+                    <th data-options="field:'expireTime', width:110,align:'center' , halign: 'center'" formatter="formatExpireTime">是否过期</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+        <div class="conditions">
+            <span class="con-span">标题: </span>
+            <input id="search_title" class="easyui-textbox" type="text" name="title" style="width:266px;height:35px;line-height:35px;">
+            </input>
+            <a href="javascript:void(0);" onclick="searchRemind()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true" style="margin-left:10px;">查询</a>
+            <a href="javascript:void(0);" onclick="searchReset()"  class="easyui-linkbutton" iconCls="icon-reload">重置</a>
+            <a href="javascript:void(0);" onclick="refreshPage()"  class="easyui-linkbutton" iconCls="icon-reload">刷新</a>
+        </div>
+      </div>
+    </div>   
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+    var url;
+    function refreshPage(){
+        location.reload(true);   
+    }
+    function formatExpireTime(val,row){
+    	var date=new Date();
+    	var expire=new Date(val.replace("-","/"));
+        if (expire>date){
+            return '<span>未过期</span>';
+        } else {
+            return '<span>已过期</span>';
+                }
+    }
+    function getSelectionsIds(dg){
+        var sels = dg.datagrid("getChecked");
+        var ids = [];
+        for(var i in sels){
+            ids.push(sels[i].id);
+        }
+        ids = ids.join(","); 
+        
+        return ids;
+    }    
+        function searchRemind(){
+                var title=$("#search_title").val();
+                if(title==""){
+                    $.messager.alert("提示信息", "请输入标题！","info");
+                }else{
+                    $('#dg').datagrid('load',
+                        {
+                            title: title
+                        });
+                }
+            }
+            function searchReset(){
+                $("input").val("");
+            } 
+    </script>
+</body> 
+</html>

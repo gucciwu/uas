@@ -1,0 +1,276 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>统一登录后台管理系统</title> 
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link href="/platform/static/darkblue/css/platform.css" rel="stylesheet">
+<link href="/platform/custom/darkblue/uimaker/easyui.css" rel="stylesheet">
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/platform/js/base.js"></script>
+<script type="text/javascript" src="/platform/js/util.js"></script>
+<script type="text/javascript" src="/platform/js/md5/md5.js"></script>
+</head> 
+<body>
+    <div class="container">
+        <div id="pf-hd">
+            <div class="pf-logo">
+                <img src="/platform/image/main_logo.png" width="60" height="50" alt="logo"><font color="white" size="5">&nbsp;统一登录后台管理系统</font>
+            </div>           
+            <div class="pf-nav-wrap">
+              <!--<div class="pf-nav-ww">-->
+              <div class="pf-nav-ww">              
+                <ul class="pf-nav">                 
+                </ul>
+              </div>
+              <a href="javascript:;" class="pf-nav-prev disabled iconfont">&#xe606;</a>
+              <a href="javascript:;" class="pf-nav-next iconfont">&#xe607;</a>
+            </div>
+            <div class="pf-user" onclick="showPanel()">
+                <div class="pf-user-photo">
+                    <img src="../static/darkblue/images/main/user.png" alt="">                   
+                </div>
+                <h4 id="name" class="pf-user-name ellipsis"></h4>
+                <i class="iconfont xiala">&#xe607;</i>
+
+                <div class="pf-user-panel">
+                    <ul class="pf-user-opt">
+                        <li class="pf-modify-pwd" onClick="toModifyPassword()">
+                            <a href="javascript:void(0)" >
+                                <i class="iconfont">&#xe634;</i>
+                                <span class="pf-opt-name">修改密码</span>
+                            </a>
+                        </li>
+                        <li class="pf-logout">
+                            <a href="javascript:;">
+                                <i class="iconfont">&#xe60e;</i>
+                                <span class="pf-opt-name">退出</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div id="pf-bd" class="bodydiv">
+          <div class="pf-sider-wrap"></div>
+           <div id="pf-page">
+            </div>
+        </div>
+        <div id="pf-ft">
+            <div class="system-name">
+              <i class="iconfont">&#xe6fe;</i>
+              <span>统一登录后台管理系统&nbsp;v1.0</span>
+            </div>
+            <div class="copyright-name">
+              <span>CopyRight&nbsp;2017&nbsp;&nbsp;民生证券&nbsp;版权所有</span>
+              <i class="iconfont" >&#xe6ff;</i>
+            </div>
+        </div>
+    </div>
+    <div id="mm" class="easyui-menu tabs-menu" style="width:120px;display:none;">
+         <div id="mm-tabclose">关闭</div>
+         <div id="mm-tabcloseall">关闭所有</div>
+         <div id="mm-tabcloseother">关闭其他</div> 
+    </div>
+    
+       <!-- 增、改的dialog -->
+   <div id="dlg" class="easyui-dialog" title="修改密码" 
+      data-options="closed:true,modal:true,resizeble:false" style="width:420px;height:250px;padding:10px;" buttons="#dlg-buttons">
+      	<div class="easyui-layout" data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <form id="passwordForm" method="post">
+		            <table class="kv-table">
+					  <tbody>                       
+						<tr>
+							<td class="kv-label">旧密码</td>
+							<td class="kv-content">
+								<input class="easyui-textbox"  type="password" id="oldPassword" name="oldPassword" data-options="required:true" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>							
+						</tr>
+						<tr>
+							<td class="kv-label">新密码</td>
+							<td class="kv-content">
+								<input class="easyui-textbox"  type="password" id="newPassword" name="newPassword" data-options="required:true" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">确认新密码</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="password" id="reNewPassword" name="reNewPassword" data-options="required:true" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>						
+					</tbody>
+				</table>
+		        </form>
+		    </div>
+		   
+		</div>
+		    <div id="dlg-buttons" style="text-align:center;"> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="modifyPassword()" data-options="selected:true">提交</a> 
+               <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#dlg').dialog('close')" >取消</a> 
+            </div> 
+	  </div>
+	  
+	
+
+    <script type="text/javascript" src="/platform/static/darkblue/js/main.js"></script>
+    <script type="text/javascript" src="/platform/js/storage.js"></script>    
+    <script type="text/javascript">
+    
+    
+    $(window).resize(function(){
+          $('.tabs-panels').height($("#pf-page").height()-46);
+          $('.panel-body').not('.messager-body').height($(".easyui-dialog").height)
+    }).resize();
+    
+    var page = 0,
+        pages = ($('.pf-nav').height() / 70) - 1;
+    if(pages <= 0){
+      $('.pf-nav-prev,.pf-nav-next').hide();
+    }
+    //设置用户相关属性
+    $(function(){ 
+    	$('#name').html(getItem("name"));
+    	$('#newPassword').tooltip({
+    		content: "<strong>我是html</strong>"
+    	});
+    })
+    
+    
+    
+    $(document).on('click', '.pf-nav-prev,.pf-nav-next', function(){
+      if($(this).hasClass('disabled')) return;
+      if($(this).hasClass('pf-nav-next')){
+        page++;
+        $('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+        if(page == pages){
+          $(this).addClass('disabled');
+          $('.pf-nav-prev').removeClass('disabled');
+        }else{
+          $('.pf-nav-prev').removeClass('disabled');
+        }       
+      }else{
+        page--;
+        $('.pf-nav').stop().animate({'margin-top': -70*page}, 200);
+        if(page == 0){
+          $(this).addClass('disabled');
+          $('.pf-nav-next').removeClass('disabled');
+        }else{
+          $('.pf-nav-next').removeClass('disabled');
+        } 
+      }
+    })
+    
+    
+    function replace(doc, style) {
+      $('link', doc).each(function(index, one) {
+        var path = $(one).attr('href').replace(/(static\/)\w+(\/css)/g, '$1' + style + '$2').replace(/(custom\/)\w+(\/)/g, '$1' + style + '$2'),
+          sheet;
+        if(doc.createStyleSheet) {
+          sheet = doc.createStyleSheet(path);
+          setTimeout(function() {
+            $(one).remove();
+          }, 500)
+        } else {
+          sheet = $('<link rel="stylesheet" type="text/css" href="' + path + '" />').appendTo($('head', doc));
+          sheet = sheet[0];
+          sheet.onload = function() {
+            $(one).remove();
+          }
+        }
+      })
+      $('img', doc).each(function(index, one) {
+        var path = $(one).attr('src').replace(/(static\/)\w+(\/images)/g, '$1' + style + '$2');
+        $(one).attr('src', path);
+      })
+    }
+    $('.skin-item').click(function() {
+      var color = $(this).data('color');
+      replaceAll(color);
+    })
+    function replaceAll(style) {
+      $('iframe').each(function(index, one) {
+        try {
+          replace(one.contentWindow.document, style)
+        } catch(e) {
+          console.warn('origin cross');
+        }
+      })
+      replace(document, style)
+    }
+    
+    function toModifyPassword(){
+    	 $("#dlg").dialog("open"); 
+    }
+    function modifyPassword(){
+    	//先验证是否输入
+    	if($('#oldPassword').val()=='') {
+    		$.messager.alert('提示信息', '请输入旧密码',"info");
+    		return;
+    	}
+    	if($('#newPassword').val()=='') {
+    		$.messager.alert('提示信息', '请输入新密码',"info");
+    		return;
+    	}
+    	if($('#reNewPassword').val()=='') {
+    		$.messager.alert('提示信息', '请重新输入密码',"info");
+    		return;
+    	}
+    	if($('#newPassword').val()!=$('#reNewPassword').val()) {
+    		$.messager.alert('提示信息', '新密码不一致',"info");
+    		return;
+    	}
+    	
+    	//复杂度要求检查
+    	if(regex.test($('#newPassword').val())){
+    		var password =$('#newPassword').textbox("getValue");
+    		$('#newPassword').textbox("setValue",md5(password));
+    		var oldPassword =$('#oldPassword').textbox("getValue");
+    		$('#oldPassword').textbox("setValue",md5(oldPassword));
+        	$("#passwordForm").form("submit", {
+                url: '/employee/update/password',
+                onSubmit: function () {
+                    return $(this).form("validate");
+                },
+                onLoadError: function(){
+                	$('#newPassword').textbox("setValue",password);
+                	$('#oldPassword').textbox("setValue",oldPassword);
+                },
+                success: function (result) {
+                	$('#newPassword').textbox("setValue",password);
+                	$('#oldPassword').textbox("setValue",oldPassword);
+                	result = $.parseJSON(result);
+                    if (result.status == 1) {
+                        $("#dlg").dialog("close");
+                        $.messager.alert("操作信息", result.msg,"info");
+                        //--------退出-------
+                        //调用退出方法
+                        //$.post('/logout');
+                        //清理cookie和storage
+                        //clearStorage();
+                        //window.location.href = 'login.html';
+                        
+                    }
+                    else {
+                        $.messager.alert("操作信息", result.msg,"error");
+                    }
+                }
+            }); 
+    	}else{
+    		$.messager.alert('提示信息', '密码复杂度不满足要求',"info");
+    	}
+    	
+
+   }
+   //展示下拉列表
+   function showPanel(){
+	   $(".pf-user-panel").show();
+   }
+   
+    </script>
+</body> 
+</html>

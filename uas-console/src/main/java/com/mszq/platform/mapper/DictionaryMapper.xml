@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.dictionary.dao.IDictionaryDAO">                                                     
+    
+   
+   <select id="queryAll"  resultType="com.mszq.platform.entity.Dictionary" parameterType="Map">
+		SELECT
+			id,parent_id,name,code,status,is_leaf,has_item,level_code
+		FROM
+			pf_sm_dictionary
+		<where>
+		 <if test="parentId!=null"> parent_id=#{parentId}</if>
+		 <if test="_parameter.containsKey('status')"> and status = #{status} </if>
+		</where>
+		
+  </select>
+  
+  <select id="queryFirstLevel"  resultType="com.mszq.platform.entity.Dictionary">
+		SELECT
+			id,parent_id,name,code,status,is_leaf,has_item,level_code
+		FROM
+			pf_sm_dictionary
+		where parent_id=0
+  </select>
+  
+  
+   <select id="queryChildren" parameterType="Map" resultType="com.mszq.platform.entity.Dictionary">
+		SELECT
+			id,parent_id,name,code,status,is_leaf,has_item,level_code
+		FROM
+			pf_sm_dictionary
+		<where>
+			<if test="_parameter.containsKey('parentId')"> parent_id=#{parentId}</if>
+		 	<if test="_parameter.containsKey('status')"> and status = #{status} </if>
+		</where>
+  </select>
+  
+   <select id="queryDictionaryByDictionaryItemId" parameterType="Integer" resultType="com.mszq.platform.entity.Dictionary">
+     select * from pf_sm_dictionary where id=(select dic_id from pf_sm_dictionary_item where id=#{dicItemId})
+  </select>
+  
+   <select id="getDictionaryItemByDicId" parameterType="Map" resultType="com.mszq.platform.entity.DictionaryItem">
+		SELECT
+			id,dic_id,name,value,status
+		FROM
+			pf_sm_dictionary_item
+		<where>
+			<if test="_parameter.containsKey('dicId')"> dic_id=#{dicId}</if>
+		 	<if test="_parameter.containsKey('status')"> and status = #{status} </if>
+		</where>
+		
+  </select>
+   <select id="getDictionaryItemById" parameterType="Long" resultType="com.mszq.platform.entity.DictionaryItem">
+		SELECT
+			id,dic_id,name,value,status
+		FROM
+			pf_sm_dictionary_item
+		where id=#{id}
+  </select>
+  
+  <select id="getDictionaryItemByDicCode" parameterType="String" resultType="com.mszq.platform.entity.DictionaryItem">
+		SELECT
+			id,dic_id,name,value,status
+		FROM
+			pf_sm_dictionary_item
+		where dic_id=(select id from pf_sm_dictionary where code=#{dicCode})
+  </select>
+  
+   <select id="getDictionaryById" parameterType="Integer" resultType="com.mszq.platform.entity.Dictionary">
+		SELECT
+			id,parent_id,name,code,status,creator_id,is_leaf,has_item,level_code
+		FROM
+			pf_sm_dictionary
+		where id=#{Id}
+  </select>
+  
+  <select id="getDictionaryItemCountById" parameterType="Integer" resultType="Integer">
+     select count(1) from pf_sm_dictionary_item where dic_id=(select dic_id from pf_sm_dictionary_item where id=#{id})
+  </select>
+  
+  
+  
+  <insert id="createDictionary" parameterType="com.mszq.platform.entity.Dictionary" keyProperty="id" useGeneratedKeys="true">
+  	insert ignore into pf_sm_dictionary(parent_id,name,code,status,creator_id,is_leaf,has_item,level_code)
+  	values (#{parentId},#{name},#{code},#{status},#{creatorId},#{isLeaf},#{hasItem},#{levelCode})
+  </insert>
+  
+    <insert id="createDictionaryItem" parameterType="com.mszq.platform.entity.DictionaryItem" keyProperty="id" useGeneratedKeys="true">
+  	insert ignore into pf_sm_dictionary_item(dic_id,name,value,status,creator_id)
+  	values (#{dicId},#{name},#{value},#{status},#{creatorId})
+  </insert>
+  
+  <update id="updateDictionary" parameterType="com.mszq.platform.entity.Dictionary" >
+    update pf_sm_dictionary
+    set   name = #{name},
+          parent_id=#{parentId},
+          code=#{code},
+	      status=#{status},
+	      creator_id=#{creatorId},
+	      is_leaf=#{isLeaf},
+	      has_item=#{hasItem},
+	      level_code=#{levelCode}
+    where id = #{id}
+  </update>
+  <update id="updateDictionaryItem" parameterType="com.mszq.platform.entity.DictionaryItem" >
+    update pf_sm_dictionary_item
+    set   name = #{name},
+	      value = #{value},
+	       status=#{status}
+    where id = #{id}
+  </update>
+  
+  <delete id="deleteDictionaryByLevelCode" parameterType="String">
+    delete  from pf_sm_dictionary   where level_code like concat(#{levelCode},'%')
+  </delete>
+  <delete id="deleteDictionaryItemByDicLevelCode" parameterType="String">
+    delete from pf_sm_dictionary_item where dic_id in(
+      select id from pf_sm_dictionary where level_code like concat(#{levelCode},'%')
+    )
+  </delete>
+  
+  <delete id="deleteDictionaryItemById" parameterType="Integer">
+    delete  from pf_sm_dictionary_item   where id=#{id}
+  </delete>
+  
+  
+  
+</mapper>

@@ -1,0 +1,362 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>数据字典</title> 
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/switchbutton.css">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+</head> 
+<body>
+<div id="loading"> 
+     <image src='/platform/image/loading3.gif'/>
+     <h1><font color="#15428B">页面载入中....</font></h1>  
+</div>
+ <div class="container">
+       	<table id="tg" class="easyui-treegrid" title="数据字典列表" 
+			data-options="
+			    url:'/dictionary/list',
+			    method:'get',
+			    rownumbers: true,
+			    pagination: true,
+			    pageSize: 50,
+				pageList: [10,50,200],
+			    idField: 'id',
+				treeField: 'name',
+				parentField : 'parentId',
+			    fitColumns:true,
+                striped:true,
+                animate: true,
+				collapsible: true,
+				toolbar:'#tb',
+				showFooter: true
+				
+            ">
+		<thead>
+			<tr>
+				<th data-options="field:'name',width:100,halign: 'center',editor:'text'">名称</th>
+				<th data-options="field:'value',width:60,halign: 'center',editor:'text'">代码值</th>
+				<th data-options="field:'status',width:80,halign: 'center',formatter:formateStatus,editor:{type:'combobox',options:{valueField: 'id',textField: 'text',data:[{'id':1,'text':'启用'},{'id':0,'text':'禁用'}]}}">状态</th>
+			</tr>
+		</thead>
+	</table>
+	   <div id="tb">
+        <div class="opt-buttons">
+            <a href="javascript:void(0);" onclick="create()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+            <a href="javascript:void(0);" onclick="edit()" class="easyui-linkbutton">修改</a>
+            <a href="javascript:void(0);" onclick="update()" class="easyui-linkbutton">保存</a>
+            <a href="javascript:void(0);" onclick="cancel()" class="easyui-linkbutton">取消</a>
+            <!-- 关键基础数据，不提供删除功能
+             <a href="javascript:void(0);" onclick="del()" class="easyui-linkbutton">删除</a>
+             -->
+            <a href="javascript:void(0);" onclick="refreshPage()"  class="easyui-linkbutton" iconCls="icon-reload">刷新</a>
+        </div>
+      </div>
+    </div>
+   <!-- 增、改的dialog -->
+   <div id="dlg" class="easyui-dialog dictionary-dialog" title="新增数据字典" data-options="closed:true,modal:true,resizeble:false"  buttons="#dlg-buttons">
+      	<div class="easyui-layout" data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <form id="dictionaryForm" method="post">
+		            <div style="margin-bottom:15px;font-size:14px;">
+		            <label class="kv-label">字典类型:</label>
+		            <span style="margin-left:15px;">
+		              <input  type="radio" name="type"  value="0"><label>主数据</label></input>
+                      <input  type="radio" name="type"  value="1"><label>子数据</label></input>
+		            </span>
+		            </div> 
+		            <!-- 根据radio的选择来设置下面的两个table显示哪个 -->
+		            <table id="dictionary" class="kv-table" style="display:none">
+					  <tbody>  
+					    <tr>
+							<td class="kv-label">父级数据字典</td>
+							<td class="kv-content">
+								<input id="dictionary_combotree"  name="parentId" class="easyui-combotree" data-options="url:'',method:'get'"  style="width:200px;height: 29px;"/>
+							</td>							
+						</tr>               
+						<tr>
+							<td class="kv-label">名称</td>
+							<td class="kv-content">
+								<input id="dic_name" class="easyui-textbox" type="text"  name="name" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>							
+						</tr>
+						<tr>
+							<td class="kv-label">代码</td>
+							<td class="kv-content">
+								<input id="dic_code" class="easyui-textbox" type="text" name="code" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>					
+					</tbody>
+				</table>
+				<!-- 子表数据 -->
+				 <table id="dictionaryItem" class="kv-table" style="display:none">
+					<tbody>  
+					   <tr>
+							<td class="kv-label"></td>
+							<td class="kv-content">
+								<input name="parentId" id="dictionaryItem_combotree" class="easyui-combotree" data-options="url:'',method:'get'"  style="width:200px;height: 29px;"/>
+							</td>							
+						</tr>                    
+						<tr>
+							<td class="kv-label">名称</td>
+							<td class="kv-content">
+								<input id="dicItem_name" class="easyui-textbox" type="text"  name="text" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>							
+						</tr>						
+						<tr>
+							<td class="kv-label">代码值</td>
+							<td class="kv-content">
+								<input id="dicItem_value" class="easyui-textbox" type="text" name="value" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>						
+					</tbody>
+				</table>
+		        </form>
+		    </div>
+		   
+		</div>
+		    <div id="dlg-buttons" style="text-align:center;"> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="save()" data-options="selected:true">保存</a> 
+               <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#dlg').dialog('close')" iconcls="icon-cancel">取消</a> 
+            </div> 
+	  </div>
+	<!-- treegrid异步加载子节点的方法都不用写了，easyui自己就搞定了 ,但为啥不显示？-->
+
+
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+    function closes() {  
+        $('#loading').fadeOut('normal', function () {  
+            $(this).remove();  
+        });  
+    }  
+    var pc;  
+      
+    $.parser.onComplete = function () {  
+        if (pc) clearTimeout(pc);  
+        pc = setTimeout(closes, 1000);  
+    }
+    
+    
+    function create() {
+        $("#dlg").dialog("open").dialog('setTitle', '新增数据字典'); 
+        $("#dictionary").css("display","none");
+        $("#dictionaryItem").css("display","none");
+        $("#dictionaryForm").form("clear");
+       
+    }
+    //TODO
+    function save(){
+    	var parentId;
+    	var name;
+    	var code;
+    	var value;
+    	var type=$('input:radio[name="type"]:checked').val(); 	
+    	if(type=="0"){
+    		parentId=$("#dictionary_combotree").combobox('getValue');
+    		if(parentId=="") parentId=0; 
+    		name=$("#dic_name").val();
+    		code=$("#dic_code").val();
+    		value="";
+    	}else{
+    		parentId=$("#dictionaryItem_combotree").combobox('getValue');
+    		if(parentId==""){
+    			$.messager.alert("操作信息", "请选择叶子节点！","warning");
+    			  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+    			return;
+    		}
+    		name=$("#dicItem_name").val();
+    		value=$("#dicItem_value").val();
+    		code="";
+    	}
+    		
+   	   $.ajax({
+   		   type:"POST",
+   		   url: "/dictionary/create",
+   		   data:{"Id":0,"type":type,"parentId":parentId,"name":name,"value":value,"code":code},//id的值设置一个初始值，避免前端向后端提交form时报错
+   		   error:function(){
+   			   
+   		   },
+   		   success: function (result) {
+         	result = $.parseJSON(result);
+             if (result.status == 1) {
+             	$("#dg").datagrid("reload");
+                 $("#dlg").dialog("close");
+                 $.messager.alert("操作信息", result.msg,"info");
+                 setTimeout(function(){
+                     $(".messager-body").window('close');  
+                   },2000);
+             }
+             else {
+                 $.messager.alert("操作信息", result.msg,"error");
+                 setTimeout(function(){
+                     $(".messager-body").window('close');  
+                   },2000);
+             }
+         }
+   	   });
+	}
+    
+    
+    
+    
+      var isServerResponse=1;//formateStatus这个函数在save函数调用完，服务端未响应时就有可能执行，因此在这两个方法在进行编辑操作时需要做同步，这个就是同步的标志位
+      function formateStatus(value){
+        var s="";
+    	if(isServerResponse){
+    		if(value==0) s="<span style=''>禁用</span>";
+    		else s="<span style='background:#cc0000;color:#fff'>启用 </span>";
+    		return s;
+    	}
+    	
+    	  
+      }
+      function refreshPage(){
+    	 location.reload(true);   
+      }      
+      var editingId;
+		function edit(){
+			if (editingId != undefined){
+				$('#tg').treegrid('select', editingId);
+				return;
+			}
+			var row = $('#tg').treegrid('getSelected');
+			if (row){
+				editingId = row.id
+				$('#tg').treegrid('beginEdit', editingId);
+			}
+		}
+		
+		
+		
+		function update(){
+			if (editingId != undefined){
+				isServerResponse=0;//避免调用formateStatus方法去设置状态这一列
+				var t = $('#tg');
+				t.treegrid('endEdit', editingId);
+				var row = $('#tg').treegrid('getSelected');//获取缩编辑的数据
+				//保存到后台数据库
+				$.ajax({
+                                type:"post",
+                                dataType:"json",
+                                url:"/dictionary/update",
+                                data:{ "id":row.id,"name":row.name,"value":row.value,"status":row.status,"type":row.type },
+                                error:function(request) {
+                                	isServerResponse=1;
+                                	$.messager.alert("操作提示", "发生异常！", "error"); 
+                                	  setTimeout(function(){
+                                          $(".messager-body").window('close');  
+                                        },2000);
+                                },
+                                success:function(result) {
+                                	isServerResponse=1;
+                                	if (result.status == 1) {
+                                        $('#tg').treegrid('reload');
+                                        $.messager.alert("操作信息", result.msg,"info");
+                                        setTimeout(function(){
+                                            $(".messager-body").window('close');  
+                                          },2000);
+                                    } else {
+                                    	$.messager.alert("操作信息", result.msg,"error");
+                                    	  setTimeout(function(){
+                                              $(".messager-body").window('close');  
+                                            },2000);
+                                    }
+                                }
+                            });
+			}
+		}
+		function cancel(){
+			if (editingId != undefined){
+				$('#tg').treegrid('cancelEdit', editingId);
+				editingId = undefined;
+			}
+		}
+		
+		//目前只做删除单个，多个逻辑比较复杂，暂时不做
+		function del() {
+           	var dgObject = $("#tg");
+           	var row = $('#tg').treegrid('getSelected');//获取缩编辑的数据
+   	    	if(row==null ){
+   	    		$.messager.alert("操作信息", "请选择一行数据","warning");
+   	    	  setTimeout(function(){
+                  $(".messager-body").window('close');  
+                },2000);
+   	    		return ;
+   	    	}
+                   $.messager.confirm('操作确认', '确认要删除此参数吗？', function (r) {
+                       if (r) {
+                           $.ajax({
+                               type:"post",
+                               dataType:"json",
+                               url:"/dictionary/delete",
+                               data:{ "id":row.id,"type":row.type,"levelCode":row.levelCode },
+                               error:function(request) {
+                               	$.messager.alert("操作提示", "发生异常！", "error"); 
+                                setTimeout(function(){
+                                    $(".messager-body").window('close');  
+                                  },2000);
+                               },
+                               success:function(result) {
+                               	if (result.status == 1) {
+                                       $('#tg').treegrid('reload');
+                                       $.messager.alert("操作信息", result.msg,"info");
+                                       setTimeout(function(){
+                                           $(".messager-body").window('close');  
+                                         },2000);
+                                   } else {
+                                   	$.messager.alert("操作信息", result.msg,"error");
+                                    setTimeout(function(){
+                                        $(".messager-body").window('close');  
+                                      },2000);
+                                   }
+                               }
+                           });
+                       }
+                   });
+           }
+		 
+		 $(function(){ 
+		    	$(":radio").change(function() { 
+		    		var val=$('input:radio[name="type"]:checked').val();
+		            if(val==0){
+		            	$("#dictionary").css("display","table");
+		            	$("#dictionary_combotree").combotree("reload","/dictionary/list?source=new");
+		            	$("#dictionaryItem").css("display","none");
+		            }
+		            else if(val==1){
+		            	$("#dictionaryItem").css("display","table");
+		            	$("#dictionaryItem_combotree").combotree({  
+		            			    //获取数据URL  
+		            			    url : "/dictionary/list?source=new",
+		            			    //选择树节点触发事件  
+		            			    onSelect : function(node) {  
+		            			        //返回树对象  
+		            			        var tree = $(this).tree;  
+		            			        //选中的节点是否为叶子节点,如果不是叶子节点,清除选中  
+		            			        var isLeaf = tree('isLeaf', node.target);  
+		            			        if (!isLeaf) {  		            			           
+		            			        	 $.messager.alert("操作信息", "请选择叶子节点！","warning");
+		            			        	  setTimeout(function(){
+		                                          $(".messager-body").window('close');  
+		                                        },2000);
+		            			        }  
+		            			    }  
+		            			});
+		            	$("#dictionary").css("display","none");
+		            }
+		            })
+		    	}); 
+            
+           
+    </script>
+</body> 
+</html>

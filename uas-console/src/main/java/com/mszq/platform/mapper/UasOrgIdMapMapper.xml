@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasOrgIdMapDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasOrgIdMapDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="SROUCE_ORG_ID" property="srouceOrgId" jdbcType="BIGINT" />
+    <result column="SROUCE_ORG_TYPE" property="srouceOrgType" jdbcType="SMALLINT" />
+    <result column="SROUCE_ORG_TYPE_NAME" property="srouceOrgTypeName" jdbcType="VARCHAR" />
+    <result column="TARGET_ORG_ID" property="targetOrgId" jdbcType="BIGINT" />
+    <result column="TARGET_ORG_TYPE" property="targetOrgType" jdbcType="SMALLINT" />
+    <result column="TARGET_ORG_TYPE_NAME" property="targetOrgTypeName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, SROUCE_ORG_ID, SROUCE_ORG_TYPE, TARGET_ORG_ID, TARGET_ORG_TYPE
+  </sql>
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+             a.ID
+			 , a.SROUCE_ORG_ID
+			 , b.`NAME` SROUCE_ORG_NAME
+			 , a.SROUCE_ORG_TYPE
+			 , d.`COMMENT` SROUCE_ORG_TYPE_NAME
+			 , a.TARGET_ORG_ID
+			 , c.`NAME` TARGET_ORG_NAME
+			 , a.TARGET_ORG_TYPE
+			 , e.COMMENT TARGET_ORG_TYPE_NAME
+    from uas_org_id_map a 
+    left join uas_org b on b.ORG_ID = a.SROUCE_ORG_ID and b.ORG_TYPE = a.SROUCE_ORG_TYPE
+    left join uas_org c on c.ORG_ID = a.TARGET_ORG_ID and c.ORG_TYPE = a.TARGET_ORG_TYPE
+    left join uas_org_type d on d.ID = a.SROUCE_ORG_TYPE
+    left join uas_org_type e on e.ID = a.TARGET_ORG_TYPE
+    
+    <where > 
+        <if test="srouceOrgId != null and srouceOrgId != ''" >
+	        and a.SROUCE_ORG_ID = #{srouceOrgId,jdbcType=BIGINT}
+	    </if>
+	    <if test="srouceOrgName != null and srouceOrgName != ''" >
+	        <bind name="srouceOrgName"  value="'%' + srouceOrgName + '%'"/>
+	        and b.NAME like #{srouceOrgName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="srouceOrgType != null and srouceOrgType != ''" >
+	        and a.SROUCE_ORG_TYPE = #{srouceOrgType,jdbcType=SMALLINT}
+	    </if>
+	    <if test="targetOrgId != null and targetOrgId != ''" >
+	        and a.TARGET_ORG_ID like #{targetOrgId,jdbcType=BIGINT}
+	    </if>
+	    <if test="targetOrgName != null and targetOrgName != ''" >
+	        <bind name="targetOrgName"  value="'%' + targetOrgName + '%'"/>
+	        and c.NAME like #{targetOrgName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="targetOrgType != null and targetOrgType != ''" >
+	        and a.TARGET_ORG_TYPE like #{targetOrgType,jdbcType=SMALLINT}
+	    </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_org_id_map
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_org_id_map
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasOrgIdMap" >
+    insert into uas_org_id_map (ID, SROUCE_ORG_ID, SROUCE_ORG_TYPE, 
+      TARGET_ORG_ID, TARGET_ORG_TYPE)
+    values (#{id,jdbcType=BIGINT}, #{srouceOrgId,jdbcType=BIGINT}, #{srouceOrgType,jdbcType=SMALLINT}, 
+      #{targetOrgId,jdbcType=BIGINT}, #{targetOrgType,jdbcType=SMALLINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasOrgIdMap" >
+    insert into uas_org_id_map
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="srouceOrgId != null" >
+        SROUCE_ORG_ID,
+      </if>
+      <if test="srouceOrgType != null" >
+        SROUCE_ORG_TYPE,
+      </if>
+      <if test="targetOrgId != null" >
+        TARGET_ORG_ID,
+      </if>
+      <if test="targetOrgType != null" >
+        TARGET_ORG_TYPE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="srouceOrgId != null" >
+        #{srouceOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="srouceOrgType != null" >
+        #{srouceOrgType,jdbcType=SMALLINT},
+      </if>
+      <if test="targetOrgId != null" >
+        #{targetOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="targetOrgType != null" >
+        #{targetOrgType,jdbcType=SMALLINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasOrgIdMap" >
+    update uas_org_id_map
+    <set >
+      <if test="srouceOrgId != null" >
+        SROUCE_ORG_ID = #{srouceOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="srouceOrgType != null" >
+        SROUCE_ORG_TYPE = #{srouceOrgType,jdbcType=SMALLINT},
+      </if>
+      <if test="targetOrgId != null" >
+        TARGET_ORG_ID = #{targetOrgId,jdbcType=BIGINT},
+      </if>
+      <if test="targetOrgType != null" >
+        TARGET_ORG_TYPE = #{targetOrgType,jdbcType=SMALLINT},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasOrgIdMap" >
+    update uas_org_id_map
+    set SROUCE_ORG_ID = #{srouceOrgId,jdbcType=BIGINT},
+      SROUCE_ORG_TYPE = #{srouceOrgType,jdbcType=SMALLINT},
+      TARGET_ORG_ID = #{targetOrgId,jdbcType=BIGINT},
+      TARGET_ORG_TYPE = #{targetOrgType,jdbcType=SMALLINT}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

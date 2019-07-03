@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasLogDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasLogDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="OPER_TIME" property="operTime" jdbcType="TIMESTAMP" />
+    <result column="OPER_COMMENT" property="operComment" jdbcType="VARCHAR" />
+    <result column="LOGIN_IP" property="loginIp" jdbcType="VARCHAR" />
+    <result column="USER_ID" property="userId" jdbcType="INTEGER" />
+    <result column="USER_NAME" property="userName" jdbcType="VARCHAR" />
+    <result column="ACCOUNT_ID" property="accountId" jdbcType="VARCHAR" />
+    <result column="ACCOUNT_TYPE" property="accountType" jdbcType="SMALLINT" />
+    <result column="APP_ID" property="appId" jdbcType="BIGINT" />
+    <result column="APP_NAME" property="appName" jdbcType="VARCHAR" />
+    <result column="LAST_LOGIN_MAC" property="lastLoginMac" jdbcType="VARCHAR" />
+    <result column="LAST_LOGIN_INFO" property="lastLoginInfo" jdbcType="VARCHAR" />
+    <result column="LAST_LOGIN_IP" property="lastLoginIp" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, OPER_TIME, OPER_COMMENT, LOGIN_IP, USER_ID, ACCOUNT_ID, ACCOUNT_TYPE, APP_ID, 
+    LAST_LOGIN_MAC, LAST_LOGIN_INFO, LAST_LOGIN_IP
+  </sql>
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID, a.USER_ID, b.NAME USER_NAME, a.ACCOUNT_ID, a.APP_ID, c.NAME APP_NAME, a.OPER_TIME, a.OPER_COMMENT, a.LAST_LOGIN_IP
+    from uas_log a
+    join uas_user b on b.id = a.user_id
+    left join uas_app c on c.ID = a.APP_ID
+    <where > 
+	    <if test="userName != null and userName != ''" >
+	        <bind name="userName"  value="'%' + userName + '%'"/>
+	        and b.NAME like #{userName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="accountId != null and accountId != ''" >
+	        <bind name="accountId"  value="'%' + accountId + '%'"/>
+	        and a.ACCOUNT_ID like #{accountId,jdbcType=VARCHAR}
+	    </if>
+	    <if test="appId != null and appId != ''" >
+	        and a.APP_ID like #{appId,jdbcType=SMALLINT}
+	    </if>
+	    <if test="operComment != null and operComment != ''" >
+	        <bind name="operComment"  value="'%' + operComment + '%'"/>
+	        and a.OPER_COMMENT like #{operComment,jdbcType=VARCHAR}
+	    </if>
+    </where>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_log
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_log
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasLog" >
+    insert into uas_log (ID, OPER_TIME, OPER_COMMENT, 
+      LOGIN_IP, USER_ID, ACCOUNT_ID, 
+      ACCOUNT_TYPE, APP_ID, LAST_LOGIN_MAC, 
+      LAST_LOGIN_INFO, LAST_LOGIN_IP)
+    values (#{id,jdbcType=BIGINT}, #{operTime,jdbcType=TIMESTAMP}, #{operComment,jdbcType=VARCHAR}, 
+      #{loginIp,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{accountId,jdbcType=VARCHAR}, 
+      #{accountType,jdbcType=SMALLINT}, #{appId,jdbcType=BIGINT}, #{lastLoginMac,jdbcType=VARCHAR}, 
+      #{lastLoginInfo,jdbcType=VARCHAR}, #{lastLoginIp,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasLog" >
+    insert into uas_log
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="operTime != null" >
+        OPER_TIME,
+      </if>
+      <if test="operComment != null" >
+        OPER_COMMENT,
+      </if>
+      <if test="loginIp != null" >
+        LOGIN_IP,
+      </if>
+      <if test="userId != null" >
+        USER_ID,
+      </if>
+      <if test="accountId != null" >
+        ACCOUNT_ID,
+      </if>
+      <if test="accountType != null" >
+        ACCOUNT_TYPE,
+      </if>
+      <if test="appId != null" >
+        APP_ID,
+      </if>
+      <if test="lastLoginMac != null" >
+        LAST_LOGIN_MAC,
+      </if>
+      <if test="lastLoginInfo != null" >
+        LAST_LOGIN_INFO,
+      </if>
+      <if test="lastLoginIp != null" >
+        LAST_LOGIN_IP,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="operTime != null" >
+        #{operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operComment != null" >
+        #{operComment,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIp != null" >
+        #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null" >
+        #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null" >
+        #{accountType,jdbcType=SMALLINT},
+      </if>
+      <if test="appId != null" >
+        #{appId,jdbcType=BIGINT},
+      </if>
+      <if test="lastLoginMac != null" >
+        #{lastLoginMac,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginInfo != null" >
+        #{lastLoginInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginIp != null" >
+        #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasLog" >
+    update uas_log
+    <set >
+      <if test="operTime != null" >
+        OPER_TIME = #{operTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="operComment != null" >
+        OPER_COMMENT = #{operComment,jdbcType=VARCHAR},
+      </if>
+      <if test="loginIp != null" >
+        LOGIN_IP = #{loginIp,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        USER_ID = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="accountId != null" >
+        ACCOUNT_ID = #{accountId,jdbcType=VARCHAR},
+      </if>
+      <if test="accountType != null" >
+        ACCOUNT_TYPE = #{accountType,jdbcType=SMALLINT},
+      </if>
+      <if test="appId != null" >
+        APP_ID = #{appId,jdbcType=BIGINT},
+      </if>
+      <if test="lastLoginMac != null" >
+        LAST_LOGIN_MAC = #{lastLoginMac,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginInfo != null" >
+        LAST_LOGIN_INFO = #{lastLoginInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginIp != null" >
+        LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasLog" >
+    update uas_log
+    set OPER_TIME = #{operTime,jdbcType=TIMESTAMP},
+      OPER_COMMENT = #{operComment,jdbcType=VARCHAR},
+      LOGIN_IP = #{loginIp,jdbcType=VARCHAR},
+      USER_ID = #{userId,jdbcType=INTEGER},
+      ACCOUNT_ID = #{accountId,jdbcType=VARCHAR},
+      ACCOUNT_TYPE = #{accountType,jdbcType=SMALLINT},
+      APP_ID = #{appId,jdbcType=BIGINT},
+      LAST_LOGIN_MAC = #{lastLoginMac,jdbcType=VARCHAR},
+      LAST_LOGIN_INFO = #{lastLoginInfo,jdbcType=VARCHAR},
+      LAST_LOGIN_IP = #{lastLoginIp,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

@@ -1,0 +1,400 @@
+﻿<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>用户列表</title> 
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/js/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/platform/js/base.js"></script>
+<script type="text/javascript" src="/platform/js/util.js"></script>
+<script type="text/javascript" src="/platform/js/md5/md5.js"></script>
+</head> 
+<body>
+	<div id="loading" > 
+      <image src='/platform/image/loading3.gif'/>
+      <h1><font color="#15428B">页面载入中....</font></h1>   
+     </div>  
+    <div class="container">
+       <table id="dg" class="easyui-datagrid" fitColumns="true"  title="所有用户列表"
+             url="/employee/list" data-options="
+                rownumbers:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                method:'get',
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10">
+            <thead>
+                <tr>
+                	<th field="id" width="10" halign="center"  hidden="hidden">隐藏id</th>
+                    <th field="account" halign="center" align="center" width="80">登陆账号</th>
+                    <th field="name" halign="center" align="center" width="86">用户名</th>
+                    <th field="orgnizationName" halign="center" align="center" width="182">所属机构</th>
+                    <th field="orgnizationId" halign="center" align="center" hidden="hidden">所属机构id</th>
+                    <th field="mobile" halign="center" align="center" width="80">电话</th>
+                    <th field="email" halign="center"  align="center" width="130">邮箱</th>
+                    <th field="roleNames" halign="center" align="center"  width="96">角色</th>
+                    <th field="roleIds" halign="center" align="center"  hidden="hidden">角色id</th>
+                   <!--  <th field="type" halign="center" align="center" width="46" formatter="formatType">类型</th> -->
+                    <th field="status" halign="center" align="center" width="36" formatter="formatStatus">状态</th>
+                    <th field="createTime" halign="center" align="center" width="95">创建时间</th>
+                    <th field="updateTime" halign="center" align="center" width="95">修改时间</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+	      <form id="searchUserForm">
+		        <div class="conditions">
+		            <span class="con-span">登陆账号: </span><input class="easyui-textbox" type="text" name ="account" style="width:146px;height:35px;line-height:35px;"></input>
+		            <span class="con-span">用户名: </span><input class="easyui-textbox" type="text" name ="name" style="width:146px;height:35px;line-height:35px;"></input>
+		            <span class="con-span">所属机构: </span><input class="easyui-combotree"  name="orgnizationId"  
+								data-options="url:'/orgnization/tree',parentField:'pid'" style="width:206px;height:35px;line-height:35px;"></input>
+		            <span class="con-span">角色: </span><input class="easyui-combobox" type="text" name ="roleIds" data-options="url:'/role/tree',
+																method:'post',
+																valueField:'id',
+																textField:'text',
+																panelHeight:'auto',
+																editable:false" style="width:146px;height:35px;line-height:35px;"></input>
+		            <a href="#" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true" onclick="searchUser()">查询</a>
+		            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="cleanCondition()" >重置</a>
+		           <!--  <a href="#" class="easyui-linkbutton more" iconCls="icon-more">更多</a> -->
+		        </div>
+		        <div class="opt-buttons">
+		            <a href="#" class="easyui-linkbutton" onclick ="newUser()" data-options="selected:true">新增</a>
+		            <a href="#" class="easyui-linkbutton" onclick ="editUser()" >修改</a>
+		            <a href="#" class="easyui-linkbutton" onclick ="deleteUser()">删除</a>
+		            <a href="#" class="easyui-linkbutton" onclick ="resetPasswordBatch()">密码重置</a>
+		        </div>
+	        </form>
+      </div>
+      
+      
+      <div id="dlg" class="easyui-dialog user-dialog" title="增加用户" 
+      data-options="closed:true,modal:true"  buttons="#dlg-buttons">
+      	<div class="easyui-layout" data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <form id="userAddForm" method="post">
+		            <table class="kv-table">
+					<tbody>
+						<tr>
+							<td class="kv-label">登陆账号</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" id="account" name="account" style="width:200px;height:35px;line-height:35px;"
+								data-options="required:true,
+											  validType:'NotEmpty'"></input>
+							</td>
+							<td class="kv-label">姓名</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" name="name" style="width:200px;height:35px;line-height:35px;"
+								data-options="required:true,
+											  validType:'NotEmpty'"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-content" hidden="hidden">
+								<input class="easyui-textbox" type="text" name="id" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">密码</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="password" name="password" data-options="required:true,
+											  validType:'NotEmpty'" id="psd" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+							<td class="kv-label" >电话</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" name="mobile" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">邮箱</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" name="email" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+							<td class="kv-label">所属部门</td>
+							<td class="kv-content">
+								<select id="organizationCombo" class="easyui-combotree"  name="orgnizationId" style="width:200px;height:35px;"
+								data-options="required:true, url:'/orgnization/tree',parentField:'pid'"></select>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-content" hidden="hidden">
+								<input id="orgnizationName" name="orgnizationName" type="hidden" />
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">状态</td>
+							<td class="kv-content">
+
+		                        <input class="easyui-combobox" 
+		                        		
+		                        		type="text" name ="status" data-options="url:'/dictionary/comboOption?key=status',
+																method:'get',
+																valueField:'value',
+																textField:'text',
+																panelHeight:'auto',
+																required:true,
+																editable:false" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+							<td class="kv-label">角色</td>
+							<td class="kv-content">
+							
+								  <input class="easyui-combobox" type="text" id="roleCombo" name ="roleIds" data-options="url:'/role/tree',
+																method:'post',
+																valueField:'id',
+																textField:'text',
+																multiple:true,
+																panelHeight:'auto',
+																editable:false" style="width:200px;height:35px;line-height:35px;"></input>
+							</td>
+							
+						</tr>
+					</tbody>
+				</table>
+		        </form>
+		         
+		    </div>
+		   
+		</div>
+	  </div>
+	  <div id="dlg-buttons"> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveUser()" data-options="selected:true">保存</a> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg').dialog('close')"
+            iconcls="icon-cancel">取消</a> 
+    </div> 
+    </div>
+    
+    
+    <script type="text/javascript">
+    var op="";
+	    function closes() {  
+	        $('#loading').fadeOut('normal', function () {  
+	            $(this).remove();  
+	        });  
+	    }  
+	    var pc;  
+	      
+	    $.parser.onComplete = function () {  
+	        if (pc) clearTimeout(pc);  
+	        pc = setTimeout(closes, 1000);  
+	    }  
+	    function formatStatus(val,row){
+	    	if (val == 0){
+	    		return '<span style="color:red;">停用</span>';
+	    	} else {
+	    		return '<span >正常</span>';
+	    	}
+	    }
+	    function formatType(val,row){
+	    	if (val == 0){
+	    		return '<span >普通用户</span>';
+	    	} else {
+	    		return '<span >管理员</span>';
+	    	}
+	    }
+	    function searchUser() {
+		    //var json_data = $('#searchUserForm').serializeJSON();  
+		    var json_data = $('#searchUserForm').serialize();
+		    $('#dg').datagrid('options').url = "/employee/list?" + json_data;
+		    //$('#dg').datagrid({url : '/employee/list' , queryParams : {json_data}});
+	    	//$("#dg").datagrid('load', json_data);
+		    $("#dg").datagrid('load');
+	    };
+	    function cleanCondition() {
+	    	$("#searchUserForm").form("clear");
+	        //$('#searchUserForm input').val('');
+	        //$("#dg").datagrid('load');
+	    };
+    
+        
+        var url;
+        var type;
+        function newUser() {
+        	op="new";
+        	$("#psd").textbox("enable",true);
+        	$("#account").textbox("enable",true);
+            $("#dlg").dialog("open").dialog('setTitle', '增加用户'); ;
+            $("#userAddForm").form("clear");
+            $('#organizationCombo').combotree('reload');
+            $('#roleCombo').combobox('reload');
+            url = "/employee/add";
+        }
+        function editUser() {
+        	op="edit";
+        	var dgObject = $("#dg");
+        	var ids = getSelectionsIds(dgObject);
+        	if(ids.length == 0){
+        		$.messager.alert("操作信息", "请选择一行数据","warning");
+        		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+	    	if(ids.indexOf(',') > 0){
+	    		$.messager.alert("操作信息", "只能选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+        	var row = $("#dg").datagrid("getSelected");
+            if (row) {
+            	url = "/employee/update";
+            	$("#psd").textbox("disable",true);
+            	$("#account").textbox("disable",true);
+            	$("#userAddForm").form("clear");
+            	$('#organizationCombo').combotree('reload');
+            	$('#roleCombo').combobox('reload');
+                $("#dlg").dialog("open").dialog('setTitle', '编辑用户');
+                $("#userAddForm").form("load", row);
+                //$("#psd").textbox("setValue","");
+                $("#organizationCombo").combotree('setValue',row.orgnizationId);
+              /*   if(row.roleIds){
+                	$("#roleCombo").combobox('setValues',row.roleIds);
+                } */
+            }
+        }
+        function saveUser() {
+        	var selectNode = $("#organizationCombo").combotree('getText');
+        	$('#orgnizationName').val(selectNode);
+        	var flag=op=="new"?regex.test($('#psd').val()):true;
+        	//验证密码复杂度是否满足要求
+        	if(flag){
+        		var password =$('#psd').val();
+        		$('#psd').val(md5(password));
+                $("#userAddForm").form("submit", {
+                    url: url,
+                    onSubmit: function () {
+                        return $(this).form("validate");
+                    },
+                    onLoadError: function(){
+                    	$('#psd').val(password);
+                    },
+                    success: function (result) {
+                    	$('#psd').val(password);
+                    	result = $.parseJSON(result);
+                        if (result.status == 1) {
+                        	$("#dg").datagrid("reload");
+                            $("#dlg").dialog("close");
+                            $.messager.alert("操作信息", "成功","info");
+                            setTimeout(function(){
+                                $(".messager-body").window('close');  
+                              },2000);
+                        }
+                        else {
+                            $.messager.alert("操作信息", result.msg,"error");
+                            setTimeout(function(){
+                                $(".messager-body").window('close');  
+                              },2000);
+                        }
+                    }
+                });
+        	}else{
+        		$.messager.alert('提示信息', '密码复杂度不满足要求',"info");
+        	}
+        	
+        }
+        function deleteUser() {
+        	var dgObject = $("#dg");
+        	var ids = getSelectionsIds(dgObject);
+	    	if(ids.length == 0){
+	    		$.messager.alert("操作信息", "请至少选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+                $.messager.confirm('操作确认', '确认要删除用户吗？', function (r) {
+                    if (r) {
+                       /*  $.post('/employee/deleteBatch', { "ids":ids }, function (result) {
+                        	result = $.parseJSON(result);
+                            if (result.status == 1) {
+                                $('#dg').datagrid('reload');
+                                $.messager.alert("操作信息", "成功","info");
+                            } else {
+                            	$.messager.alert("操作信息", result.msg,"error");
+                            }
+                        }, 'json'); */
+                        $.ajax({
+                            type:"post",
+                            dataType:"json",
+                            url:"/employee/deleteBatch",
+                            data:{ "ids":ids },
+                            error:function(request) {
+                            	$.messager.alert("操作提示", "发生异常！", "error"); 
+                            	  setTimeout(function(){
+                                      $(".messager-body").window('close');  
+                                    },2000);
+                            },
+                            success:function(result) {
+                            	if (result.status == 1) {
+                                    $('#dg').datagrid('reload');
+                                    $.messager.alert("操作信息", "成功","info");
+                                    setTimeout(function(){
+                                        $(".messager-body").window('close');  
+                                      },2000);
+                                } else {
+                                	$.messager.alert("操作信息", result.msg,"error");
+                                	  setTimeout(function(){
+                                          $(".messager-body").window('close');  
+                                        },2000);
+                                }
+                            }
+                        });
+                    }
+                });
+        }
+        function getSelectionsIds(customList){
+    		var sels = customList.datagrid("getSelections");
+    		var ids = [];
+    		for(var i in sels){
+    			ids.push(sels[i].id);
+    		}
+    		ids = ids.join(","); 
+    		
+    		return ids;
+    	}
+        
+        //批量重置密码
+        function resetPasswordBatch(){
+        	var dgObject = $("#dg");
+        	var ids = getSelectionsIds(dgObject);
+        	if(ids.length == 0){
+        		$.messager.alert("操作信息", "请选择一行数据","warning");
+	    		return ;
+	    	}
+            $.ajax({
+                type:"post",
+                dataType:"json",
+                url:"/employee//update/resetPasswordBatch",
+                data:{ "ids":ids },
+                error:function(request) {
+                	$.messager.alert("操作提示", "发生异常！", "error"); 
+                },
+                success:function(result) {
+                	if (result.status == 1) {
+                        $('#dg').datagrid('reload');
+                        $.messager.alert("操作信息", "成功","info");
+                    } else {
+                    	$.messager.alert("操作信息", result.msg,"error");
+                    	  
+                    }
+                }
+            });
+        	
+        }
+    </script>
+</body> 
+</html>

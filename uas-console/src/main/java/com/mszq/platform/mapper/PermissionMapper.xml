@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.permission.dao.IPermissionDAO">
+  
+  
+  
+  <select id="getPermissionsByIDs" parameterType="java.lang.String" resultType="com.mszq.platform.entity.Permission">
+    select * from pf_sm_permission where id  in '${IDs}'
+  </select>
+  
+  <select id="queryAll" resultType="com.mszq.platform.entity.Permission">
+			SELECT
+				*
+			FROM
+				pf_sm_permission
+		</select>
+		
+   <select id="queryPermissionsByUserID" resultType="com.mszq.platform.entity.Permission">
+			SELECT distinct p.*  FROM pf_sm_employee t
+				LEFT JOIN pf_sm_employee_role r ON t.id = r.employee_id
+		        LEFT JOIN pf_sm_role o ON r.role_id = o.id and o.status = 1
+		        left join pf_sm_permission_role pr on pr.role_id = r.role_id
+		        left join pf_sm_permission p on p.id = pr.resource_id and p.status = 1
+		        where t.id = #{userID}
+		</select>
+  
+  <select id="queryPermissionByParams" parameterType="Map" resultType="com.mszq.platform.entity.Permission">
+		SELECT
+			*
+		FROM
+			pf_sm_permission
+			where status=1
+			 <if test="_parameter.containsKey('id')">  AND id = #{id}</if>
+			 <if test="_parameter.containsKey('type')">  AND type = #{type}</if>
+  </select>
+  
+  
+	  <insert id="insert" parameterType="com.mszq.platform.entity.Permission" keyProperty="id" useGeneratedKeys="true">
+	  	insert ignore into pf_sm_permission(name,url,parent_id,icon,type,status,sort,description,update_time)
+	  	values (#{name},#{url},#{parentId},#{icon},#{type},#{status},#{sort},#{description},#{updateTime})
+	  </insert>
+	  
+	  <delete id="deleteBatch">
+	  	 delete from pf_sm_permission where id IN
+	     <foreach collection="array" item="id" open="(" close=")" separator=",">
+	     	#{id}
+	     </foreach>
+	  </delete>
+	  
+	  <select id="getChildrenBykey" resultType="int">
+	  	 select count(id) from pf_sm_permission where parent_id IN
+	     <foreach collection="array" item="id" open="(" close=")" separator=",">
+	     	#{id}
+	     </foreach>
+	  </select>
+	  
+	  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.Permission" >
+	    update pf_sm_permission
+	    set   name = #{name},
+		      url = #{url},
+		      icon = #{icon},
+		      status = #{status},
+		      type = #{type},
+		      sort = #{sort},
+		      description = #{description},
+		      parent_id = #{parentId},
+		      update_time = #{updateTime,jdbcType=TIMESTAMP}
+	    where id = #{id}
+	  </update>
+</mapper>

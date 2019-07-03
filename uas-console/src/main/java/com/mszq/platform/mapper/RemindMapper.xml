@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.remind.dao.IRemindDAO">
+  <resultMap id="BaseResultMap" type="com.mszq.platform.entity.Remind">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="send_time" jdbcType="TIMESTAMP" property="sendTime" />
+    <result column="expire_time" jdbcType="TIMESTAMP" property="expireTime" />
+    <result column="sender_id" jdbcType="BIGINT" property="senderId" />
+    <result column="sender_name" jdbcType="VARCHAR" property="senderName" />
+    <result column="type" jdbcType="VARCHAR" property="type" />
+    <result column="status" jdbcType="VARCHAR" property="status" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, content, send_time, expire_time, sender_id, sender_name, type, status
+  </sql>
+   <select id="queryAll" parameterType="Map" resultType="com.mszq.platform.entity.Remind">
+   
+        SELECT
+           <include refid="Base_Column_List" />
+        FROM
+             pf_remind
+        WHERE 1=1
+           <if test="_parameter.containsKey('title')">  AND title like #{title}</if>
+        order by send_time desc
+  </select>
+     <select id="queryUser" parameterType="Map" resultType="com.mszq.platform.entity.Remind">
+      SELECT
+            r.* 
+        FROM
+            pf_remind r 
+        inner join pf_schedule s on r.sender_id=s.id 
+        WHERE (
+            exists(
+                select a.product_id 
+                from pp_authorize a 
+                where a.employee_id = #{userID,jdbcType=INTEGER}
+                and s.product_id = a.product_id
+            )  or s.type = 1) 
+          <if test="_parameter.containsKey('title')">  AND title like #{title}</if>     
+        order by r.send_time desc
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from pf_remind
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+    <select id="selectBySenderId" parameterType="java.lang.Long" resultType="int">
+    select count(1)
+    from pf_remind
+    where sender_id = #{id,jdbcType=BIGINT}
+  </select>
+   <select id="queryAllTitle" parameterType="Map" resultMap="BaseResultMap">
+        SELECT
+           <include refid="Base_Column_List" />
+        FROM
+            pf_remind
+        WHERE expire_time&gt;current_date         
+        order by send_time desc
+  </select> 
+     <select id="queryUserTitle" parameterType="Map" resultMap="BaseResultMap">
+        SELECT
+            r.* 
+        FROM
+            pf_remind r 
+        where
+           r.receiver_id= #{userID} and
+           (case when expire_time is not null then expire_time &gt;(select now())
+      		     else 1=1
+		   end)
+		  <if test=" type != null and !&quot;&quot;.equals(type.trim())">
+	          and r.type = #{type}
+	      </if>
+        order by r.send_time desc
+  </select> 
+  
+  <!--  
+  <select id="queryRemindTable" parameterType="Map" resultMap="RemindTableMap">
+    select 
+    	t.id as t_id,
+    	t.name_english as t_name_english,
+    	t.name_chinese as t_name_chinese,
+    	c.id as c_id,
+    	c.table_id as c_table_id,
+    	c.name_english as c_name_english,
+    	c.name_chinese as c_name_chinese,
+    	c.data_type as c_data_type 
+    	from pf_remind_table t
+    		left join pf_remind_column c on t.id=c.table_id
+  </select>
+  <resultMap type="com.mszq.platform.entity.RemindTable" id="RemindTableMap">
+      <id property="id" column="t_id"/>
+      <result property="nameEnglish" column="t_name_english"/>
+      <result property="nameChinese" column="t_name_chinese"/>
+      <collection property="children" ofType="com.mszq.platform.entity.RemindColumn">
+          <id property="id" column="c_id"/>
+          <result property="tableId" column="c_table_id"/>
+          <result property="nameEnglish" column="c_name_english"/>
+          <result property="nameChinese" column="c_name_chinese"/>
+          <result property="dataType" column="c_data_type"/>
+      </collection>
+  </resultMap>
+  -->
+  
+  <select id="queryRemindRule" parameterType="Map" resultType="com.mszq.platform.entity.RemindRule">
+    select 
+    	r.id,
+    	r.table_name,
+    	r.trigger_rule,
+    	r.content_rule,
+    	r.target_rule 
+    	from pf_remind_rule r
+  </select>
+  
+  
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from pf_remind
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.Remind">
+  
+    insert into pf_remind (id, title, content, 
+      send_time, expire_time, sender_id, 
+      sender_name, type, status
+      )
+    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, 
+      #{sendTime,jdbcType=TIMESTAMP}, #{expireTime,jdbcType=TIMESTAMP}, #{senderId,jdbcType=BIGINT}, 
+      #{senderName,jdbcType=VARCHAR}, #{type,jdbcType=VARCHAR}, #{status,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.Remind">
+    insert into pf_remind
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="content != null">
+        content,
+      </if>
+      <if test="sendTime != null">
+        send_time,
+      </if>
+      <if test="expireTime != null">
+        expire_time,
+      </if>
+      <if test="senderId != null">
+        sender_id,
+      </if>
+      <if test="senderName != null">
+        sender_name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null">
+        #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireTime != null">
+        #{expireTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="senderId != null">
+        #{senderId,jdbcType=BIGINT},
+      </if>
+      <if test="senderName != null">
+        #{senderName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  
+  <insert id="insertRemindBatch" parameterType="java.util.List">
+    insert into pf_remind (title, content, 
+      send_time, expire_time, sender_id, 
+      sender_name,receiver_id, type, status
+      )
+    values 
+    	<foreach collection="list" item="item" index="index" separator=",">
+            (#{item.title,jdbcType=VARCHAR}, #{item.content,jdbcType=VARCHAR}, #{item.sendTime,jdbcType=TIMESTAMP}, #{item.expireTime,jdbcType=TIMESTAMP}, #{item.senderId,jdbcType=BIGINT},#{item.senderName,jdbcType=VARCHAR},#{item.receiverId,jdbcType=BIGINT}, #{item.type,jdbcType=VARCHAR}, #{item.status,jdbcType=VARCHAR}
+      		)
+        </foreach>
+  </insert>
+  
+  
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.Remind">
+    update pf_remind
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="sendTime != null">
+        send_time = #{sendTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="expireTime != null">
+        expire_time = #{expireTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="senderId != null">
+        sender_id = #{senderId,jdbcType=BIGINT},
+      </if>
+      <if test="senderName != null">
+        sender_name = #{senderName,jdbcType=VARCHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.Remind">
+    update pf_remind
+    set title = #{title,jdbcType=VARCHAR},
+      content = #{content,jdbcType=VARCHAR},
+      send_time = #{sendTime,jdbcType=TIMESTAMP},
+      expire_time = #{expireTime,jdbcType=TIMESTAMP},
+      sender_id = #{senderId,jdbcType=BIGINT},
+      sender_name = #{senderName,jdbcType=VARCHAR},
+      type = #{type,jdbcType=VARCHAR},
+      status = #{status,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

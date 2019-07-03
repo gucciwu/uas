@@ -1,0 +1,179 @@
+﻿<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>角色列表</title> 
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+</head> 
+<body>
+	<div id="loading"> 
+      <image src='/platform/image/loading3.gif'/>
+      <h1><font color="#15428B">页面载入中....</font></h1>   
+     </div>  
+    <div class="container" >
+       <table id="tg" class="easyui-datagrid"  title="会话列表"
+             url="/uasSession/list" data-options="
+               fitColumns:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                striped:true,
+                method:'get',
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10">
+            <thead>
+                <tr>
+                	<th field="id" width="10" halign="center" align="center" hidden="hidden">会话id</th>
+                	<th field="sessionId" width="100" halign="center" align="center">会话ID</th>
+                	<th field="ticket" width="100" halign="center" align="center">票据</th>
+                	<th field="jobNumber" width="100" halign="center" align="center">员工编号</th>
+                	<th field="userName" width="100" halign="center" align="center">用户</th>
+                	<th field="userId" width="100" halign="center" align="center" hidden="hidden">用户id</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+	      <form id="searchUasSessionForm">
+	          <div class="conditions">
+		            <span class="con-span">员工编号: </span><input class="easyui-textbox" type="text"  name="jobNumber" style="width:200px;height:35px;line-height:35px;"></input>
+	                <span class="con-span" style="width:60px;margin-left:20px">员工名称: </span><input class="easyui-textbox" type="text"  name="userName" style="width:200px;height:35px;line-height:35px;"></input>
+	                
+		            <a href="#" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true" onclick="searchSession()">查询</a>
+		            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="cleanCondition()" >重置</a>
+		        </div>
+		        <div class="opt-buttons">
+		            <a href="#" id="btn-delete" class="easyui-linkbutton" onclick ="deleteSession()">删除</a>
+		        </div>
+	        </form>
+      </div>
+      
+      
+    </div>
+    
+    <script type="text/javascript">
+	    function closes() {  
+	        $('#loading').fadeOut('normal', function () {  
+	            $(this).remove();  
+	        });  
+	    }  
+	    
+	    var pc;  
+	    $.parser.onComplete = function () {  
+	        if (pc) clearTimeout(pc);  
+	        pc = setTimeout(closes, 1000);  
+	    }  
+	    
+	    $(function(){
+	    	$('#tg').datagrid({
+	    		onSelect: function (rowIndex, rowData) {
+	                if (rowData.type == "1") {
+	                	$('#btn-delete').linkbutton('disable');
+	                	$('#btn-edit').linkbutton('disable');
+	                }else{
+	                	$('#btn-delete').linkbutton('enable');
+	                	$('#btn-edit').linkbutton('enable');
+	                }
+	            }
+	    	});
+	    	
+	    	$('#searchUasSessionForm input.easyui-textbox').each(function(){
+	    		$(this).textbox('textbox').bind('keyup', function(e) {
+	    			if (e.keyCode == 13) {
+	    				searchSession();
+	                 }
+	    		});
+	    	});
+		});
+	    
+	    $(document).ajaxComplete(function(event, XMLHttpRequest, settings) {
+	    	result = $.parseJSON(XMLHttpRequest.responseText);
+	    	if(result.status != null && result.status != undefined && result.status===111){
+	    		window.location.reload(true);//刷新当前页
+	    	}
+	  });
+    
+    function searchSession() {
+	    //var json_data = $('#searchUserForm').serializeJSON();  
+	    var json_data = $('#searchUasSessionForm').serialize();
+	    //alert($('#dg').datagrid);
+	    $('#tg').datagrid('options').url = "/uasSession/list?" + json_data;
+	    //$('#dg').datagrid({url : '/employee/list' , queryParams : {json_data}});
+    	//$("#dg").datagrid('load', json_data);
+	    $("#tg").datagrid('load');
+    }
+    
+    function cleanCondition() {
+    	$("#searchUasSessionForm").form("clear");
+        //$('#searchUserForm input').val('');
+        //$("#dg").datagrid('load');
+    };
+        
+        var url;
+        var type;
+        
+        
+        function deleteSession() {
+        	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+	    	if(ids.length == 0){
+	    		$.messager.alert("操作信息", "请至少选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+                $.messager.confirm('操作确认', '确认要删除回话吗？', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type:"post",
+                            dataType:"json",
+                            url:"/uasSession/deleteBatch",
+                            data:{ "ids":ids },
+                            error:function(request) {
+                            	$.messager.alert("操作提示", "发生异常！", "error"); 
+                            	  setTimeout(function(){
+                                      $(".messager-body").window('close');  
+                                    },2000);
+                            },
+                            success:function(result) {
+                            	if (result.status == 1) {
+                                    $('#tg').datagrid('reload');
+                                    $.messager.alert("操作信息", "成功","info");
+                                    setTimeout(function(){
+                                        $(".messager-body").window('close');  
+                                      },2000);
+                                } else {
+                                	$.messager.alert("操作信息", result.msg,"error");
+                                	  setTimeout(function(){
+                                          $(".messager-body").window('close');  
+                                        },2000);
+                                }
+                            }
+                        });
+                    }
+                });
+        }
+        function getSelectionsIds(customList){
+    		var sels = customList.datagrid("getSelections");
+    		var ids = [];
+    		for(var i in sels){
+    			ids.push(sels[i].id);
+    		}
+    		ids = ids.join(","); 
+    		
+    		return ids;
+    	}
+    </script>
+</body> 
+</html>

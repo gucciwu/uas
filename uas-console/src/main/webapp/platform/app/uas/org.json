@@ -1,0 +1,125 @@
+[
+	{
+		"id": 1,
+		"text": "民生证券",
+		"state": "open",
+		"checked": false,
+		"sort": null,
+		"attributes": null,
+		"children": [
+			{
+				"id": 2,
+				"text": "计划财务总部",
+				"state": "open",
+				"checked": false,
+				"sort": null,
+				"attributes": null,
+				"children": [
+					{
+						"id": 3,
+						"text": "资金部",
+						"state": "open",
+						"checked": false,
+						"sort": null,
+						"attributes": null,
+						"children": [],
+						"iconCls": null,
+						"pid": 2,
+						"openMode": null
+					},
+					{
+						"id": 4,
+						"text": "财务部",
+						"state": "open",
+						"checked": false,
+						"sort": null,
+						"attributes": null,
+						"children": [],
+						"iconCls": null,
+						"pid": 2,
+						"openMode": null
+					}
+				],
+				"iconCls": null,
+				"pid": 1,
+				"openMode": null
+			},
+			{
+				"id": 76,
+				"text": "固定收益事业部",
+				"state": "open",
+				"checked": false,
+				"sort": null,
+				"attributes": null,
+				"children": [
+					{
+						"id": 77,
+						"text": "固定收益事业部-运营管理部",
+						"state": "open",
+						"checked": false,
+						"sort": null,
+						"attributes": null,
+						"children": [],
+						"iconCls": null,
+						"pid": 76,
+						"openMode": null
+					},
+					{
+						"id": 78,
+						"text": "固定收益投资交易部",
+						"state": "open",
+						"checked": false,
+						"sort": null,
+						"attributes": null,
+						"children": [],
+						"iconCls": null,
+						"pid": 76,
+						"openMode": null
+					},
+					{
+						"id": 79,
+						"text": "固定收益事业部-投资咨询部",
+						"state": "open",
+						"checked": false,
+						"sort": null,
+						"attributes": null,
+						"children": [],
+						"iconCls": null,
+						"pid": 76,
+						"openMode": null
+					},
+					{
+						"id": 80,
+						"text": "债券销售交易部",
+						"state": "open",
+						"checked": false,
+						"sort": null,
+						"attributes": null,
+						"children": [],
+						"iconCls": null,
+						"pid": 76,
+						"openMode": null
+					},
+					{
+						"id": 81,
+						"text": "债券做市交易部",
+						"state": "open",
+						"checked": false,
+						"sort": null,
+						"attributes": null,
+						"children": [],
+						"iconCls": null,
+						"pid": 76,
+						"openMode": null
+					}
+				],
+				"iconCls": null,
+				"pid": 1,
+				"openMode": null
+			}
+		],
+		"iconCls": null,
+		"pid": null,
+		"openMode": null
+	}
+]

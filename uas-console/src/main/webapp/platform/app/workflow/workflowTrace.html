@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link rel="stylesheet" href="/platform/js/qtip/jquery.qtip.css?v=1.1.2"  />
+<link rel="stylesheet" href="/platform/js/qtip/jquery.qtip.min.css"  />
+<script type="text/javascript" src="/platform/js/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/platform/js/base.js"></script>
+<script type="text/javascript" src="/platform/js/jquery.outerhtml.js"></script>
+<script type="text/javascript" src="/platform/js/workflow/workflow.js"></script>
+<script type="text/javascript" src="/platform/js/qtip/jquery.qtip.min.js" ></script>
+<style>
+div#workflowTraceDialog {
+    position: absolute;
+    top: -109px;
+}
+body {
+     overflow-x : hidden;
+     overflow-y : hidden;
+}
+.panel-header.panel-header-noborder.window-header {
+    display: none;
+}
+</style>
+<script type="text/javascript">
+
+	function getRequestParams() {
+		var url = location.search; //获取url中"?"符后的字串
+		var theRequest = new Object();
+		if (url.indexOf("?") != -1) {
+		var str = url.substr(1);
+		strs = str.split("&");
+		for(var i = 0; i < strs.length; i ++) {
+		theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);
+		}
+		}
+		return theRequest;
+	}
+	function loadHtml(pid,b){
+		  graphTrace(null,null,pid,b);
+	}
+	var params=getRequestParams();
+    $(function() {
+    	loadHtml(params.pid,params.bid);
+    });
+</script>
+</head>
+<body>
+</body>
+</html>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org/DTD Mapper 3.0" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mszq.platform.app.role.dao.IRoleDAO">
+
+
+	<select id="getPermissionIdListByRoleId" parameterType="java.lang.Long"
+		resultType="java.lang.Long">
+		select resource_id from pf_sm_permission_role where role_id = #{id}
+	</select>
+
+	<insert id="insertRolePermissionBatch" parameterType="List"
+		keyProperty="id" useGeneratedKeys="true">
+		insert ignore into pf_sm_permission_role(resource_id,role_id)
+		values 
+		 <foreach collection="list" item="item" separator="," >  
+	        (#{item.resourceId},#{item.roleId})
+	    </foreach>  
+	</insert>
+
+	<select id="queryAll" resultType="com.mszq.platform.entity.Role">
+		SELECT
+		*
+		FROM
+		pf_sm_role order by name
+	</select>
+	
+	<select id="queryRoleById" resultType="com.mszq.platform.entity.Role">
+		SELECT
+		id,code
+		FROM
+		pf_sm_role where id=#{id}
+	</select>
+	
+	<!-- 每个账号只能有一个_admin角色，否则这个sql会报错 -->
+	<select id="queryAdminRoleAndPermissionByEmployeeId" parameterType="java.lang.Long" resultType="com.mszq.platform.app.role.dto.RolePermissionWebDTO">
+	select a.id as role_id,a.name as role_name,GROUP_CONCAT(c.name) as permission_name from pf_sm_role a 
+		left join pf_sm_permission_role b on a.id=b.role_id
+		left join pf_sm_permission c on b.resource_id=c.id 
+		where code like CONCAT((
+			select left(code,LENGTH(code)-5) as role_code from pf_sm_role where id in(
+				select role_id from pf_sm_employee_role 
+					where employee_id=#{employeeId} 
+					and role_id in(
+						select id from pf_sm_role where code like '%/_admin' escape '/' and code!='sys_admin' )
+						)),'%')
+	    and code not like '%/_admin' escape '/'
+	    and a.status=1
+		GROUP BY role_name;
+	
+	  
+	</select>
+
+	<insert id="insert" parameterType="com.mszq.platform.entity.Role"
+		keyProperty="id" useGeneratedKeys="true">
+		insert ignore into pf_sm_role(name,status,type,code,description,update_time)
+		values (#{name},#{status},#{type},#{code},#{description},#{updateTime})
+	</insert>
+
+	<delete id="deleteBatch">
+		delete from pf_sm_role where id IN
+		<foreach collection="array" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<delete id="deletePermissionMappingBatch">
+		delete from pf_sm_permission_role where role_id IN
+		<foreach collection="array" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	<delete id="deleteEmployeeMappingBatch">
+		delete from pf_sm_employee_role where role_id IN
+		<foreach collection="array" item="id" open="(" close=")"
+			separator=",">
+			#{id}
+		</foreach>
+	</delete>
+	
+	
+
+	<update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.Role">
+		update pf_sm_role
+		set name = #{name},
+		status = #{status},
+		code = #{code},
+		type = #{type},
+		description = #{description},
+		update_time = #{updateTime,jdbcType=TIMESTAMP}
+		where id = #{id}
+	</update>
+
+</mapper>

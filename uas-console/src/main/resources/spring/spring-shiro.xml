@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans 
+    http://www.springframework.org/schema/beans/spring-beans-4.3.xsd">
+
+    <!-- 缓存管理器 使用Ehcache实现 
+    <bean id="cacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+        <property name="cacheManagerConfigFile" value="classpath:shiro-ehcache.xml" />
+    </bean>-->
+    <!-- 会话Session ID生成器 -->
+    <bean id="sessionIdGenerator" class="org.apache.shiro.session.mgt.eis.JavaUuidSessionIdGenerator"/>
+    <!-- 自定义的realm定义 -->
+    <bean id="simplePasswordRealm" class="com.mszq.platform.base.shiro.SimplePasswordRealm">
+        <!-- <property name="credentialsMatcher" ref="hashedCredentialsMatcher" />   -->
+    </bean>
+    <!--  
+    <bean id="hashedCredentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">  
+        <property name="hashAlgorithmName" value="MD5" />  
+        <property name="storedCredentialsHexEncoded" value="true" />  
+        <property name="hashIterations" value="1" />  
+    </bean> 
+    --> 
+    <!-- custom shiro session dao -->
+    <bean id="customShiroSessionDAO" class="com.mszq.platform.base.shiro.CustomShiroSessionDAO" >
+        <property name="sessionIdGenerator" ref="sessionIdGenerator"/>
+    </bean>
+    <!-- custom shiro session listener -->
+    <bean id="customSessionListener" class="com.mszq.platform.base.shiro.CustomSessionListener" />
+    <!-- custom shiro cache manager -->
+    <bean id="redisCacheManager" class="com.mszq.platform.base.shiro.RedisCacheManager" />
+    
+     <!--simpleCookie,不定义在集群环境下会出现There is no session with id ....-->
+    <bean id="simpleCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+        <constructor-arg name="name" value="CUSTOMSESSIONID"/>
+        <property name="path" value="/"/>
+    </bean>
+    <!-- Session Manager -->
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">
+        <!-- 相隔多久检查一次session的有效性   -->
+        <property name="sessionValidationInterval" value="600000"/>
+        <!-- session 有效时间为半小时 （毫秒单位）-->  
+        <property name="globalSessionTimeout" value="1800000"/>
+        <property name="sessionDAO" ref="customShiroSessionDAO"/>
+        <!-- session 监听，可以多个。 -->
+        <property name="sessionListeners">
+            <list>
+                <ref bean="customSessionListener"/>
+            </list>
+        </property>
+        <!-- 去掉 JSESSIONID -->
+        <property name="sessionIdUrlRewritingEnabled" value="false" />
+        <!-- 是否开启 检测，默认开启 -->
+        <property name="sessionValidationSchedulerEnabled" value="true"/>
+        <!-- 间隔多少时间检查，不配置是60分钟    
+        <property name="sessionValidationScheduler" ref="sessionValidationScheduler"/> -->
+        <!-- 是否删除无效的，默认也是开启 -->
+        <property name="deleteInvalidSessions" value="true"/>
+        <!-- 会话Cookie模板 -->
+        <property name="sessionIdCookie" ref="simpleCookie"/>
+    </bean>
+    <!-- securityManager -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <!-- realms的定义必须在authenticator之后 -->
+        <property name="realm" ref="simplePasswordRealm" />
+        <property name="sessionManager" ref="sessionManager"/>
+        <!-- <property name="cacheManager" ref="cacheManager" /> -->
+        <property name="cacheManager" ref="redisCacheManager"/>
+    </bean>
+
+    <!-- 静态注入，相当于调用SecurityUtils.setSecurityManager(securityManager) -->
+    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+        <property name="staticMethod" value="org.apache.shiro.SecurityUtils.setSecurityManager"/>
+        <property name="arguments" ref="securityManager"/>
+    </bean>
+    
+
+    <!-- shiro 主过滤器配置 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"></property>
+        <property name="loginUrl" value="/index.html"></property>
+        <!-- <property name="loginUrl" value="/unlogin"></property> -->
+        <property name="successUrl" value="/platform/app/index.html"></property>
+        <!-- <property name="unauthorizedUrl" value="/platform/app/error.html"></property> -->
+        <property name="unauthorizedUrl" value="/unauth"></property>
+        <property name="filters">
+			<map>
+				<entry key="authc">
+					<bean class="com.mszq.platform.base.shiro.CustomFormAuthenticationFilter" />
+				</entry>
+			</map>
+		</property>
+        <property name="filterChainDefinitions">
+           <value>
+            <!--   /test1=roles[teacher]
+              /test2=perms["user:create"] -->
+             /platform/image/**=anon
+             /platform/css/**=anon
+             /platform/js/**=anon
+             /platform/custom/**=anon
+             /platform/static/**=anon
+             /index.html=anon
+             /platform/app/error.html=anon
+             /login=anon
+             /manager/getValidateCode=anon
+             /manager/addOrUpdateManager/add=anon
+             /pp/app/manager/register.html=anon
+             /captcha.form=anon
+             /**=authc
+             <!-- /**=anon -->
+           </value>
+        </property>
+    </bean>
+</beans>
+

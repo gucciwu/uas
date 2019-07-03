@@ -1,0 +1,493 @@
+﻿<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>角色列表</title> 
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+</head> 
+<body>
+	<div id="loading"> 
+      <image src='/platform/image/loading3.gif'/>
+      <h1><font color="#15428B">页面载入中....</font></h1>   
+     </div>  
+    <div class="container" >
+       <table id="tg" class="easyui-datagrid"  title="所有角色列表"
+             url="/role/list" data-options="
+               fitColumns:true,
+                rownumbers:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                striped:true,
+                method:'get',
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10">
+            <thead>
+                <tr>
+                	<th field="id" width="10" halign="center" align="center" hidden="hidden">隐藏id</th>
+                    <th field="name" width="100" halign="center" align="center">角色名称</th>
+                    <th field="code" width="100" halign="center" align="center">角色代码</th>
+                    <th field="type" width="50" halign="center" align="center" formatter="formatType">角色类型</th>
+                    <th field="description" width="160" halign="center" align="center">备注</th>
+                    <th field="status" width="50" halign="center" align="center" formatter="formatStatus">状态</th>
+                    <th field="createTime" width="60" halign="center" align="center">创建时间</th>
+                    <th field="updateTime" width="60" halign="center" align="center">修改时间</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+	      <form id="searchRoleForm">
+		        <div class="opt-buttons">
+		            <a href="#" class="easyui-linkbutton" onclick ="newRole()" data-options="selected:true">新增</a>
+		            <a href="#" id="btn-edit" class="easyui-linkbutton" onclick ="editRole()" >修改</a>
+		            <a href="#" id="btn-delete" class="easyui-linkbutton" onclick ="deleteRole()">删除</a>
+		            <a href="#" class="easyui-linkbutton" onclick ="getRolePermission()">授权</a> 
+		        </div>
+	        </form>
+      </div>
+      
+      
+      <div id="dlg" class="easyui-dialog role-dialog" title="增加角色" style="width:400px;height:360px;"
+      data-options="closed:true,modal:true" buttons="#dlg-buttons">
+      	<div class="easyui-layout" data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <form id="roleAddForm" method="post">
+		            <table class="kv-table">
+					<tbody>
+						<tr>
+							<td class="kv-label">角色名称</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" data-options="required:true" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">角色代码</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" data-options="required:true" name="code" style="width:166px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-label">角色类型</td>
+										<td class="kv-content">
+											<input class="easyui-combobox" type="text"  name="type" style="width:166px;height:35px;line-height:35px;"
+											data-options="url:'/dictionary/comboOption?key=roleType',
+																									method:'get',
+																									valueField:'value',
+																									textField:'text',
+																									panelHeight:'auto',
+																									required: true,
+																									editable:false"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-content" hidden="hidden">
+								<input class="easyui-textbox" type="text" name="id" style="width:166px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>							
+							<td class="kv-label">状态</td>
+							<td class="kv-content">
+								<select name="status" class="easyui-combobox" data-options="required:true,width:166,height:35,editable:false,panelHeight:'auto'">
+		                                <option value="0">停用</option>
+		                                <option value="1" selected="selected">正常</option>
+		                        </select>
+							</td>
+						</tr>
+						<tr>							
+							<td class="kv-label">备注</td>
+							<td class="kv-content">
+								<input class="easyui-textbox" type="text" name="description" style="width:166px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						
+					</tbody>
+				</table>
+		        </form>
+		    </div>
+		   
+		</div>
+	  </div>
+	  <div id="dlg-buttons"> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveRole()" data-options="selected:true">保存</a> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg').dialog('close')"
+            iconcls="icon-cancel">取消</a> 
+      </div> 
+      
+      <div id="dlg-permission" class="easyui-dialog" title="角色授权" 
+      data-options="closed:true,modal:true" 
+      style="width:429px;height:629px;padding:10px;display:none;" buttons="#dlg-permission-buttons">
+      	<div data-options="fit:true,border:false">
+		    <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+		        <div > 
+			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="checkAll()" >全选</a> 
+			        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="checkInverse()">反选</a> 
+			      </div> 
+		        <form id="grantForm" method="post" >
+		            <table class="kv-table">
+					<tbody>
+						<tr>
+							<td class="kv-content" hidden="hidden">
+								<input class="easyui-textbox" type="text" name="id" style="width:166px;height:35px;line-height:35px;"></input>
+							</td>
+						</tr>
+						<tr>
+							<td class="kv-content">
+								<ul id="resourceTree" class="easyui-tree" style="height:100%"  title="所有资源列表"></ul>
+							</td>
+							<td class="kv-content" hidden="hidden">
+								<input id="resourceIds" name="resourceIds" type="hidden" />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+		        </form>
+		    </div>
+		   
+		</div>
+	  </div>
+	  <div id="dlg-permission-buttons"> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="saveRolePermission()" data-options="selected:true">保存</a> 
+        <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#dlg-permission').dialog('close')"
+            iconcls="icon-cancel">取消</a> 
+      </div> 
+      
+    </div>
+    
+    
+    <script type="text/javascript">
+	    function closes() {  
+	        $('#loading').fadeOut('normal', function () {  
+	            $(this).remove();  
+	        });  
+	    }  
+	    var pc;  
+	      
+	    $.parser.onComplete = function () {  
+	        if (pc) clearTimeout(pc);  
+	        pc = setTimeout(closes, 1000);  
+	    }  
+   		var resourceTree;
+	    $(function(){
+	    	$('#tg').datagrid({
+	    		onSelect: function (rowIndex, rowData) {
+	                if (rowData.type == "1") {
+	                	$('#btn-delete').linkbutton('disable');
+	                	$('#btn-edit').linkbutton('disable');
+	                }else{
+	                	$('#btn-delete').linkbutton('enable');
+	                	$('#btn-edit').linkbutton('enable');
+	                }
+	            }
+	    	});
+	    	resourceTree = $('#resourceTree').tree({
+	            url : '/permission/tree',
+	            parentField : 'pid',
+	            lines : true,
+	            checkbox : true,
+	            //onClick : function(node) {},
+	            onLoadSuccess : function(node, data) {
+	                
+	            },
+	            cascadeCheck : false,
+	            onCheck: function (node, checked) {
+                    if (checked) {
+                        var parentNode = $("#resourceTree").tree('getParent', node.target);
+                        if (parentNode != null) {
+                            $("#resourceTree").tree('check', parentNode.target);
+                        }
+                    } else {
+                        var childNode = $("#resourceTree").tree('getChildren', node.target);
+                        if (childNode.length > 0) {
+                            for (var i = 0; i < childNode.length; i++) {
+                                $("#resourceTree").tree('uncheck', childNode[i].target);
+                            }
+                        }
+                    }
+                }
+	        });
+		});
+	    $(document).ajaxComplete(function(event, XMLHttpRequest, settings) {
+	    	result = $.parseJSON(XMLHttpRequest.responseText);
+	    	if(result.status != null && result.status != undefined && result.status===111){
+	    		window.location.reload(true);//刷新当前页
+	    	}
+	  });
+    
+	    function formatStatus(val,row){
+	    	if (val == 0){
+	    		return '<span style="color:red;">停用</span>';
+	    	} else {
+	    		return '<span >正常</span>';
+	    	}
+	    }
+	    function formatType(val,row){
+	    	if (val == 1){
+	    		return '<span >系统角色</span>';
+	    	} else if (val == 2){
+	    		return '<span >普通角色</span>';
+	    	}
+	    }
+	    function getRolePermission() {
+	    	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+        	if(ids.length == 0){
+        		$.messager.alert("操作信息", "请选择一行数据","warning");
+        		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+	    	if(ids.indexOf(',') > 0){
+	    		$.messager.alert("操作信息", "只能选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+        	var row = $("#tg").datagrid("getSelected");
+            if (row) {
+            	uncheckAll();
+            	$("#dlg-permission").dialog("open") ;
+            	$("#grantForm").form("load", row);
+                $.post( '/role/findResourceIdListByRoleId', {
+                    id : row.id
+                }, function(result) {
+                    var resids;
+                 /*    try {
+                		result = $.parseJSON(result);
+                	}catch (e){
+                		$.messager.alert("操作信息", "后台出现异常！","error");
+                		return;
+                	} */
+                    if (result.status == 1 && result.data != undefined) {
+                    	resids = result.data;
+                    	if (resids.length > 0) {
+                            for ( var i = 0; i < resids.length; i++) {
+                                if (resourceTree.tree('find', resids[i])) {
+                                    resourceTree.tree('check', resourceTree.tree('find', resids[i]).target);
+                                }
+                            }
+                        }
+                    }
+                    
+                }, 'json');
+            }
+        }
+	    
+	    function checkAll() {
+	        var nodes = resourceTree.tree('getChecked', 'unchecked');
+	        if (nodes && nodes.length > 0) {
+	            for ( var i = 0; i < nodes.length; i++) {
+	                resourceTree.tree('check', nodes[i].target);
+	            }
+	        }
+	    }
+	    
+	    function uncheckAll() {
+	        var nodes = resourceTree.tree('getChecked');
+	        if (nodes && nodes.length > 0) {
+	            for ( var i = 0; i < nodes.length; i++) {
+	                resourceTree.tree('uncheck', nodes[i].target);
+	            }
+	        }
+	    }
+	    
+	    function checkInverse() {
+	        var unchecknodes = resourceTree.tree('getChecked', 'unchecked');
+	        var checknodes = resourceTree.tree('getChecked');
+	        if (unchecknodes && unchecknodes.length > 0) {
+	            for ( var i = 0; i < unchecknodes.length; i++) {
+	                resourceTree.tree('check', unchecknodes[i].target);
+	            }
+	        }
+	        if (checknodes && checknodes.length > 0) {
+	            for ( var i = 0; i < checknodes.length; i++) {
+	                resourceTree.tree('uncheck', checknodes[i].target);
+	            }
+	        }
+	    }
+	    
+	    function saveRolePermission() {
+	    	var checknodes = resourceTree.tree('getChecked');
+            var ids = [];
+            if (checknodes && checknodes.length > 0) {
+                for ( var i = 0; i < checknodes.length; i++) {
+                    ids.push(checknodes[i].id);
+                }
+            }
+            $('#resourceIds').val(ids);
+	    	$("#grantForm").form("submit", {
+                url: '/role/grant',
+                onSubmit: function () {
+                	 
+                    return $(this).form("validate");
+                },
+                success: function (result) {
+                	try {
+                		result = $.parseJSON(result);
+                	}catch (e){
+                		$.messager.alert("操作信息", "后台出现异常！","error");
+                		  setTimeout(function(){
+                              $(".messager-body").window('close');  
+                            },2000);
+                		return;
+                	}
+                    if (result.status == 1) {
+                        $("#dlg-permission").dialog("close");
+                        $.messager.alert("操作信息", "成功","info");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                    else {
+                        $.messager.alert("操作信息", result.msg,"error");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                },
+                error : function(XmlHttpRequest,textStatus, errorThrown){
+                	$.messager.alert("操作信息", XmlHttpRequest.responseText,"error");
+                	  setTimeout(function(){
+                          $(".messager-body").window('close');  
+                        },2000);
+                }
+            });
+        }
+        
+        var url;
+        var type;
+        function newRole() {
+        	$("#roleAddForm").form("clear");
+            $("#dlg").dialog("open").dialog('setTitle', '增加角色'); ;
+            url = "/role/add";
+        }
+        function editRole() {
+        	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+        	if(ids.length == 0){
+        		$.messager.alert("操作信息", "请选择一行数据","warning");
+        		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+	    	if(ids.indexOf(',') > 0){
+	    		$.messager.alert("操作信息", "只能选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+        	var row = $("#tg").datagrid("getSelected");
+            if (row) {
+            	$("#roleAddForm").form("clear");
+                $("#dlg").dialog("open").dialog('setTitle', '编辑角色');
+                $("#roleAddForm").form("load", row);
+                url = "/role/update";
+            }
+        }
+        function saveRole() {
+            $("#roleAddForm").form("submit", {
+                url: url,
+                onSubmit: function () {
+                    return $(this).form("validate");
+                },
+                success: function (result) {
+                	try {
+                		result = $.parseJSON(result);
+                	}catch (e){
+                		$.messager.alert("操作信息", "后台出现异常！","error");
+                		  setTimeout(function(){
+                              $(".messager-body").window('close');  
+                            },2000);
+                		return;
+                	}
+                    if (result.status == 1) {
+                    	$("#tg").datagrid("reload");
+                        $("#dlg").dialog("close");
+                        $.messager.alert("操作信息", "成功","info");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                    else {
+                        $.messager.alert("操作信息", result.msg,"error");
+                        setTimeout(function(){
+                            $(".messager-body").window('close');  
+                          },2000);
+                    }
+                },
+                error : function(XmlHttpRequest,textStatus, errorThrown){
+                	$.messager.alert("操作信息", XmlHttpRequest.responseText,"error");
+                	  setTimeout(function(){
+                          $(".messager-body").window('close');  
+                        },2000);
+                }
+            });
+        }
+        function deleteRole() {
+        	var dgObject = $("#tg");
+        	var ids = getSelectionsIds(dgObject);
+	    	if(ids.length == 0){
+	    		$.messager.alert("操作信息", "请至少选择一行数据","warning");
+	    		  setTimeout(function(){
+                      $(".messager-body").window('close');  
+                    },2000);
+	    		return ;
+	    	}
+                $.messager.confirm('操作确认', '确认要删除角色吗？', function (r) {
+                    if (r) {
+                        $.ajax({
+                            type:"post",
+                            dataType:"json",
+                            url:"/role/deleteBatch",
+                            data:{ "ids":ids },
+                            error:function(request) {
+                            	$.messager.alert("操作提示", "发生异常！", "error"); 
+                            	  setTimeout(function(){
+                                      $(".messager-body").window('close');  
+                                    },2000);
+                            },
+                            success:function(result) {
+                            	if (result.status == 1) {
+                                    $('#tg').datagrid('reload');
+                                    $.messager.alert("操作信息", "成功","info");
+                                    setTimeout(function(){
+                                        $(".messager-body").window('close');  
+                                      },2000);
+                                } else {
+                                	$.messager.alert("操作信息", result.msg,"error");
+                                	  setTimeout(function(){
+                                          $(".messager-body").window('close');  
+                                        },2000);
+                                }
+                            }
+                        });
+                    }
+                });
+        }
+        function getSelectionsIds(customList){
+    		var sels = customList.datagrid("getSelections");
+    		var ids = [];
+    		for(var i in sels){
+    			ids.push(sels[i].id);
+    		}
+    		ids = ids.join(","); 
+    		
+    		return ids;
+    	}
+    </script>
+</body> 
+</html>

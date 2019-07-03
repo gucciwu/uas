@@ -1,0 +1,1033 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+ <meta charset="utf-8"> 
+ <meta name="viewport" content="width=device-width, initial-scale=1"> 
+ <title>工作台</title> 
+  	<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+    <link href="/platform/static/darkblue/css/platform.css" rel="stylesheet">
+    <link href="/platform/css/public.css" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+    <link href="/platform/js/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="/platform/static/darkblue/css/workbench.css">
+	<link rel="stylesheet" href="/platform/js/qtip/jquery.qtip.css?v=1.1.2"  />
+	<link rel="stylesheet" href="/platform/js/qtip/jquery.qtip.min.css"  />
+	<link rel="stylesheet" type="text/css" href="/platform/css/spectrum.css">
+    <script type="text/javascript" src="/platform/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/js/spectrum.js"></script>
+       <script type='text/javascript' src='/platform/js/docs/toc.js'></script>
+    <script type='text/javascript' src='/platform/js/docs/docs.js'></script>
+	<script type="text/javascript" charset="utf-8" src="/platform/js/jquery.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/platform/js/umeditor/umeditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/platform/js/umeditor/umeditor.js"></script>
+	<script type="text/javascript" src="/platform/js/umeditor/lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript" src="/platform/js/jquery.outerhtml.js"></script>
+	<script type="text/javascript" src="/platform/js/workflow/workflow.js"></script>
+	<script type="text/javascript" src="/platform/js/qtip/jquery.qtip.min.js" ></script>
+	<script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
+    <script src="/platform/js/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="/platform//static/darkblue/js/echarts-all.js"></script>
+    <script type="text/javascript" src="/platform/js/workbench.js"></script>
+    <script type="text/javascript" src="/platform/js/base.js"></script>
+    
+<style>
+a.easyui-linkbutton.l-btn.l-btn-small {
+    margin: 0 5px;
+}
+</style>
+
+<style>
+
+  .workflow-item-more{
+  	margin-right:10px;
+  	font-size:14px;
+  	text-decoration:none;
+  }
+  
+  .workflow-item-li{
+  
+  }
+  .workflow-item-a{
+    text-decoration:none;
+  	color:#000;
+  	font-size:14px;
+  	
+  	line-height:31px;
+  }
+   .workflow-item-a:hover{
+  	text-decoration:underline;
+  }
+  
+  
+  
+  .workflow-item-date{
+	  	color:#b8b8b8;
+	  	float:right;
+	  	font-size:14px;
+	  	padding-top:6px;
+  }
+
+
+
+</style>
+
+
+
+</head> 
+<body>
+    <div class="container">
+        <div id="hd"></div>
+        <div id="bd">
+            <div class="bd-content">
+                <div class="right-zone">
+                    <div class="attached item-box" id="calendar-part">
+                         <div id="calendarRoom">
+                              <div class="easyui-calendar" id="schedular-calendar" data-options="formatter:formatDay" style="width:300px;height:231px;">                              
+                             </div>                 
+                         </div>
+                         <ul class="calendar-ul"></ul>             
+                         <div class="calendar-div">
+                            <a  onclick="calendarCreate()">新建</a>
+                            <a href="calendar.html" style="text-decoration:none;">更多<span>&gt;</span></a>
+                         </div>    
+                    </div>          
+                </div>
+                   
+                <div class="center-part" style="height:650px;">
+                	 <div  style="width:98%;height:271px;">
+                		<div class="easyui-tabs" style="width:98%;height:231px"> 
+						     <div title="待办事项" > 
+							     <div style="padding:10px;height:145px">
+							     	 <ul id="indexWorkflow" >	 
+				                     </ul>   
+							     </div>
+							     <div style="float:right">
+				                      <a href="workflowList.html" class="workflow-item-more" >更多<span>&gt;</span></a>
+				                 </div>
+						     </div>
+						  </div>
+				    </div>
+				    <div  style="width:98%;height:271px;">
+                		<div class="easyui-tabs" style="width:98%;height:231px"> 
+						     <div title="提醒事项" > 
+							     <div style="padding:10px;height:145px">
+							     	 <ul id="indexRemind" >	 
+				                     </ul>   
+							     </div>
+							     <div style="float:right">
+				                      <a href="remindList.html" class="workflow-item-more" >更多<span>&gt;</span></a>
+				                 </div>
+						     </div>
+						  </div>
+				    </div>
+                </div>
+            </div>
+         
+        </div>
+
+    </div>
+
+    <!-- 添加日程 -->
+   <div  id="addCalendarWin" class="easyui-dialog" title="新增日程" 
+      data-options="closed:true,modal:true,resizeble:false" 
+      style="width:420px;height:495px;padding:10px;display:none;" buttons="#dlg-buttons">
+        <div class="easyui-layout" data-options="fit:true,border:false">
+            <div data-options="region:'center',border:false" title="" style="overflow: hidden;padding: 3px;">
+                <form id="scheduleForm" method="post">
+                  <label class="id-data_label">  <input id="id_data" class="easyui-textbox" type="hidden" type="text" name="id" ></input></label>
+                    <table>
+                      <tbody>                  
+                        <tr class="schedule-tr">
+                            <td class="field-label">日程内容：</td>
+                            <td>
+                                <input class="easyui-textbox" data-options="multiline:true" required="true" type="text" name="title" id="title"  style="height:82px;width:320px;"></input>
+                            </td>
+                        </tr>
+                        <tr class="schedule-tr">
+                            <td class="field-label">开始时间：</td>
+                            <td >
+                                <input class="easyui-datetimebox"  data-options="showSeconds:false"  type="text" name="start" id="start"  style="width:320px;height:35px;line-height:35px;" required="true"></input>
+                            </td>
+                        </tr>   
+                        <tr class="schedule-tr">
+                            <td class="field-label">结束时间：</td>
+                            <td >
+                                <input class="easyui-datetimebox" data-options="showSeconds:false"  type="text"name="end" id="end" style="width:320px;height:35px;line-height:35px;" required="true"></input>
+                            </td>
+                        </tr>   
+                   </table>
+                    <div class="color-div">
+                        <label for="type" class="type-form radio-form">
+                                                                    活动性质：
+                            <label><input name="type" type="radio" id="type" value="1"/>公共 </label>
+                            <label><input name="type" type="radio" id="type" value="2"/>私人 </label>
+                       </label>
+                         <label for="type" class="type-form color-form"> 
+                                                                   显示颜色：<input name="status" style="text" id="full" />
+                          </label>
+                    </div> 
+                 <div class="remind-div">
+                        <label for="isRemind" class="type-form isRemind">
+                                                                        提醒设置：
+                            <label><input name="isRemind" type="radio" id="isRemind" value="1"  onclick="checking()"/>是  </label>
+                            <label><input name="isRemind" type="radio" id="isRemind" value="2"  onclick="checking()"/>否 </label>
+                       </label> 
+                    <label class="tixingshezhi"> 
+                                            提前<input class="easyui-textbox" type="text" name="advanceTime" id="advanceTime" style="width:60px;margin-right:0;" form="scheduleForm"></input>
+                       <select id="timeType" name="timeType" form="scheduleForm">
+                                        <option value="1" selected="selected">分钟</option>
+                                        <option value="2">小时</option>
+                                        <option value="3">天</option>
+                                        <option value="4">周</option>
+                        </select> 发送提醒      
+                      </label>
+                  </div>
+                 <label for="creatorName" class="type-form creatorName-form">
+                                                      创建人：
+                    <label>&nbsp;<input name="creatorName" type="text" id="creatorName"/></label>                   
+                 </label> 
+                </form>
+            </div>
+           
+        </div>
+            <div id="dlg-buttons" style="text-align:center;"> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="saveSchedule()" data-options="selected:true">保存</a> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="delSchedule()" data-options="selected:true">删除</a> 
+                <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#addCalendarWin').dialog('close')" iconcls="icon-cancel">取消</a> 
+            </div> 
+        </div> 
+    <!-- 通知公告查看dialog -->
+           
+     <div id="dlglook" class="easyui-dialog announcement-dialog" title="公告详情"
+         data-options="closed:true,modal:true,resizeble:false" buttons="">
+        <div class="easyui-layout" data-options="fit:true,border:false">
+            <div id="announce-content" data-options="region:'center',border:false" title="" style="padding:3px;">                   
+            </div>
+        </div>      
+    </div>  
+        
+        
+   
+	  
+	<!-- 流程审批对话框 -->
+	  
+	<div id="processDialog">
+	</div>
+	
+    <script type="text/javascript">
+ /*    var $j = jQuery.noConflict(); */
+ 
+ 
+	 function openProcessDialog(title,url){
+  	   $('#processDialog').dialog({
+  		    title: title,
+  		    width:1200,
+  		    height:700,
+  		    closed: true,
+  		    cache: false,
+  		    content:"<iframe scrolling='auto' frameborder='0' src='"+url+"' style='width:100%; height:100%; display:block;'></iframe>",
+  		    modal: true,
+  		}).dialog('open');
+     }  
+     
+     
+     function closeProcessDialog(title,url){
+    	 $('#processDialog').dialog('close');
+     }
+	function openWorkflowDealDialog(pdid,title,type,taskId,
+		businessDataTable,businessDataId,pid,approveUrl){
+	    if(!(approveUrl.indexOf("?")>-1)){
+	       approveUrl=approveUrl+"?"
+	    }
+	    var url=approveUrl
+	    if(url.substring(url.length-1)=="?"){
+	    	url=url+"bid="+businessDataId+"&tid="+taskId;
+	    }else{
+	    	url=url+"&bid="+businessDataId+"&tid="+taskId;
+	    }
+	    url=url+"&pid="+pid;
+	    url="/cms"+url;
+	    openProcessDialog(title,url);
+    }
+	
+	function openWorkflowHisDialog(pdid,title,type,taskId,
+			businessDataTable,businessDataId,pid,approveUrl){
+		    if(!(approveUrl.indexOf("?")>-1)){
+		       approveUrl=approveUrl+"?"
+		    }
+		    var url=approveUrl
+		    if(url.substring(url.length-1)=="?"){
+		    	url=url+"bid="+businessDataId+"&tid="+taskId;
+		    }else{
+		    	url=url+"&bid="+businessDataId+"&tid="+taskId;
+		    }
+		    url=url+"&pid="+pid;
+		    url="/cms"+url;
+		    openProcessDialog(title,url);
+	 }
+ 
+    $(".id-data_label").hide();
+    var url;
+    Date.prototype.pattern=function(fmt) {         
+        var o = {         
+        "M+" : this.getMonth()+1, //月份         
+        "d+" : this.getDate(), //日         
+        "h+" : this.getHours()%12 == 0 ? 12 : this.getHours()%12, //小时         
+        "H+" : this.getHours(), //小时         
+        "m+" : this.getMinutes(), //分         
+        "s+" : this.getSeconds(), //秒         
+        "q+" : Math.floor((this.getMonth()+3)/3), //季度         
+        "S" : this.getMilliseconds() //毫秒         
+        };         
+        var week = {         
+        "0" : "/u65e5",         
+        "1" : "/u4e00",         
+        "2" : "/u4e8c",         
+        "3" : "/u4e09",         
+        "4" : "/u56db",         
+        "5" : "/u4e94",         
+        "6" : "/u516d"        
+        };         
+        if(/(y+)/.test(fmt)){         
+            fmt=fmt.replace(RegExp.$1, (this.getFullYear()+"").substr(4 - RegExp.$1.length));         
+        }         
+        if(/(E+)/.test(fmt)){         
+            fmt=fmt.replace(RegExp.$1, ((RegExp.$1.length>1) ? (RegExp.$1.length>2 ? "/u661f/u671f" : "/u5468") : "")+week[this.getDay()+""]);         
+        }         
+        for(var k in o){         
+            if(new RegExp("("+ k +")").test(fmt)){         
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length==1) ? (o[k]) : (("00"+ o[k]).substr((""+ o[k]).length)));         
+            }         
+        }         
+        return fmt;         
+    }
+    // 给日期类对象添加日期差方法，返回日期与diff参数日期的时间差，单位为天
+    Date.prototype.diff = function(date){
+      return (this.getTime() - date.getTime())/(24 * 60 * 60 * 1000);
+    }
+    //chart0      
+    //公开附件tab事件处理
+    $(".attached-tab").on("click","a",function(){
+    	$j(this).closest(".attached-tab").find("a").removeClass("current");
+    	$(this).addClass("current");
+    	$(this).closest(".attached").find("ul").addClass("hide");   
+    	$(this).closest(".attached").find("ul." + $(this).attr("attached")).removeClass("hide");    
+    }) ;
+
+    function formatDay(date){   	             
+          return '<a id="formatDay-a">'+  date.getDate()+'</a>'; 
+        }
+    function remind(){
+        $.ajax({
+            type: 'GET',
+            url: '/remind/titleList',
+            dataType: 'json',
+            success: function (data) {
+            	data=data.rows;
+                var result = "";
+                   var length=data.length;
+                   if(length>5){
+                	   length=5;
+                   }
+                   for(var i=0;i<length;i++) {
+                        // 构造两个日期，分别是系统时间
+                        var nowDate = new Date();                       
+                        var sendDate = new Date(data[i].sendTime);
+                        // 调用日期差方法，求得参数日期与系统时间相差的天数
+                        var diff = nowDate.diff(sendDate);
+                        //如果时间差小于1天，就带new
+                         if(diff<=1){
+                           result+='<li class="workflow-item-li"><span></span><a href="javascript:void(0);" class="ellipsis  workflow-item-a">'+data[i].title+'<i></i></a><label class="workflow-item-date">'+data[i].sendTime+'</label></li>';
+                         }else{
+                            result+='<li class="workflow-item-li"><span></span><a href="javascript:void(0);" class="ellipsis workflow-item-a">'+data[i].title+'</a><label class="workflow-item-date" >'+data[i].sendTime+'</label></li>'; 
+                         }                     
+                  }   
+                    //设置页面
+                   $('#indexRemind').html(result);
+                    // 如果没有数据
+                },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        }); 
+        
+        $.ajax({
+            type: 'GET',
+            url: '/remind/titleWorkflowList',
+            dataType: 'json',
+            success: function (data) {
+            	data=data.rows;
+                  var result = "";
+                   var length=data.length;
+                   if(length>5){
+                	   length=5;
+                   }
+                   for(var i=0;i<length;i++) {
+                        // 构造两个日期，分别是系统时间
+                        var nowDate = new Date();                       
+                        var sendDate = new Date(data[i].sendTime);
+                        // 调用日期差方法，求得参数日期与系统时间相差的天数
+                        var diff = nowDate.diff(sendDate);
+                        //如果时间差小于1天，就带new
+                         if(diff<=1){
+                           result+='<li class="workflow-item-li"><span></span><a href="javascript:;" class="ellipsis workflow-item-a ">'+data[i].title+'<i></i></a><label class="workflow-item-date">'+data[i].sendTime+'</label></li>';
+                         }else{
+                            result+='<li class="workflow-item-li"><span></span><a href="javascript:;" class="ellipsis workflow-item-a ">'+data[i].title+'</a><label class="workflow-item-date" >'+data[i].sendTime+'</label></li>'; 
+                         }                     
+                  }   
+                    //设置页面
+                   $('#indexRemindWorkflow').html(result);
+                    // 如果没有数据
+                },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    }
+    /*每5分钟刷新一次提醒  */
+    setInterval("remind()","300000"); 
+    function openCalendarDialog(id){
+    	$.ajax({
+            type: 'GET',
+            url: '/agenda/keylist',
+            data: {id:id},
+            dataType: 'json',
+            success: function (data) {
+                $("#scheduleForm").form("clear"); 
+                $("#title").textbox('readonly',false);
+                $("#start").datetimebox('readonly',false);
+                $("#end").datetimebox('readonly',false);
+                $("#advanceTime").textbox('readonly',false);
+                $(".creatorName-form").css("display","block");
+                $("#creatorName").val(data.creatorName);
+                $("#creatorName").attr("readOnly","true");
+                $("input[name=type]").attr("disabled", false);
+                $("input[name=isRemind]").attr("disabled", false);
+                $("#timeType").attr("disabled", false);
+                $("#id_data").textbox('setValue',data.id);
+                $("#title").textbox('setValue',data.title);
+                $("#advanceTime").textbox('setValue',data.advanceTime);
+                $("#start").datetimebox('setValue',data.start);
+                $("#end").datetimebox('setValue',data.end);
+                document.getElementsByClassName("sp-preview-inner")[0].style.backgroundColor=data.status;
+                $("#full").val(data.status);
+                if(data.type==1){
+                    document.getElementsByName("type")[0].checked="checked";
+              }else{
+                 document.getElementsByName("type")[1].checked="checked";
+              }
+               if(data.isRemind==1){
+                    document.getElementsByName("isRemind")[0].checked="checked";       
+                    objTimeType=document.getElementsByName("timeType")[0];
+                    for(i=0;i<objTimeType.length;i++){
+                        if(objTimeType[i].value==data.timeType){ 
+                            objTimeType[i].selected=true;
+                                break;
+                            }
+                    }
+                    $(".tixingshezhi").show(); 
+               }else{
+            	   document.getElementsByName("isRemind")[1].checked="checked";      
+                    $(".tixingshezhi").hide(); 
+               }
+               //如果data.creatorId=0，表示查看者和创建者不是同一人此时form表单处于不可编辑状态
+               if(data.creatorId==-768){
+            	   $("#title").textbox('readonly',true);
+            	   $("#start").datetimebox('readonly',true);
+            	   $("#end").datetimebox('readonly',true);
+            	    $(".sp-preview-inner").click(function(){return false;});
+                    $(".sp-dd").click(function(){return false;});
+            	   $("#advanceTime").textbox('readonly',true);
+            	   $("input[name=type]").attr("disabled", true);
+                   $("input[name=isRemind]").attr("disabled", true);
+            	   $("#timeType").attr("disabled", true);
+               }
+                 $("#addCalendarWin").dialog("open").dialog('setTitle', '修改日程');
+                  url= "/agenda/update";
+                  urldel="/agenda/delete?id="+data.id;
+                    // 如果没有数据
+                },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    }
+     $(function () {
+    	 
+    	 refreshProcessList();
+    	 remind();
+    	 //点击固定年份月份，进行二次加载
+    	 $(".calendar-menu-month-inner").click(function (){
+             $.ajax({
+                 type: 'GET',
+                 url: '/agenda/datelist',
+                 dataType: 'json',
+                 success: function (data) {
+                     var result = "";
+                     for(var key in data){  
+                         console.log("属性：" + key + ",值："+ data[key]);
+                         var arrLen=data[key].length;
+                        for(var i=0;i<arrLen;i++){
+                               var time=data[key][i].replace(/\-/g,',');
+                               var calength=$(".calendar-day").length;                      
+                               for(var j=0;j<calength;j++){
+                                   var date=$(".calendar-day")[j].getAttribute('abbr');
+                                   if(date.length==8){
+                                       date=date.substr(0,5)+'0'+date.substr(5,2)+'0'+date[7];
+                                   }else if(date.length==9){
+                                       if(date[7]==time[7]){
+                                              date=date.substr(0,8)+'0'+date[8];
+                                         }else{
+                                             date=date.substr(0,5)+'0'+date.substr(5,4);
+                                         }
+                                   }else{
+                                       date=date;
+                                   }
+                                   if(date==time&&!$(".calendar-day")[j].classList.contains('color-Selected')){
+                                       $(".calendar-day")[j].classList.add("color-Selected");
+                                   }
+                               }  
+                         } 
+                     
+                        }  
+                     },
+                 error: function (XMLHttpRequest, textStatus, errorThrown) {
+                 }
+             });
+         });
+    	 
+         //点击上个月，下个月二次加载
+         $(".calendar-nav").on("click",function(){
+             $.ajax({
+                 type: 'GET',
+                 url: '/agenda/datelist',
+                 dataType: 'json',
+                 success: function (data) {
+                     var result = "";
+                     for(var key in data){  
+                         console.log("属性：" + key + ",值："+ data[key]);
+                         var arrLen=data[key].length;
+                        for(var i=0;i<arrLen;i++){
+                               var time=data[key][i].replace(/\-/g,',');
+                               var calength=$(".calendar-day").length;                      
+                               for(var j=0;j<calength;j++){
+                                   var date=$(".calendar-day")[j].getAttribute('abbr');
+                                   if(date.length==8){
+                                       date=date.substr(0,5)+'0'+date.substr(5,2)+'0'+date[7];
+                                   }else if(date.length==9){
+                                       if(date[7]==time[7]){
+                                              date=date.substr(0,8)+'0'+date[8];
+                                         }else{
+                                             date=date.substr(0,5)+'0'+date.substr(5,4);
+                                         }
+                                   }else{
+                                       date=date;
+                                   }
+                                   if(date==time&&!$(".calendar-day")[j].classList.contains('color-Selected')){
+                                       $(".calendar-day")[j].classList.add("color-Selected");
+                                   }
+                               }  
+                         } 
+                     
+                        }  
+                     },
+                 error: function (XMLHttpRequest, textStatus, errorThrown) {
+                 }
+             });
+         });
+    	 //加载打点
+         $.ajax({
+             type: 'GET',
+             url: '/agenda/datelist',
+             dataType: 'json',
+             success: function (data) {
+                 var result = "";
+                 for(var key in data){  
+                	 console.log("属性：" + key + ",值："+ data[key]);
+                     var arrLen=data[key].length;
+                    for(var i=0;i<arrLen;i++){
+                    	   var time=data[key][i].replace(/\-/g,',');
+                    	   var calength=$(".calendar-day").length;                 	    
+                           for(var j=0;j<calength;j++){
+                               var date=$(".calendar-day")[j].getAttribute('abbr');
+                               if(date.length==8){
+                            	   date=date.substr(0,5)+'0'+date.substr(5,2)+'0'+date[7];
+                               }else if(date.length==9){
+                            	   if(date[7]==time[7]){
+        	                              date=date.substr(0,8)+'0'+date[8];
+                                     }else{
+                                    	 date=date.substr(0,5)+'0'+date.substr(5,4);
+                                     }
+                               }else{
+                            	   date=date;
+                               }
+                               if(date==time&&!$(".calendar-day")[j].classList.contains('color-Selected')){
+                                   $(".calendar-day")[j].classList.add("color-Selected");
+                               }
+                           }  
+                     } 
+                 
+                    }  
+                 },
+             error: function (XMLHttpRequest, textStatus, errorThrown) {
+             }
+         });
+
+        //点击日期后的效果
+         $('#schedular-calendar').calendar({
+        	    onSelect: function(date){
+        	    	var time=date.getFullYear()+"-";
+                    var month=date.getMonth()+1;
+        	    	if(date.getMonth()<9){      
+        	    		time+='0'+ month+'-';
+        	    	}else{
+        	    		time+=month+'-';
+        	    	}
+        	    	if(date.getDate()<10){
+        	    		time+='0'+date.getDate();
+        	    	}else{
+        	    		time+=date.getDate();
+        	    	}
+        	    	$.ajax({
+        	             type: 'GET',
+        	             url: '/agenda/dateCalendarList',
+        	             dataType: 'json',
+        	             success: function (data) {
+        	                 var result = "";
+        	                 for(var key in data){  
+        	                         console.log("属性：" + key + ",值："+ data[key]);                    
+        	                         var arrLen=data[key].length;
+        	                         if(key==time){
+        	                             for(var i=0;i<arrLen;i++){
+        	                                result+='<li><span></span><a href="javascript:void(0);"  onclick="openCalendarDialog('+data[key][i].id+')" class="ellipsis">' + data[key][i].title+'</a></li>';
+        	                             }
+        	                          }
+        	                    }  
+        	                     $(".calendar-ul").html(result);
+        	                 },
+        	             error: function (XMLHttpRequest, textStatus, errorThrown) {
+        	             }
+        	         }); 
+        	  
+        	    	//打点加载
+                    $.ajax({
+                        type: 'GET',
+                        url: '/agenda/datelist',
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log("aaadata"+data);
+                            var result = "";
+                            for(var key in data){  
+                                console.log("属性：" + key + ",值："+ data[key]);
+                                var arrLen=data[key].length;
+                               for(var i=0;i<arrLen;i++){
+                                      var time=data[key][i].replace(/\-/g,',');
+                                      var calength=$(".calendar-day").length;                      
+                                      for(var j=0;j<calength;j++){
+                                          var date1=$(".calendar-day")[j].getAttribute('abbr');
+                                          if(date1.length==8){
+                                              date1=date1.substr(0,5)+'0'+date1.substr(5,2)+'0'+date1[7];
+                                          }else if(date1.length==9){
+                                              if(date1[7]==time[7]){
+                                                     date1=date1.substr(0,8)+'0'+date1[8];
+                                                }else{
+                                                    date1=date1.substr(0,5)+'0'+date1.substr(5,4);
+                                                }
+                                          }else{
+                                              date1=date1;
+                                          }
+                                          if(date1==time&&!$(".calendar-day")[j].classList.contains('color-Selected')){
+                                              $(".calendar-day")[j].classList.add("color-Selected");
+                                          }
+                                      }  
+                                } 
+                            
+                               }  
+                            },
+                        error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        }
+                    });
+        	    	
+        	    }
+        	});
+        
+         
+         $.ajax({
+             type: 'GET',
+             url: '/agenda/dateCalendarList',
+             dataType: 'json',
+             success: function (data) {
+                 console.log("aaadata"+data);
+                 var result = "";
+                 var date=$(".calendar-today")[0].getAttribute('abbr');
+                 if(date.length==8){
+                     date=date.substr(0,5)+'0'+date.substr(5,2)+'0'+date[7];
+                 }else if(date.length==9){
+                     if(date[7]==','){
+                            date=date.substr(0,8)+'0'+date[8];
+                       }else{
+                           date=date.substr(0,5)+'0'+date.substr(5,4);
+                       }
+                 }else{
+                     date=date;
+                 }
+                 for(var key in data){  
+	                     console.log("属性：" + key + ",值："+ data[key]);                    
+	                     var arrLen=data[key].length;
+	                     var date=date.replace(/\,/g,'-');
+	                     if(key==date){
+	                    	 for(var i=0;i<arrLen;i++){
+	                    		result+='<li><span></span><a href="javascript:void(0);"  onclick="openCalendarDialog('+data[key][i].id+')" class="ellipsis">' + data[key][i].title+'</a></li>';
+	                    	 }
+	                      }
+                    }  
+                     $(".calendar-ul").html(result);
+                 },
+             error: function (XMLHttpRequest, textStatus, errorThrown) {
+             }
+         });
+        $.ajax({
+            type: 'GET',
+            url: '/announcement/titleList',
+            dataType: 'json',
+            success: function (data) {
+                var result = "";
+                if(data.length<6){
+                    for(var i=0;i<data.length;i++) {
+                   	// 构造两个日期，分别是系统时间
+                       var nowDate = new Date();                       
+                       var updateDate = new Date(data[i].updateTime);
+                       // 调用日期差方法，求得参数日期与系统时间相差的天数
+                       var diff = nowDate.diff(updateDate);
+                       if(diff<=1){
+                    	   result+='<li><span></span><a href="javascript:;" class="ellipsis" onclick="detail(\'' + data[i].id+ '\')">'+data[i].title+'</a><i class="li-i"></i></li>';
+                       }else{
+                    	   result+='<li><span></span><a href="javascript:;" class="ellipsis" onclick="detail(\'' + data[i].id+ '\')">'+data[i].title+'</a></li>';
+                       }                  
+                     }   
+                }else{
+                    for(var i=0;i<6;i++) {
+                        // 构造两个日期，分别是系统时间
+                       var nowDate = new Date();                       
+                       var updateDate = new Date(data[i].updateTime);
+                       // 调用日期差方法，求得参数日期与系统时间相差的天数
+                       var diff = nowDate.diff(updateDate);
+                        if(diff<=1){
+                            result+='<li><span></span><a href="javascript:;" class="ellipsis" onclick="detail(\'' + data[i].id+ '\')">'+data[i].title+'</a><i class="li-i"></i></li>';
+                        }else{
+                            result+='<li><span></span><a href="javascript:;" class="ellipsis" onclick="detail(\'' + data[i].id+ '\')">'+data[i].title+'</a></li>';
+                        }
+                      } 
+                }
+                    //设置页面
+                    $('#indexAno').html(result);
+                    // 如果没有数据
+                },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    });  
+      function checking(evt){
+            var evt=evt || window.event;   
+            var e =evt.srcElement || evt.target;
+            if(e.value==1){ 
+                $(".tixingshezhi").show(); 
+                $("#advanceTime").textbox({ required:true });
+                document.getElementsByName("timeType")[0][0].selected=true;
+            }else{
+                $(".tixingshezhi").hide();
+            }
+       }
+    function refreshCalendar(){
+        //新建日程后局部刷新
+        /* 刷新日程标题 */
+        $.ajax({
+            type: 'GET',
+            url: '/agenda/dateCalendarList',
+            dataType: 'json',
+            success: function (data) {
+                console.log("aaadata"+data);
+                var result = "";
+                var date=$(".calendar-today")[0].getAttribute('abbr');
+                if(date.length==8){
+                    date=date.substr(0,5)+'0'+date.substr(5,2)+'0'+date[7];
+                }else if(date.length==9){
+                    if(date[7]==','){
+                           date=date.substr(0,8)+'0'+date[8];
+                      }else{
+                          date=date.substr(0,5)+'0'+date.substr(5,4);
+                      }
+                }else{
+                    date=date;
+                }
+                for(var key in data){  
+                        console.log("属性：" + key + ",值："+ data[key]);                    
+                        var arrLen=data[key].length;
+                        var date=date.replace(/\,/g,'-');
+                        if(key==date){
+                            for(var i=0;i<arrLen;i++){
+                               result+='<li><span></span><a href="javascript:void(0);"  onclick="openCalendarDialog('+data[key][i].id+')" class="ellipsis">' + data[key][i].title+'</a></li>';
+                            }
+                         }
+                   }  
+                    $(".calendar-ul").html(result);
+                },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+        /* 刷新打点 */
+        $.ajax({
+            type: 'GET',
+            url: '/agenda/datelist',
+            dataType: 'json',
+            success: function (data) {
+                var result = "";
+                for(var key in data){  
+                    console.log("属性：" + key + ",值："+ data[key]);
+                    var arrLen=data[key].length;
+                   for(var i=0;i<arrLen;i++){
+                          var time=data[key][i].replace(/\-/g,',');
+                          var calength=$(".calendar-day").length;                      
+                          for(var j=0;j<calength;j++){
+                              var date=$(".calendar-day")[j].getAttribute('abbr');
+                              if(date.length==8){
+                                  date=date.substr(0,5)+'0'+date.substr(5,2)+'0'+date[7];
+                              }else if(date.length==9){
+                                  if(date[7]==time[7]){
+                                         date=date.substr(0,8)+'0'+date[8];
+                                    }else{
+                                        date=date.substr(0,5)+'0'+date.substr(5,4);
+                                    }
+                              }else{
+                                  date=date;
+                              }
+                              if(date==time&&!$(".calendar-day")[j].classList.contains('color-Selected')){
+                                  $(".calendar-day")[j].classList.add("color-Selected");
+                              }
+                          }  
+                    } 
+                
+                   }  
+                },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+            }
+        });
+    	
+    }
+   function calendarCreate(){
+            var myDate = new Date();
+            $("#addCalendarWin").dialog("open").dialog('setTitle', '新增日程');
+            $("#scheduleForm").form("clear");  
+            $("#product_Id").combobox('readonly',false);
+            //初始化日期控件 
+            var startTime=myDate.pattern('yyyy-MM-dd HH:mm'); 
+            document.getElementsByName("isRemind")[1].checked="checked"; 
+            $(".tixingshezhi").hide(); 
+            $(".creatorName-form").css("display","none");
+            document.getElementsByName("type")[1].checked="checked";
+            document.getElementsByName("timeType")[0][0].selected=true;
+            $("#start").datetimebox('setValue',startTime);
+            $("#end").datetimebox('setValue',myDate.pattern('yyyy-MM-dd'));
+            $("#full").val(document.getElementsByClassName("sp-preview-inner")[0].style.backgroundColor);
+            url= "/agenda/create";
+   }
+   
+   
+   function formatProcessInstanceTitle(index,row){
+	  return  '<a class="ellipsis qurerydo" href="javascript:void(0);" onclick="openWorkflowDealDialog(\''+row.processDefinationKey+'\''+',\''+row.title+'\''+',\''+row.type+'\''+',\''+row.taskId+'\''+',\''+row.businessDataTable+'\''+',\''+row.businessDataId+'\''+',\''+row.processInstanceId+'\''+',\''+row.approveUrl+'\')" class="ellipsis">'+row.title+'</a>';   
+   }
+   
+   function formatDate(val,row){
+   	if(typeof(val)!="undefined"&& val!=null){
+   		var result=val.substr(0,10);
+			 return result;
+   	}
+   }
+   function delSchedule(){
+       $('#addCalendarWin').dialog('close');
+       $.ajax({
+           type:"post",
+           dataType:"json",
+           url:urldel,
+           error:function(request) {
+               $.messager.alert("操作提示", "发生异常！", "error"); 
+           },
+           success:function(result) {
+               if (result.status == 1) {
+                     $('#mycalendar').fullCalendar( 'refetchEvents' );
+                   $.messager.alert("操作信息", result.msg,"info");
+                   refreshCalendar();
+               } else {
+                   $.messager.alert("操作信息", result.msg,"error");
+               }
+           }
+       });
+   }
+   function saveSchedule(){
+       $("#scheduleForm").form("submit", {
+           url: url,
+           onsubmit: function () {
+               return $(this).form("validate");
+           },
+           success: function (result) {
+               result = $.parseJSON(result);
+               if (result.status == 1) {
+                 //   $('#mycalendar').fullCalendar( 'refetchEvents' );
+                   $("#addCalendarWin").dialog("close");
+                   $.messager.alert("操作信息", result.msg,"info");
+                   refreshCalendar();
+               }
+               else {
+                   $.messager.alert("操作信息", result.msg,"error");
+               }
+           }
+       });
+   } 
+   /* 通知公告*/
+        function detail(id){
+         $.ajax({
+             type:"post",
+             dataType:"json",
+             url:"/announcement/lookOne",
+             data:{ "id":id },
+             error:function(request) {
+                 $.messager.alert("操作提示", "发生异常！", "error"); 
+             },
+             success:function(result) {
+                  $("#dlglook").dialog("open").dialog('setTitle', '查看公告');
+                  var resultStr="";
+                  resultStr+='<div class="content-head">'+ result.title +'</div>'
+                        +'<div class="announcement-source">创建者：' + result.createName+' | 发布时间：'+result.updateTime
+                        +'</div>'
+                        +'<div class="content-body">'+ result.content + '</div>';
+                   $("#announce-content").html(resultStr);   
+             }
+         });
+     }
+   
+   //---------------------------------------------------------------------以下为工作流相关js------------------------------------------------------------------------------------------------------------------------------
+   
+   var currentBusinessDataId;//当前打开的业务数据id,全局变量
+   
+   function toUploadReport(id) {
+		$("#reportUploadForm").form("clear");
+	    $("#dlgUpload").dialog("open");
+		$("#selectId").textbox('setValue',id);  
+   }
+   
+   
+   function uploadReport(){
+   	$.messager.confirm('操作确认', '该操作将替换所选报表文件，确认要上传吗？', function (r) {
+        if (r) {
+        	$("#reportUploadForm").form("submit", {
+                url: "/periodReport/fileUpload",
+                onSubmit: function () {
+                    return $(this).form("validate");
+                },
+                success: function (result) {
+                	try {
+                		result = $.parseJSON(result);
+                	}catch (e){
+                		$.messager.alert("操作信息", "后台出现异常！","error");
+                	}
+                    if (result.status == 1) {
+                    	$("#tg").datagrid("reload");
+                        $("#dlgUpload").dialog("close");
+                        $.messager.alert("操作信息", "成功","info");
+                    }
+                    else {
+                        $.messager.alert("操作信息", result.msg,"error");
+                    }
+                },
+                error : function(XmlHttpRequest,textStatus, errorThrown){
+                	$.messager.alert("操作信息", XmlHttpRequest.responseText,"error");
+                }
+            });
+        }
+       })
+   }
+   
+   
+  
+   function formateButtonForReport(id,status){
+	   	var result='';
+		if(status=='5'){//打回后重新提交， 不需要启动新的流程，此时，可以上传报表，其余状态都不可上传
+			 result+='<a href="javascript:void(0)" onclick="toUploadReport('+id+')"(\'' +id + '\',0)" class="easyui-linkbutton" data-options="selected:true">上传 </a>'
+			 result+='<a href="javascript:void(0)" onclick="operateForReport(\'' +id + '\',44,'+ status +')" class="easyui-linkbutton">提交复核 </a>';
+		}else if(status=='4'){
+			 result+='<a href="javascript:void(0)" onclick="operateForReport(\'' +id+ '\',5,'+ status +')" class="easyui-linkbutton">驳回 </a>';
+			 result+='<a href="javascript:void(0)" onclick="operateForReport(\'' +id+ '\',6,'+ status +')" class="easyui-linkbutton">通过复核 </a>';
+		}else if(status=='6'){
+			result+='<a href="javascript:void(0)" onclick="operateForReport(\'' +id+ '\',7,'+ status +')" class="easyui-linkbutton">发布 </a>';
+		}
+		return result;
+  }
+  
+   $(".workflow-div").css("display","none"); 
+   $("#traceTb-a").click(function(){
+       $(".workflow-div").css("display","none");
+       $(".panel.datagrid").css("display","block");
+    });
+   $("#worlfolw-a").click(function(){
+	   $(".workflow-div").css("display","block");
+	   $(".panel.datagrid").css("display","none");
+	   });
+   function refreshProcessList(){
+  	 $.ajax({
+           type: 'GET',
+           url: '/workflow/queryTodo',
+           dataType: 'json',
+           success: function (data) {
+               var result = "";
+               var iframeStr="";
+               if(data.rows.length<11){
+                   for(var i=0;i<data.rows.length;i++) {
+                     result+='<li class="workflow-item-li" ><span></span><a class="ellipsis qurerydo workflow-item-a " href="javascript:void(0);" onclick="openWorkflowDealDialog(\''+data.rows[i].processDefinationKey+'\''+',\''+data.rows[i].title+'\''+',\''+data.rows[i].type+'\''+',\''+data.rows[i].taskId+'\''+',\''+data.rows[i].businessDataTable+'\''+',\''+data.rows[i].businessDataId+'\''+',\''+data.rows[i].processInstanceId+'\''+',\''+data.rows[i].approveUrl+'\')" class="ellipsis">'+data.rows[i].title+'</a><label class="workflow-item-date">'+data.rows[i].createTime+'</label></li>';
+                 /*     iframeStr+='<iframe id="iframe" src="workflow/workflowTrace.html?pid='+data.rows[i].processInstanceId
+                     +'&businessKey='+data.rows[i].businessDataId+'" width="900px" height="450px"></iframe>';   
+                     $j('#iframe-div').html(iframeStr);  */  
+                   }   
+               }else{
+                   for(var i=0;i<11;i++) {
+                     result+='<li class="workflow-item-li"><span></span><a class="ellipsis qurerydo workflow-item-a" href="javascript:void(0);" onclick="openWorkflowDealDialog(\''+data.rows[i].processDefinationKey+'\''+',\''+data.rows[i].title+'\''+',\''+data.rows[i].type+'\''+',\''+data.rows[i].taskId+'\''+',\''+data.rows[i].businessDataTable+'\''+',\''+data.rows[i].businessDataId+'\''+',\''+data.rows[i].processInstanceId+'\''+',\''+data.rows[i].approveUrl+'\')" class="ellipsis">'+data.rows[i].title +'</a><label class="workflow-item-date">'+data.rows[i].createTime+'</label></li>';
+                         } 
+               }
+                   //设置页面
+                    $j('#indexWorkflow').html(result);                                 		                    	 
+                   // 如果没有数据
+               },
+           error: function (XMLHttpRequest, textStatus, errorThrown) {
+           }
+       });
+  	 
+  	 $.ajax({
+         type: 'GET',
+         url: '/workflow/queryHisTask',
+         dataType: 'json',
+         success: function (data) {
+             var result = "";
+             var iframeStr="";
+             if(data.rows.length<11){
+                 for(var i=0;i<data.rows.length;i++) {
+                   result+='<li class="workflow-item-li" ><span></span><a class="ellipsis qurerydo workflow-item-a " href="javascript:void(0);" onclick="openWorkflowHisDialog(\''+data.rows[i].processDefinationKey+'\''+',\''+data.rows[i].title+'\''+',\''+data.rows[i].type+'\''+',\''+data.rows[i].taskId+'\''+',\''+data.rows[i].businessDataTable+'\''+',\''+data.rows[i].businessDataId+'\''+',\''+data.rows[i].processInstanceId+'\''+',\''+data.rows[i].approveUrl+'\')" class="ellipsis">'+data.rows[i].title+'</a><label class="workflow-item-date">'+data.rows[i].completeTime+'</label></li>';
+               /*     iframeStr+='<iframe id="iframe" src="workflow/workflowTrace.html?pid='+data.rows[i].processInstanceId
+                   +'&businessKey='+data.rows[i].businessDataId+'" width="900px" height="450px"></iframe>';   
+                   $j('#iframe-div').html(iframeStr);  */  
+                 }   
+             }else{
+                 for(var i=0;i<11;i++) {
+                   result+='<li class="workflow-item-li"><span></span><a class="ellipsis qurerydo workflow-item-a" href="javascript:void(0);" onclick="openWorkflowHisDialog(\''+data.rows[i].processDefinationKey+'\''+',\''+data.rows[i].title+'\''+',\''+data.rows[i].type+'\''+',\''+data.rows[i].taskId+'\''+',\''+data.rows[i].businessDataTable+'\''+',\''+data.rows[i].businessDataId+'\''+',\''+data.rows[i].processInstanceId+'\''+',\''+data.rows[i].approveUrl+'\')" class="ellipsis">'+data.rows[i].title +'</a><label class="workflow-item-date">'+data.rows[i].completeTime+'</label></li>';
+                       } 
+             }
+                 //设置页面
+                
+                 $j('#indexCompleteWorkflow').html(result);    
+                 // 如果没有数据
+             },
+         error: function (XMLHttpRequest, textStatus, errorThrown) {
+         }
+     });
+  	 
+  }
+    </script>
+</body> 
+</html>

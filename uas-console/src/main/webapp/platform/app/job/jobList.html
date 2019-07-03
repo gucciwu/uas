@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>定时任务列表</title>
+    <link rel="stylesheet" href="/platform/static/darkblue/css/base.css" >
+    <link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+        <link href="/platform/css/public.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/platform/js/base.js"></script>
+</head>
+<body>
+<div id="loading"> 
+     <image src='/platform/image/loading3.gif'/>
+     <h1><font color="#15428B">页面载入中....</font></h1>  
+</div>
+<div class="container">
+   <!-- 增、改的dialog -->
+<div id="dlg" class="easyui-dialog job-dialog" title="新增任务"
+     data-options="closed:true,modal:true,resizeble:false" buttons="#dlg-buttons">
+    <div class="easyui-layout" data-options="fit:true,border:false">
+        <div data-options="region:'center',border:false" title="" style="padding:3px;">
+            <form id="quartzForm" method="post">
+                <input id="id_data" type="hidden" type="text" name="id" ></input>
+                <table class="kv-table">
+                    <tbody>
+                    <tr>
+                        <td class="kv-label">任务名称</td>
+                        <td class="kv-content">
+                            <input class="easyui-textbox" data-options="required:true,
+                                              validType:'maxLength[30]'" type="text" id="jobName" name="jobName" style="width:480px;height:35px;line-height:35px;"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="kv-label">任务组</td>
+                        <td class="kv-content">
+                            <input class="easyui-textbox" data-options="required:true" type="text" id="jobGroup" name="jobGroup" style="width:480px;height:35px;line-height:35px;"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="kv-label">cron表达式</td>
+                        <td class="kv-content">
+                            <input class="easyui-textbox" data-options="required:true,
+                                              validType:'NotEmpty'" type="text" id="cronExpression" name="cronExpression" style="width:480px;height:35px;line-height:35px;"></input>
+                        </td>
+                    </tr> 
+                    <tr>
+                        <td class="kv-label">任务执行类名称</td>
+                        <td class="kv-content">
+                            <input class="easyui-textbox" data-options="required:true,
+                                              validType:['classValidator','maxLength[80]']" type="text" id="className" name="className" style="width:480px;height:35px;line-height:35px;"></input>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="kv-label">任务执行类方法</td>
+                        <td class="kv-content">
+                            <input class="easyui-textbox" data-options="required:true" type="text" id="methodName" name="methodName" style="width:480px;height:35px;line-height:35px;"></input>
+                        </td>
+                    </tr>
+                       <tr>
+                        <td class="kv-label">任务描述</td>
+                        <td class="kv-content">
+                            <input class="easyui-textbox" data-options="multiline:true, validType:'maxLength[500]'" type="text" id="description" name="description" style="width:480px;height:75px;"></input>
+                        </td>
+                    </tr> 
+                    </tbody>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+    <div id="dlg-buttons">
+        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="saveJob()" data-options="selected:true">保存</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#dlg').dialog('close')" iconcls="icon-cancel">取消</a>
+  </div>
+    <table id="dg" class="easyui-datagrid" title="定时任务列表"
+           data-options="
+                url:'/job/jobList',
+                method:'get',
+                rownumbers:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10"
+    >
+        <thead>
+        <tr>
+            <th data-options="field:'jobName', width:110,align:'center' , halign: 'center'">任务名称</th>
+            <th data-options="field:'jobGroup', width:60,align:'center' , halign: 'center'">任务组</th>
+            <th data-options="field:'cronExpression', width:160,align:'center' , halign: 'center'" >cron表达式</th>
+            <th data-options="field:'className', width:170,align:'center' , halign: 'center'">任务执行类名称</th>
+            <th data-options="field:'methodName', width:60,align:'center' , halign: 'center'">任务执行类方法</th>
+            <th data-options="field:'description', width:180,align:'center' , halign: 'center'">描述</th>
+            <th data-options="field:'status', width:30,align:'center' , halign: 'center'"  formatter="formatStatus">状态</th>
+            <th data-options="field:'操作', width:40,align:'center' , halign: 'center'"  formatter="formatOS">操作</th>
+        </tr>
+        </thead>
+    </table>
+        <div id="tb">
+        <div class="conditions">
+            <span class="con-span">任务名称: </span><input id="search_name" class="easyui-textbox" type="text" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+            <a href="javascript:void(0);" onclick="searchConfig()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+            <a href="javascript:void(0);" onclick="searchReset()"  class="easyui-linkbutton" iconCls="icon-reload">重置</a>
+            <a href="javascript:void(0);" onclick="refreshPage()"  class="easyui-linkbutton" iconCls="icon-reload">刷新</a>
+        </div>
+        <div class="opt-buttons">
+            <a href="javascript:void(0);" onclick="createJob()" class="easyui-linkbutton" data-options="selected:true">新增</a>
+            <a href="javascript:void(0);" onclick="updateJob()" class="easyui-linkbutton">修改</a>
+            <a href="javascript:void(0);" onclick="deleteJob()" class="easyui-linkbutton">删除</a>
+            <a href="javascript:void(0);" onclick="startTask()" class="easyui-linkbutton">启用</a>
+            <a href="javascript:void(0);" onclick="stopTask()" class="easyui-linkbutton">停用</a>
+            <a href="javascript:void(0);" onclick="stratNow()" class="easyui-linkbutton">立即执行</a>
+        </div>
+    </div>
+</div>
+
+
+<!-- 展示执行日志 -->
+<div id="dlgLog" class="easyui-dialog jobLog-dialog"
+     data-options="closed:true,modal:true,resizeble:false" buttons="#jouLog-buttons">
+      <table id="logdg" class="easyui-datagrid" style="width:100%;height:460px;display:none;"
+           data-options="
+                method:'get',
+                rownumbers:true,
+                singleSelect:true,
+                autoRowHeight:false,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                pageSize:10"
+    >
+    </table>   
+    
+    <div id="jouLog-buttons" style="text-align:center;">
+        <a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#dlgLog').dialog('close')" iconcls="icon-cancel">关闭</a>
+    </div>
+</div>
+
+<script type="text/javascript">
+/*加载页面过程 begin  */
+function closes() {  
+    $('#loading').fadeOut('normal', function () {  
+        $(this).remove();  
+    });  
+} 
+var pc;  
+$.parser.onComplete = function () {  
+    if (pc) clearTimeout(pc);
+    pc = setTimeout(closes, 1000);  
+}
+/*加载页面过程 end  */
+    /* begin实时限制长度 */
+/*  $(function() {  
+     $('#descrption').textbox('textbox').bind('keyup', function() {  
+         var text = $('#descrption').textbox('getValue');
+         if(text.length>500){
+             var valuetext=text.substring(0,500);
+             $('#descrption').textbox('setValue',text.substring(0,500));
+             
+         }
+     });
+ }); */
+ /* end实时限制长度 */
+
+    var url;
+    function refreshPage(){
+        location.reload(true);
+    }
+
+    function formatStatus(val,row){
+    	if (val == "PAUSED"){
+    		return '<span style="color:black;background-color:red">已停用</span>';
+    	} else if (val == "NORMAL"){
+    		return '<span style="color:black;background-color:green">已启用</span>';
+    	} else {
+    		return val;
+    	}
+    }
+    function formatOS(val,row){
+    	return '<a href="javascript:void(0)" onclick="constructionManager(\'' + row.id+ '\')">查看日志</a>';
+    }
+    function constructionManager(id){
+        $('#logdg').datagrid({   
+              url:"/jobLog/logList?&jobId=" + id,   
+              columns:[[   
+                  {field:'jobId',title:'任务Id',width:100,align:'center'},   
+                  {field:'runTime',title:'任务执行时间',width:200,align:'center'},   
+                  {field:'runResult',title:'任务执行结果',width:376,align:'center'}   
+              ]]   
+          });
+          $("#dlgLog").dialog("open").dialog('setTitle', '任务执行日志') ;
+          
+    }
+    function getSelectionsIds(dg){
+        var sels = dg.datagrid("getSelections");
+        var ids = [];
+        for(var i in sels){
+            ids.push(sels[i].jobName);
+        }
+        ids = ids.join(",");
+
+        return ids;
+    }
+    function searchConfig(){
+        var name=$("#search_name").val(); 
+            $('#dg').datagrid('load',
+                {
+                    name: name,
+                });
+    }
+    function searchReset(){
+        //$("input").val("");
+        $("#search_name").textbox('clear');
+    }
+    function createJob() {
+        $("#dlg").dialog("open").dialog('setTitle', '新增任务') ;
+        $("#quartzForm :input").attr("readonly", false);
+        $("#quartzForm").form("clear");
+        url= "/job/createJob";
+    }
+    function saveJob() {
+        $("#quartzForm").form("submit", {
+            url: url,
+            onSubmit: function () {
+                return $(this).form("validate");
+            },
+            success: function (result) {
+                result = $.parseJSON(result);
+                if (result.status == 1) {
+                    $("#dg").datagrid("reload");
+                    $("#dlg").dialog("close");
+                    $.messager.alert("操作信息", result.msg,"info");
+                }
+                else {
+                    $.messager.alert("操作信息", result.msg,"error");
+                }
+            },
+            onLoadError:function (err){
+            	alert(err);
+            }
+        });
+    }
+
+    function updateJob() {
+        var dgObject = $("#dg");
+        var ids = getSelectionsIds(dgObject);
+        if(ids.length == 0){
+            $.messager.alert("操作信息", "请选择一行数据","warning");
+            return ;
+        }
+        if(ids.indexOf(',') > 0){
+            $.messager.alert("操作信息", "只能选择一行数据","warning");
+            return ;
+        }
+        var row = $("#dg").datagrid("getSelected");
+        if (row) {
+            $("#dlg").dialog("open").dialog('setTitle', '编辑任务');
+            $("#quartzForm :input").attr("readonly", "readonly");
+            $("#cronExpression").textbox("readonly", false);
+            $("#quartzForm").form("load", row);
+            url= "/job/update";
+           
+        }
+    }
+	function stratNow(){
+		var dgObject = $("#dg");
+        var ids = getSelectionsIds(dgObject);
+        if(ids.length == 0){
+            $.messager.alert("操作信息", "请选择一行数据","warning");
+            return ;
+        }
+        var row = $("#dg").datagrid("getSelected");
+        $.messager.confirm('操作确认', '确认要删除此任务吗？', function (r) {
+            if (r) {
+                $.ajax({
+                    dataType:"json",
+                    url:"/job/stratNow",
+                    data:{ "jobName" : row.jobName,
+                  	   "jobGroup" : row.jobGroup },
+                    error:function(request) {
+                        $.messager.alert("操作提示", "发生异常！", "error");
+                    },
+                    success:function(result) {
+                        if (result.status == 1) {
+                            $.messager.alert("操作信息", result.msg,"info");
+                        } else {
+                            $.messager.alert("操作信息", result.msg,"error");
+                        }
+                    }
+                });
+            }
+        });
+	}
+    function deleteJob() {
+        var dgObject = $("#dg");
+        var ids = getSelectionsIds(dgObject);
+        if(ids.length == 0){
+            $.messager.alert("操作信息", "请选择一行数据","warning");
+            return ;
+        }
+        var row = $("#dg").datagrid("getSelected");
+        $.messager.confirm('操作确认', '确认要删除此任务吗？', function (r) {
+            if (r) {
+                $.ajax({
+                    dataType:"json",
+                    url:"/job/delete",
+                    data:{ "jobName" : row.jobName,
+                  	   "jobGroup" : row.jobGroup },
+                    error:function(request) {
+                        $.messager.alert("操作提示", "发生异常！", "error");
+                    },
+                    success:function(result) {
+                        if (result.status == 1) {
+                            $('#dg').datagrid('reload');
+                            $.messager.alert("操作信息", result.msg,"info");
+                        } else {
+                            $.messager.alert("操作信息", result.msg,"error");
+                        }
+                    }
+                });
+            }
+        });
+    }
+    function startTask() {
+        var dgObject = $("#dg");
+        var ids = getSelectionsIds(dgObject);
+        if(ids.length == 0){
+            $.messager.alert("操作信息", "请至少选择一行数据","warning");
+            return ;
+        }
+        var row = $("#dg").datagrid("getSelected");
+        $.messager.confirm('操作确认', '确认要启用此任务吗？', function (r) {
+            if (r) {
+                $.ajax({
+                    dataType:"json",
+                    url:"/job/resume",
+                    data:{ "jobName" : row.jobName,
+                 	   "jobGroup" : row.jobGroup },
+                    error:function(request) {
+                        $.messager.alert("操作提示", "发生异常！", "error");
+                    },
+                    success:function(result) {
+                        if (result.status == 1) {
+                            $('#dg').datagrid('reload');
+                            $.messager.alert("操作信息", result.msg,"info");
+                        } else {
+                            $.messager.alert("操作信息", result.msg,"error");
+                        }
+                    }
+                });
+            }
+        });
+    }
+    function stopTask() {
+        var dgObject = $("#dg");
+        var ids = getSelectionsIds(dgObject);
+        if(ids.length == 0){
+            $.messager.alert("操作信息", "请至少选择一行数据","warning");
+            return ;
+        }
+        var row = $("#dg").datagrid("getSelected");
+        $.messager.confirm('操作确认', '确认要停用此任务吗？', function (r) {
+            if (r) {
+                $.ajax({
+                    dataType:"json",
+                    url:"/job/stopJob",
+                    data:{ "jobName" : row.jobName,
+                    	   "jobGroup" : row.jobGroup},
+                    error:function(request) {
+                        $.messager.alert("操作提示", "发生异常！", "error");
+                    },
+                    success:function(result) {
+                        if (result.status == 1) {
+                            $('#dg').datagrid('reload');
+                            $.messager.alert("操作信息", result.msg,"info");
+                        } else {
+                            $.messager.alert("操作信息", result.msg,"error");
+                        }
+                    }
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>

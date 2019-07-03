@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.mszq.platform.app.uas.dao.IUasRoleDAO" >
+  <resultMap id="BaseResultMap" type="com.mszq.platform.app.uas.dto.UasRoleDto" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="ROLE_CODE" property="roleCode" jdbcType="VARCHAR" />
+    <result column="ROLE_NAME" property="roleName" jdbcType="VARCHAR" />
+    <result column="STATUS" property="status" jdbcType="SMALLINT" />
+    <result column="STATUS_NAME" property="statusName" jdbcType="VARCHAR" />
+    <result column="PARENT_ID" property="parentId" jdbcType="BIGINT" />
+    <result column="ROLE_TYPE_ID" property="roleTypeId" jdbcType="INTEGER" />
+    <result column="ROLE_TYPE_NAME" property="roleTypeName" jdbcType="VARCHAR" />
+    <result column="COMMENT" property="comment" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, ROLE_NAME, STATUS, PARENT_ID, ROLE_TYPE_ID, COMMENT
+  </sql>
+  <select id="selectList" resultMap="BaseResultMap"  parameterType="map" >
+    select 
+       a.ID, a.ROLE_CODE, a.ROLE_NAME, a.STATUS, c.NAME STATUS_NAME, a.PARENT_ID, a.ROLE_TYPE_ID, a.COMMENT, b.`NAME` ROLE_TYPE_NAME
+    from uas_role a
+    inner join uas_role_type b on b.ID = a.ROLE_TYPE_ID
+    left join pf_sm_dictionary_item c on c.value = a.STATUS and c.dic_id=135
+    <where > 
+	    <if test="roleName != null and roleName != ''" >
+	        <bind name="roleName"  value="'%' + roleName + '%'"/>
+	        and a.ROLE_NAME like #{roleName,jdbcType=VARCHAR}
+	    </if>
+	    <if test="status != null and status != ''" >
+	        and a.STATUS like #{status,jdbcType=VARCHAR}
+	    </if>
+	    <if test="roleTypeId != null and roleTypeId != ''" >
+	        and a.ROLE_TYPE_ID like #{roleTypeId,jdbcType=SMALLINT}
+	    </if>
+	    <if test="parentId != null and parentId != ''" >
+	        and a.PARENT_ID like #{parentId,jdbcType=SMALLINT}
+	    </if>
+    </where>
+  </select>
+  <select id="queryAll" resultMap="BaseResultMap" parameterType="map">
+		SELECT
+		    <include refid="Base_Column_List" />
+		FROM uas_role a
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from uas_role
+    where ID = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from uas_role
+    where ID = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.mszq.platform.entity.UasRole" >
+    insert into uas_role (ID, ROLE_NAME, STATUS, 
+      PARENT_ID, ROLE_TYPE_ID, COMMENT
+      )
+    values (#{id,jdbcType=BIGINT}, #{roleName,jdbcType=VARCHAR}, #{status,jdbcType=SMALLINT}, 
+      #{parentId,jdbcType=BIGINT}, #{roleTypeId,jdbcType=INTEGER}, #{comment,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.mszq.platform.entity.UasRole" >
+    insert into uas_role
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="roleName != null" >
+        ROLE_NAME,
+      </if>
+      <if test="status != null" >
+        STATUS,
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID,
+      </if>
+      <if test="roleTypeId != null" >
+        ROLE_TYPE_ID,
+      </if>
+      <if test="comment != null" >
+        COMMENT,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="roleName != null" >
+        #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="parentId != null" >
+        #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="roleTypeId != null" >
+        #{roleTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        #{comment,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.mszq.platform.entity.UasRole" >
+    update uas_role
+    <set >
+      <if test="roleName != null" >
+        ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        STATUS = #{status,jdbcType=SMALLINT},
+      </if>
+      <if test="parentId != null" >
+        PARENT_ID = #{parentId,jdbcType=BIGINT},
+      </if>
+      <if test="roleTypeId != null" >
+        ROLE_TYPE_ID = #{roleTypeId,jdbcType=INTEGER},
+      </if>
+      <if test="comment != null" >
+        COMMENT = #{comment,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.mszq.platform.entity.UasRole" >
+    update uas_role
+    set ROLE_NAME = #{roleName,jdbcType=VARCHAR},
+      STATUS = #{status,jdbcType=SMALLINT},
+      PARENT_ID = #{parentId,jdbcType=BIGINT},
+      ROLE_TYPE_ID = #{roleTypeId,jdbcType=INTEGER},
+      COMMENT = #{comment,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=BIGINT}
+  </update>
+</mapper>

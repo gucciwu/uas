@@ -1,0 +1,1245 @@
+/* 鍏叡鏍峰紡begin */
+a {
+    cursor: pointer;
+}
+#loading{
+	position:absolute;z-index:1000;top:0px;left:0px;width:100%;height:100%;background:#DDDDDB;text-align :center;padding-top:20%;
+}
+#tb{
+	padding:0 30px;
+}
+/* 鍏叡鏍峰紡end */
+/*begin--  login.html  */
+html,body{height:100%;background: #fff!important;}
+body.white .login-hd{background:#fff}
+.login-bd .bd-inner {
+    width: 1200px;
+    margin: 0 auto;
+}
+.login-bd .bd-inner .inner-wrap {
+    position: relative;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .line {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 6px;}
+body.white {
+    background-color: #fff;}
+body.white .login-hd .logo{background:url(../image/login_logo.png) no-repeat}
+.login-hd .hd-inner .logo{position:relative;display:inline-block;width:720px;height:53px;margin-left:30px;margin-top:15px;margin-right:10px;}
+.login-hd {
+    position: relative;
+    height: 80px;
+    background: #fff;
+    line-height: 80px;
+    min-width: 1024px;
+}
+.iverCode{
+        background:url(../image/vercode.png) no-repeat center;
+}
+.hide {
+    display:none;
+}
+a.forget {
+    float: right;
+    color: #c3c3c3;
+     text-decoration: none;
+    font-size: 13px;
+}
+.login-telephone{
+	background:url(../image/tel.png) no-repeat;
+}
+span.login-telephone {
+    position: relative;
+    display: inline-block;
+}
+span.telephone-detail {
+    display: inline-block;
+    top: -20px;
+    position: relative;
+    left: 30px;
+    font-size: 14px;
+    color: #555555;
+}
+.login-bd{    background: url(../image/back-image.jpg) center center no-repeat;
+    height: 558px;
+    width: 100%;
+    background-size: cover;}
+ .login-error{
+    background: url(../image/error.png) left center no-repeat;
+    height: 558px;
+    width: 1124px;
+    margin: 0 auto;
+ }
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box {
+    position: absolute;
+    right: 100px;
+    top: 90px;
+    width: 334px;
+    height:312px;
+    padding-bottom: 22px;
+    box-shadow:none;
+    background-color: rgba(255, 255, 255, 0.85);
+	box-shadow: 2px 4px 43px 0px 
+		rgba(53, 53, 54, 0.85);
+	border-radius: 10px;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .line.line-g {
+    right: 0;
+    background: #71bfff;
+    left: 0;}
+ .login-bd .bd-inner .inner-wrap .lg-zone .lg-box .lg-label h4 {
+ 	border-left:none;
+ 	font-family: MicrosoftYaHei;
+	font-size: 16px;
+	font-weight: normal;
+	font-stretch: normal;
+	line-height: 24px;
+	letter-spacing: 0px;
+	color: #007cb7;
+}
+   .login-bd .bd-inner .inner-wrap .lg-zone .lg-box .lg-label {
+   color: #282828;
+   font-size: 19px;
+   margin-top: 30px;
+    text-indent: 0px;
+   margin-bottom: 22px;
+   text-align: center;
+   
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .input-item{
+	margin-bottom:20px;
+	width:280px;
+	line-height:36px;
+	height:36px;
+	margin-left:26px;
+	background-color: rgba(255, 255, 255, 0.83);
+	border-radius: 4px;
+	border: solid 1px rgba(0, 124, 183, 0.83);
+}
+	.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .input-item i{
+	float:right;
+	display:inline-block;
+	width:48px;height:36px;
+	line-height:36px;
+	text-align:center;
+	color:#5d5c68}
+	.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .input-item input {
+    border: 0;
+    height: 36px;
+    padding: 0;
+    padding-left:4px;
+    width: 180px;
+    float: left;
+    outline: none;
+    text-decoration: none;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .input-item img{
+	float:right;
+	display:inline-block;
+	cursor:pointer;
+	height:36px;
+	line-height:36px;
+	text-align:center;
+	color:#5d5c68}
+input::-webkit-input-placeholder, textarea::-webkit-input-placeholder { 
+color: #999999; 
+font-size:15px;
+} 
+input:-moz-placeholder, textarea:-moz-placeholder { 
+color: #999999; 
+font-size:15px;
+} 
+input::-moz-placeholder, textarea::-moz-placeholder { 
+color: #999999; 
+font-size:15px;
+} 
+input:-ms-input-placeholder, textarea:-ms-input-placeholder { 
+color: #999999; 
+font-size:15px;
+} 
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .tips label {
+    font-size: 13px;
+    color: #c3c3c3;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .tips a.forget-pwd {
+    color: #c3c3c3;
+    font-size: 13px;
+    float: right;
+    text-decoration: none;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .tips a.register {
+    color: #2c92e5;
+    margin-left: 15px;
+    margin-right: 34px;
+    font-size: 13px;
+    float: right;
+    text-decoration: none;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .enter a {
+    display: inline-block;
+    text-decoration: none;
+    height: 36px;
+    line-height: 36px;
+    text-align: center;
+    color: #ffffff;
+    font-size: 16px;
+    width: 280px;
+    background-color: #2c92e5;
+    border-radius: 4px;
+    font-weight: normal;
+}
+.enter {
+    text-align: center;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .tips {
+
+    margin-bottom: 18px;
+    margin-top: 4px;
+}
+.login-hd .hd-inner {
+    width: 1024px;
+    height: 80px;
+    line-height: 80px;
+    margin: 0 auto;
+}
+
+.login-ft .ft-inner .about-us {
+    height: 20px;
+    line-height: 20px;
+    width: 1000px;
+    margin: 0 auto;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #999;
+}
+.login-ft .ft-inner .about-us a {
+    color: #555;
+    text-decoration: none;
+    font-size: 14px;
+    float: left;
+    margin-left: 15px;
+}
+.login-ft {
+    padding-top: 25px;
+        width: 1024px;
+    margin: 0 auto;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone{
+	right:0;
+}
+.login-ft .ft-inner .address {
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 10px;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .tips input[type=checkbox] {
+    position: relative;
+    margin-left: 26px;
+}
+.login-ft .ft-inner .other-info {
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+}
+/*end--  login.html  */
+/*begin--  announcement.html  */
+    .items{
+        text-decoration: none;
+        color: #007cb6;
+    }
+    .validDate-div{
+        display: inline-block;
+    }
+    .isTop-form{
+        display: inline-block;
+        margin: 20px 15px 20px 25px;
+    }
+    form#announcementLookForm {
+    margin-top: 10px;
+}
+  .edui-btn.edui-btn-link {display: none!important;}
+ .edui-btn.edui-btn-unlink {display: none!important;}
+ .edui-btn.edui-btn-map {display: none!important;}
+.edui-btn.edui-btn-video {display: none!important;}
+.edui-btn.edui-btn-emotion{display: none!important;} 
+.edui-btn.edui-btn-formula{display: none!important;}
+.edui-btn.edui-btn-drafts{display: none!important;} 
+.edui-btn.edui-btn-.edui-btn-name-paragraph.edui-combobox{display: none!important;} 
+.edui-btn.edui-btn-insertorderedlist{display: none!important;} 
+.edui-btn.edui-btn-insertunorderedlist{display: none!important;}
+.edui-btn.edui-btn-image {display: none!important;}
+/*begin--  calendar.html  */
+  
+
+.fc {
+    direction: ltr;
+    text-align: left;
+    }
+    
+.fc table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    }
+    
+html .fc,
+.fc table {
+    font-size: 1em;
+    }
+    
+.fc td,
+.fc th {
+    padding: 0;
+    vertical-align: top;
+    }
+
+
+
+/* Header
+------------------------------------------------------------------------*/
+
+.fc-header td {
+    white-space: nowrap;
+    }
+
+.fc-header-left {
+    width: 25%;
+    text-align: left;
+    }
+    
+.fc-header-center {
+    text-align: center;
+    }
+    
+.fc-header-right {
+    width: 25%;
+    text-align: right;
+    }
+    
+.fc-header-title {
+    display: inline-block;
+    vertical-align: top;
+    }
+    
+.fc-header-title h2 {
+    margin-top: 0; font-size:16px;
+    white-space: nowrap;
+    }
+    
+.fc .fc-header-space {
+    padding-left: 10px;
+    }
+    
+.fc-header .fc-button {
+    margin-bottom: 1em;
+    vertical-align: top;
+    }
+    
+/* buttons edges butting together */
+
+.fc-header .fc-button {
+    margin-right: -1px;
+    }
+    
+.fc-header .fc-corner-right,  /* non-theme */
+.fc-header .ui-corner-right { /* theme */
+    margin-right: 0; /* back to normal */
+    }
+    
+/* button layering (for border precedence) */
+    
+.fc-header .fc-state-hover,
+.fc-header .ui-state-hover {
+    z-index: 2;
+    }
+    
+.fc-header .fc-state-down {
+    z-index: 3;
+    }
+
+.fc-header .fc-state-active,
+.fc-header .ui-state-active {
+    z-index: 4;
+    }
+    
+    
+    
+/* Content
+------------------------------------------------------------------------*/
+    
+.fc-content {
+    clear: both;
+    }
+    
+.fc-view {
+    width: 100%; /* needed for view switching (when view is absolute) */
+    overflow: hidden;
+    }
+    
+    
+
+/* Cell Styles
+------------------------------------------------------------------------*/
+
+.fc-widget-header,    /* <th>, usually */
+.fc-widget-content {  /* <td>, usually */
+    border: 1px solid #ddd; 
+    }
+    
+.fc-widget-header{background:#f7f7f7}
+
+.fc-state-highlight { /* <td> today cell */ /* TODO: add .fc-today to <th> */
+    background: #fcf8e3;
+    }
+    
+.fc-cell-overlay { /* semi-transparent rectangle while dragging */
+    background: #bce8f1;
+    opacity: .3;
+    filter: alpha(opacity=30); /* for IE */
+    }
+    
+
+
+/* Buttons
+------------------------------------------------------------------------*/
+
+.fc-button {
+    position: relative;
+    display: inline-block;
+    padding: 0 .6em;
+    overflow: hidden;
+    height: 1.9em;
+    line-height: 1.9em;
+    white-space: nowrap;
+    cursor: pointer;
+    }
+    
+.fc-state-default { /* non-theme */
+    border: 1px solid;
+    }
+
+.fc-state-default.fc-corner-left { /* non-theme */
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    }
+
+.fc-state-default.fc-corner-right { /* non-theme */
+    border-top-right-radius: 4px;
+    border-bottom-right-radius: 4px;
+    }
+
+/*
+    Our default prev/next buttons use HTML entities like &lsaquo; &rsaquo; &laquo; &raquo;
+    and we'll try to make them look good cross-browser.
+*/
+
+.fc-text-arrow {
+    margin: 0 .1em;
+    font-size: 2em;
+    font-family: "Courier New", Courier, monospace;
+    vertical-align: baseline; /* for IE7 */
+    }
+
+.fc-button-prev .fc-text-arrow,
+.fc-button-next .fc-text-arrow { /* for &lsaquo; &rsaquo; */
+    font-weight: bold;
+    }
+    
+/* icon (for jquery ui) */
+    
+.fc-button .fc-icon-wrap {
+    position: relative;
+    float: left;
+    top: 50%;
+    }
+    
+.fc-button .ui-icon {
+    position: relative;
+    float: left;
+    margin-top: -50%;
+    *margin-top: 0;
+    *top: -50%;
+    }
+    
+/*
+  button states
+  borrowed from twitter bootstrap (http://twitter.github.com/bootstrap/)
+*/
+
+.fc-state-default {
+    background-color: #f5f5f5;
+    background-image: -moz-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#e6e6e6));
+    background-image: -webkit-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: -o-linear-gradient(top, #ffffff, #e6e6e6);
+    background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
+    background-repeat: repeat-x;
+    border-color: #e6e6e6 #e6e6e6 #bfbfbf;
+    border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+    color: #333;
+    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.75);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+.fc-state-hover,
+.fc-state-down,
+.fc-state-active,
+.fc-state-disabled {
+    color: #333333;
+    background-color: #e6e6e6;
+    }
+
+.fc-state-hover {
+    color: #333333;
+    text-decoration: none;
+    background-position: 0 -15px;
+    -webkit-transition: background-position 0.1s linear;
+       -moz-transition: background-position 0.1s linear;
+         -o-transition: background-position 0.1s linear;
+            transition: background-position 0.1s linear;
+    }
+
+.fc-state-down,
+.fc-state-active {
+    background-color: #cccccc;
+    background-image: none;
+    outline: 0;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+.fc-state-disabled {
+    cursor: default;
+    background-image: none;
+    opacity: 0.65;
+    filter: alpha(opacity=65);
+    box-shadow: none;
+    }
+
+    
+
+/* Global Event Styles
+------------------------------------------------------------------------*/
+     
+.fc-event {
+    border: 1px solid #3a87ad; /* default BORDER color */
+    background-color: #3a87ad; /* default BACKGROUND color */
+    color: #fff;               /* default TEXT color */
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    font-size: .85em;
+    cursor: default;
+    }
+
+a.fc-event {
+    text-decoration: none;
+    }
+    
+a.fc-event,
+.fc-event-draggable {
+    cursor: pointer;
+    }
+    
+.fc-rtl .fc-event {
+    text-align: right;
+    }
+
+.fc-event-inner {
+    width: 100%;
+    overflow: hidden;
+    }
+    
+.fc-event-time,
+.fc-event-title {
+    padding: 0 1px;
+    }
+    
+.fc .ui-resizable-handle {
+    display: block;
+    position: absolute;
+    z-index: 99999;
+    overflow: hidden; /* hacky spaces (IE6/7) */
+    font-size: 300%;  /* */
+    line-height: 50%; /* */
+    }
+    
+    
+    
+/* Horizontal Events
+------------------------------------------------------------------------*/
+.fc-event-hori {
+    border-width: 1px 0;
+    margin-bottom: 1px;
+    }
+
+.fc-ltr .fc-event-hori.fc-event-start,
+.fc-rtl .fc-event-hori.fc-event-end {
+    border-left-width: 1px;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 3px;
+    }
+
+.fc-ltr .fc-event-hori.fc-event-end,
+.fc-rtl .fc-event-hori.fc-event-start {
+    border-right-width: 1px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    }
+    
+/* resizable */
+    
+.fc-event-hori .ui-resizable-e {
+    top: 0           !important; /* importants override pre jquery ui 1.7 styles */
+    right: -3px      !important;
+    width: 7px       !important;
+    height: 100%     !important;
+    cursor: e-resize;
+    }
+    
+.fc-event-hori .ui-resizable-w {
+    top: 0           !important;
+    left: -3px       !important;
+    width: 7px       !important;
+    height: 100%     !important;
+    cursor: w-resize;
+    }
+    
+.fc-event-hori .ui-resizable-handle {
+    _padding-bottom: 14px; /* IE6 had 0 height */
+    }
+    
+    
+    
+/* Reusable Separate-border Table
+------------------------------------------------------------*/
+
+table.fc-border-separate {
+    border-collapse: separate;
+    }
+    
+.fc-border-separate th,
+.fc-border-separate td {
+    border-width: 1px 0 0 1px;
+    }
+    
+.fc-border-separate th.fc-last,
+.fc-border-separate td.fc-last {
+    border-right-width: 1px;
+    }
+    
+.fc-border-separate tr.fc-last th,
+.fc-border-separate tr.fc-last td {
+    border-bottom-width: 1px;
+    }
+    
+.fc-border-separate tbody tr.fc-first td,
+.fc-border-separate tbody tr.fc-first th {
+    border-top-width: 0; 
+    }
+    
+    
+
+/* Month View, Basic Week View, Basic Day View
+------------------------------------------------------------------------*/
+
+.fc-grid th {
+    text-align: center;
+    }
+
+.fc .fc-week-number {
+    width: 22px;
+    text-align: center;
+    }
+
+.fc .fc-week-number div {
+    padding: 0 2px;
+    }
+    
+.fc-grid .fc-day-number {
+    float: right;
+    padding: 0 2px;
+    }
+    
+.fc-grid .fc-other-month .fc-day-number {
+    opacity: 0.3;
+    filter: alpha(opacity=30); /* for IE */
+    /* opacity with small font can sometimes look too faded
+       might want to set the 'color' property instead
+       making day-numbers bold also fixes the problem */
+    }
+    
+.fc-grid .fc-day-content {
+    clear: both;
+    padding: 2px 2px 1px; /* distance between events and day edges */
+    }
+    
+/* event styles */
+    
+.fc-grid .fc-event-time {
+    font-weight: bold;
+    }
+    
+/* right-to-left */
+    
+.fc-rtl .fc-grid .fc-day-number {
+    float: left;
+    }
+    
+.fc-rtl .fc-grid .fc-event-time {
+    float: right;
+    }
+    
+    
+
+/* Agenda Week View, Agenda Day View
+------------------------------------------------------------------------*/
+
+.fc-agenda table {
+    border-collapse: separate;
+    }
+    
+.fc-agenda-days th {
+    text-align: center;
+    }
+    
+.fc-agenda .fc-agenda-axis {
+    width: 50px;
+    padding: 0 4px;
+    vertical-align: middle;
+    text-align: right;
+    white-space: nowrap;
+    font-weight: normal;
+    }
+
+.fc-agenda .fc-week-number {
+    font-weight: bold;
+    }
+    
+.fc-agenda .fc-day-content {
+    padding: 2px 2px 1px;
+    }
+    
+/* make axis border take precedence */
+    
+.fc-agenda-days .fc-agenda-axis {
+    border-right-width: 1px;
+    }
+    
+.fc-agenda-days .fc-col0 {
+    border-left-width: 0;
+    }
+    
+/* all-day area */
+    
+.fc-agenda-allday th {
+    border-width: 0 1px;
+    }
+    
+.fc-agenda-allday .fc-day-content {
+    min-height: 34px; /* TODO: doesnt work well in quirksmode */
+    _height: 34px;
+    }
+    
+/* divider (between all-day and slots) */
+    
+.fc-agenda-divider-inner {
+    height: 2px;
+    overflow: hidden;
+    }
+    
+.fc-widget-header .fc-agenda-divider-inner {
+    background: #eee;
+    }
+    
+/* slot rows */
+    
+.fc-agenda-slots th {
+    border-width: 1px 1px 0;
+    }
+    
+.fc-agenda-slots td {
+    border-width: 1px 0 0;
+    background: none;
+    }
+    
+.fc-agenda-slots td div {
+    height: 20px;
+    }
+    
+.fc-agenda-slots tr.fc-slot0 th,
+.fc-agenda-slots tr.fc-slot0 td {
+    border-top-width: 0;
+    }
+
+.fc-agenda-slots tr.fc-minor th,
+.fc-agenda-slots tr.fc-minor td {
+    border-top-style: dotted;
+    }
+    
+.fc-agenda-slots tr.fc-minor th.ui-widget-header {
+    *border-top-style: solid; /* doesn't work with background in IE6/7 */
+    }
+    
+
+
+/* Vertical Events
+------------------------------------------------------------------------*/
+
+.fc-event-vert {
+    border-width: 0 1px;
+    }
+
+.fc-event-vert.fc-event-start {
+    border-top-width: 1px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    }
+
+.fc-event-vert.fc-event-end {
+    border-bottom-width: 1px;
+    border-bottom-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    }
+    
+.fc-event-vert .fc-event-time {
+    white-space: nowrap;
+    font-size: 10px;
+    }
+
+.fc-event-vert .fc-event-inner {
+    position: relative;
+    z-index: 2;
+    }
+    
+.fc-event-vert .fc-event-bg { /* makes the event lighter w/ a semi-transparent overlay  */
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    opacity: .3;
+    filter: alpha(opacity=30);
+    }
+    
+.fc .ui-draggable-dragging .fc-event-bg, /* TODO: something nicer like .fc-opacity */
+.fc-select-helper .fc-event-bg {
+    display: none\9; /* for IE6/7/8. nested opacity filters while dragging don't work */
+    }
+    
+/* resizable */
+    
+.fc-event-vert .ui-resizable-s {
+    bottom: 0        !important; /* importants override pre jquery ui 1.7 styles */
+    width: 100%      !important;
+    height: 8px      !important;
+    overflow: hidden !important;
+    line-height: 8px !important;
+    font-size: 11px  !important;
+    font-family: monospace;
+    text-align: center;
+    cursor: s-resize;
+    }
+    
+.fc-agenda .ui-resizable-resizing { /* TODO: better selector */
+    _overflow: hidden;
+    }
+    
+       #mycalendar{  
+          display: block;  
+          position: relative;
+          width: 1000px;  
+          margin: 15px auto;  
+          padding: 0;          
+      }  
+     .schedule-tr {
+        margin: 15px 0;
+        display: block;
+            }   
+    label.type-form {
+        display: block;
+        margin: 15px 0;
+    }
+    label.tixingshezhi {
+        margin: 0 0 0 25px;
+    }
+    span.textbox {
+    margin-right: 0;
+    margin-bottom: 2px;
+    margin-left: 5px;
+}
+.container-calendar {
+background: #e3e3e3;
+    height: 41px;
+    line-height: 41px;
+    margin-bottom: 20px;
+    padding-left: 15px;
+    font-size: 12px;
+}
+#catainer-id{
+border:1px solid #cacaca;
+}
+table.fc-border-separate {
+    height: 400px;
+}   
+  
+/*end--  calendar.html  */
+
+  td.kv-label.zhuce-label {
+    text-align: right;
+    border: 0!important;
+    background-color: #fff;
+}
+td.kv-content.zhuce-content {
+    border: 0!important;
+}
+
+table td.kv-label{
+  padding:10px!important;
+}
+td.kv-label.zhuce-label {
+    width: 45%;
+}
+.huoqu {
+   width: 150px!important;
+    display: inline-block;
+    text-align: center;
+    background: #eee;
+    height: 30px;
+    line-height: 30px;
+}
+.tijiao {
+    text-align: center;
+    margin-top: 10px;
+}
+/* fileManager begin */
+     #BgDiv{background-color:#D5EAEA; position:absolute; z-index:99007; left:0; top:0; 
+                display:none; width:100%; height:1000px;opacity:0.5;filter: alpha(opacity=50);-moz-opacity: 0.5;}
+        #DialogDiv{position:absolute;width:190px; left:50%; top:50%; margin-left:-200px; 
+                height:18px; z-index:99008;border:0px #D5EAEA solid; padding:1px;}
+        .def-bar {border-radius:20px 20px 20px 20px;}
+/* fileManager end */
+.manager-dialog{
+	width:900px;height:280px;padding:10px;display:none;
+}
+.product-dialog{
+	width:910px;height:420px;padding:10px;display:none;
+}
+div#dlg-buttons {
+    text-align: center;
+}
+.product-editdialog{
+	width:910px;height:600px;padding:10px 10px 0px 10px;display:none;
+}
+.tabs-panels {
+    height: 510px;
+}
+#addCalendarWin{
+	width:420px;height:380px;padding:10px;display:none;
+}
+.basicReport-dialog{
+	width:400px;height:210px;padding:10px;display:none;
+}
+.periodReport-dialog{
+	width:400px;height:180px;padding:10px;display:none;
+}
+.reject-textArea{
+	width:350px;height:170px;padding: 10px 0px 10px 20px;
+}
+#rejectReason{
+	width:350px;height:150px;
+}
+.reject-dialog{
+	width:400px;height:270px;display:none;
+}
+.reject-div{
+	text-align:left;padding:10px 0 5px 20px;
+}
+.institution-dialog{
+	width:500px;height:280px;padding:10px;display:none;
+}
+.bankCode-dialog{
+	width:700px;height:465px;padding:10px 10px 0px 10px;display:none;
+}
+.file-dialog{
+	width:500px;height:200px;padding:10px;display:none;
+}
+.credit-add-dialog{
+    width:400px;height:330px;padding:10px;display:none;
+}
+.credit-edit-dialog{
+    width:800px;height:600px;padding:10px;display:none;
+}
+.product-add-dialog{
+    width:800px;padding:10px;display:none;
+}
+.product-repay-dialog{
+    width:800px;height:600px;padding:10px;display:none;
+}
+.permission-dialog{width:720px;height:220px;padding:10px;display:none;}
+.user-dialog{width:720px;height:320px;padding:10px;display:none;}
+.password-dialog{width:500px;height:80px;padding:10px;display:none;}
+.orgnization-dialog{width:720px;height:280px;padding:10px;display:none;}
+.role-dialog{width:400px;height:180px;padding:10px;display:none;}
+.uasRole-dialog{width:750px;height:280px;padding:10px;display:none;}
+.appAccount-dialog{width:400px;height:280px;padding:10px;display:none;}
+.dictionary-dialog{width:420px;height:200px;padding:10px;display:none;}
+.config-dialog{width:720px;height:180px;padding:10px;display:none;}
+.announcement-dialog{width:700px;height:470px;padding:10px;display:none;}
+#lookcontent{width:100%;height:240px;}
+.edui-container {
+    margin: 0 0 0 10px;
+}
+.testwf-dialog{width:720px;height:180px;padding:10px;display:none;}
+.dlgDeal-div{padding: 0 0 0 10px;}
+.dlgDeal-textArea{width:630px;height:200px;padding:10px;}
+.dlgDeal-dialog{width:700px;height:300px;padding:10px;display:none;}
+.job-dialog{width:720px;height:270px;padding:10px;display:none;}
+.jobLog-dialog{width:720px;height:470px;padding:15px;display:none;}
+div#fileInfo {
+    margin-bottom: 15px;
+    margin-top: 15px;
+    margin-left: 15px;
+    font-size: 15px;
+}
+a.button-a {
+    color: #007cb6;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+img#workflow-img {
+    position:relative;top:-39px;
+}
+.button-div {
+    font-size: 19px;
+    color: #999;
+    background: url(../image/refresh.jpg) right center no-repeat;
+        width: 315px;
+}
+p.error-head {
+    font-size: 27px;
+    color: #5088df;
+    font-family: "Microsoft Yahei";
+    padding-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 13px;
+    width: 420px;
+}
+p.error-body {
+    font-family: "Microsoft Yahei";
+    font-size: 19px;
+    width: 370px;
+    color: #999;
+    line-height: 32px;
+
+}
+.lg-box.error-box {
+    top: 230px!important;
+    right: 255px!important;
+}
+a.back-index {
+    display: inline-block;
+    height: 36px;
+    width: 120px;
+    text-align: center;
+    background-color: #5088df;
+    line-height: 36px;
+    color: #fff;
+    font-size: 19px;
+        margin-right: 15px;
+            text-decoration: none;
+}
+.button-div {
+    margin-top: 20px;
+}
+a.refresh {
+ font-size: 19px;
+    color: #5088df;
+    text-decoration: none;
+    background: url(../image/refresh.jpg) right center no-repeat;
+    width: 130px;
+    display: inline-block;
+ 
+}
+/* 妫ｆ牠銆夐崗顒�鎲＄拠锔藉剰瀵懓鍤锟� */
+.content-head {
+    color: #595757;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 20px;
+    font-family: Microsoft YaHei;
+        margin-left: 15px;
+}
+.announcement-source {
+    color: #bfbfbf;
+    font-size: 14px;
+    padding: 20px 0 15px 0;
+    border-bottom: 1px solid #bfbfbf;
+        margin-left: 15px;
+        margin-right: 15px;
+}
+.content-body {
+    line-height: 25px;
+    font-size: 14px;
+    color: #555555;
+    margin: 20px 15px;
+}
+.jingbei{
+    background: url(../image/jingbei.png) left center no-repeat;
+    display: inline-block;
+    width: 30px;
+    height: 12px;
+    line-height: 12px;
+    margin-right: 10px;
+}
+.gonganbei{
+    background: url(../image/gonganbei.png) left center no-repeat;
+    width: 20px;
+    height: 12px;
+    display: inline-block;
+   margin-right: 7px;
+    margin-left: 25px;
+}
+span.beian {
+    float: right;
+}
+span.detail {
+    display: inline-block;
+    float: left;
+}
+/* register.html begin*/
+.login-bd.register{
+	 background: url(../image/register.png) center center no-repeat!important;
+	     height: 464px;
+}
+.lg-box.register-box {
+    width: 564px!important;
+}
+.lg-password.input-item.clearfix.register-form {
+    width: 400px!important;
+    margin-left: 82px!important;
+}
+.login-bd .bd-inner .inner-wrap .lg-zone .lg-box .register-form input{
+    width: 352px;
+}
+input#validateCode {
+    width: 190px;
+}
+.lg-box.register-box {
+    top: 190px!important;
+    position: absolute;
+    right: 300px!important;
+}
+.lg-box.description-box {
+    background: none!important;
+    color: #fff;
+    width: 430px!important;
+    text-align: center;
+    font-family: PingFang-SC-Medium;
+    top: 50px!important;
+        right: 385px!important;
+}
+span.inChinese {
+    font-size: 32px;
+    display: block;
+}
+span.inEnglish {
+    display: block;
+    font-size: 18px;
+    margin-top: 22px;
+}
+.enter.register-enter {
+    margin-top: 30px;
+}
+a.purchaser.register {
+    width: 400px!important;
+}
+.lg-box.register-box {
+    box-shadow: 1px 1px 2px #aaa!important;
+    padding-bottom: 45px!important;
+}
+a#getAuthCode {
+    font-size: 15px;
+    text-decoration: none;
+    color: #999;
+    font-family: Microsoft Yahei;
+}
+i.iname{
+	background: url(../image/iname.png) center center no-repeat!important;
+}
+i.iregisterCode{
+	   background: url(../image/iregister.png) center center no-repeat!important;
+}
+i.iusci{
+	background: url(../image/iusci.png) center center no-repeat!important;
+}
+i.icontacts{
+	background: url(../image/icontacts.png) center center no-repeat!important;
+}
+i.imobile{
+	background: url(../image/imobile.png) center center no-repeat!important;
+}
+.login-ft.register-ft {
+    margin-top: 310px;
+}
+
+table.kv-table .kv-label {
+	width: 130px;
+}
+/* register.html end*/
+.conditions.conditions-calendar {
+    display: block;
+    width: 1000px;
+    margin: 15px auto;
+}
+input#creatorName {
+    border: none;
+}
+label.type-form.creatorName-form {
+    margin-left: 12px;
+}
+label.type-form.isRemind {
+    display: inline;
+}
+.remind-div {
+    height: 26px;
+    line-height: 26px;
+    margin-bottom: 5px;
+}
+label.type-form.creatorName-form {
+    margin-top: 9px;
+}
+.text-select{
+	font-size:14px;
+	margin-right: 6px;
+}
+label.type-form.radio-form {
+    width: 160px;
+    display: inline;
+}
+label.type-form.color-form {
+    display: inline-block;
+        margin-left: 12px;
+}
+.sp-replacer.sp-light {
+    margin-left: 10px;
+}
+/**combobox娣诲姞琛ュ厖鏍峰紡锛岃瀹氶珮搴︽亽瀹氫负10px*/
+.combobox-item{
+     	height:10px;
+     }
+/*用于查看的样式
+  只读元素样式
+**/
+.view{
+     	border: 0px solid #FFFFFF!important;
+     }
+.view .textbox-addon{
+	display: none!important;
+}
+.view textarea{
+     	overflow-y: hidden!important;
+     }

@@ -1,0 +1,98 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+    <meta charset="utf-8"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>日志列表</title> 
+<link rel="stylesheet" href="/platform/static/darkblue/css/base.css" >
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+</head> 
+<body>
+<div id="loading"> 
+         <image src='/platform/image/loading3.gif'/>
+     <h1><font color="#15428B">页面载入中....</font></h1>  
+</div>
+    <div class="container">
+       <table id="dg" class="easyui-datagrid" title="日志列表" 
+            data-options="
+                url:'/log/list',
+                method:'get',
+                rownumbers:true,
+                singleSelect:false,
+                autoRowHeight:false,
+                pagination:true,
+                fitColumns:true,
+                striped:true,
+                checkOnSelect:false,
+                selectOnCheck:false,
+                collapsible:true,
+                toolbar:'#tb',
+                pageSize:10"
+           >
+            <thead>
+                <tr>
+                    <th data-options="field:'date', width:30,align:'center' , halign: 'center'">时间</th>
+                    <th data-options="field:'account', width:30,align:'center' , halign: 'center'" >账号</th>
+                    <th data-options="field:'name', width:30,align:'center' , halign: 'center'">姓名</th>
+                    <th data-options="field:'message', width:110,align:'left' , halign: 'center'">日志</th>
+                </tr>
+            </thead>
+        </table>
+      <div id="tb">
+        <div class="conditions">
+            <span class="con-span">账号: </span><input id="search_account" class="easyui-textbox" type="text" name="account" style="width:166px;height:35px;line-height:35px;"></input>
+            <span class="con-span">姓名: </span><input id="search_name" class="easyui-textbox" type="text" name="name" style="width:166px;height:35px;line-height:35px;"></input>
+            <span class="con-span">时间: </span><input id="search_start_time" class="easyui-datetimebox" data-options="showSeconds:false" style="width:160px;height:35px;" name="startTime"></input>
+            <span class="con-span">~</span><input id="search_end_time" class="easyui-datetimebox" data-options="showSeconds:false" style="width:160px;height:35px;" name="endTime"></input>
+            <a href="javascript:void(0);" onclick="searchLog()" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true">查询</a>
+            <a href="javascript:void(0);" onclick="refreshPage()"  class="easyui-linkbutton" iconCls="icon-reload">刷新</a>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript">
+    function closes() {  
+        $('#loading').fadeOut('normal', function () {  
+            $(this).remove();  
+        });  
+    }  
+    var pc;  
+      
+    $.parser.onComplete = function () {  
+        if (pc) clearTimeout(pc);  
+        pc = setTimeout(closes, 1000);  
+    }
+    
+    var url;
+    function refreshPage(){
+    	location.reload(true);   
+    }
+    
+     function searchLog(){
+            	var account=$("#search_account").val();
+            	var name=$("#search_name").val();
+            	var startTime=$("#search_start_time").datetimebox('getValue');
+            	var endTime=$("#search_end_time").datetimebox('getValue');
+            	if(account==""&&name==""&&startTime==""&&endTime==""){
+            		$.messager.alert("提示信息", "请至少输入一个查询条件！","info");
+            	}else{
+            		$('#dg').datagrid('load',
+            			{
+            			   account:account,
+            			   name:name,
+            			   startTime:startTime,
+            			   endTime:endTime
+            			});
+            	}
+            }
+            function searchReset(){
+            	$("input").val("");
+            }             
+           
+    </script>
+</body> 
+</html>
