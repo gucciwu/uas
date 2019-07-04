@@ -666,6 +666,21 @@ public class PermissionControllerService {
         return response;
     }
 
+    public GetUserRolesResponse<UserRole> getUserRoles(GetUserRolesRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException, OperationFailureException {
+        ipBlackCheckService.isBlackList(httpRequest);
+        appSecretVerifyService.verifyAppSecret(request.get_appId(), request.get_secret());
+
+        GetUserRolesResponse response = new GetUserRolesResponse();
+
+        UserRoleExample ure = new UserRoleExample();
+        ure.createCriteria().andUserIdEqualTo(request.getUserId());
+        List<UserRole> userRoles = userRoleMapper.selectByExample(ure);
+        response.setCode(CODE.SUCCESS);
+        response.setMsg("成功");
+        response.setData(userRoles);
+        return response;
+    }
+
     private List<App> getAllApps(long userId) {
         UserRoleExample ure = new UserRoleExample();
         ure.createCriteria().andUserIdEqualTo(userId);

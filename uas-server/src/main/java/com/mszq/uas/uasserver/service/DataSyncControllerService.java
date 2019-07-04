@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class DataSyncControllerService {
@@ -69,10 +70,14 @@ public class DataSyncControllerService {
         ue.createCriteria().andJobNumberEqualTo(request.getUser().getJobNumber());
         List<User> userList = userMapper.selectByExample(ue);
 
+        UserExample ue1 = new UserExample();
+        ue1.createCriteria().andIdTypeEqualTo(request.getUser().getIdType()).andIdNumberEqualTo(request.getUser().getIdNumber());
+        List<User> userList1 = userMapper.selectByExample(ue1);
+
         boolean isCreate = false;
         boolean isUpdate = false;
         String initPassword = "";
-        if(userList == null || userList.size() == 0){
+        if((userList == null || userList.size() == 0) && (userList1 == null || userList1.size() == 0)){
             //插入
             User user = request.getUser();
             user.setCreateTime(new Date());
@@ -105,8 +110,13 @@ public class DataSyncControllerService {
                 passwordMapper.insert(password);
             }
         }else{
+            User user = null;
+            if(userList.size() > 0 ){
+                user = userList.get(0);
+            }else if(userList1.size() > 0){
+                user = userList1.get(0);
+            }
             //更新
-            User user = userList.get(0);
             user.setModifyTime(new Date());
             request.getUser().setId(user.getId());
             int ret = userMapper.updateByPrimaryKey(request.getUser());
@@ -168,6 +178,7 @@ public class DataSyncControllerService {
 
         User user = userList.get(0);
         user.setStatus(Constant.USER_STATUS.UNSIGNED);
+//        user.setIdNumber(user.getIdNumber()+"-"+);//删除用户时需要修改用户的身份证，避免用户再次入职时因身份证重复导致数据添加失败
         user.setModifyTime(new Date());
         int ret = userMapper.updateByPrimaryKey(user);
         if(ret == 0){

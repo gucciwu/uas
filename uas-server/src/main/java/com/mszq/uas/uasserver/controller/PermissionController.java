@@ -85,4 +85,10 @@ public class PermissionController {
     DelRoleToUserResponse delRoleToUser(@RequestBody DelRoleToUserExRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException, OperationFailureException {
         return service.delRoleToUser(request,httpRequest);
     }
+    @ApiOperation(value="获取用户的所有角色", notes="给定用户ID，查询用户已经分配的所有角色")
+    @RequestMapping(value="/permission/get_user_roles",method = RequestMethod.POST)
+    public @ResponseBody
+    GetUserRolesResponse getUserRoles(@RequestBody GetUserRolesRequest request, HttpServletRequest httpRequest) throws IpForbbidenException, AppSecretMatchException, OperationFailureException {
+        return service.getUserRoles(request,httpRequest);
+    }
 }
