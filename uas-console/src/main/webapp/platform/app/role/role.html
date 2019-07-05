@@ -4,23 +4,23 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>角色列表</title> 
-<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/uas/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
 </head> 
 <body>
 	<div id="loading"> 
-      <image src='/platform/image/loading3.gif'/>
+      <image src='/uas/platform/image/loading3.gif'/>
       <h1><font color="#15428B">页面载入中....</font></h1>   
      </div>  
     <div class="container" >
        <table id="tg" class="easyui-datagrid"  title="所有角色列表"
-             url="/role/list" data-options="
+             url="/uas/role/list" data-options="
                fitColumns:true,
                 rownumbers:true,
                 singleSelect:true,
@@ -81,7 +81,7 @@
 							<td class="kv-label">角色类型</td>
 										<td class="kv-content">
 											<input class="easyui-combobox" type="text"  name="type" style="width:166px;height:35px;line-height:35px;"
-											data-options="url:'/dictionary/comboOption?key=roleType',
+											data-options="url:'/uas/dictionary/comboOption?key=roleType',
 																									method:'get',
 																									valueField:'value',
 																									textField:'text',
@@ -191,7 +191,7 @@
 	            }
 	    	});
 	    	resourceTree = $('#resourceTree').tree({
-	            url : '/permission/tree',
+	            url : '/uas/permission/tree',
 	            parentField : 'pid',
 	            lines : true,
 	            checkbox : true,
@@ -260,7 +260,7 @@
             	uncheckAll();
             	$("#dlg-permission").dialog("open") ;
             	$("#grantForm").form("load", row);
-                $.post( '/role/findResourceIdListByRoleId', {
+                $.post( '/uas/role/findResourceIdListByRoleId', {
                     id : row.id
                 }, function(result) {
                     var resids;
@@ -328,7 +328,7 @@
             }
             $('#resourceIds').val(ids);
 	    	$("#grantForm").form("submit", {
-                url: '/role/grant',
+                url: '/uas/role/grant',
                 onSubmit: function () {
                 	 
                     return $(this).form("validate");
@@ -371,7 +371,7 @@
         function newRole() {
         	$("#roleAddForm").form("clear");
             $("#dlg").dialog("open").dialog('setTitle', '增加角色'); ;
-            url = "/role/add";
+            url = "/uas/role/add";
         }
         function editRole() {
         	var dgObject = $("#tg");
@@ -395,7 +395,7 @@
             	$("#roleAddForm").form("clear");
                 $("#dlg").dialog("open").dialog('setTitle', '编辑角色');
                 $("#roleAddForm").form("load", row);
-                url = "/role/update";
+                url = "/uas/role/update";
             }
         }
         function saveRole() {
@@ -452,7 +452,7 @@
                         $.ajax({
                             type:"post",
                             dataType:"json",
-                            url:"/role/deleteBatch",
+                            url:"/uas/role/deleteBatch",
                             data:{ "ids":ids },
                             error:function(request) {
                             	$.messager.alert("操作提示", "发生异常！", "error"); 

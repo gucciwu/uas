@@ -4,26 +4,26 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>部门类型列表</title> 
-<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
-<script type="text/javascript" src="/platform/js/jquery.min.js"></script>
-<script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="/platform/js/base.js"></script>
-<script type="text/javascript" src="/platform/js/util.js"></script>
-<script type="text/javascript" src="/platform/js/md5/md5.js"></script>
+<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/uas/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/uas/platform/js/jquery.min.js"></script>
+<script type="text/javascript" src="/uas/platform/js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/uas/platform/js/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/uas/platform/js/base.js"></script>
+<script type="text/javascript" src="/uas/platform/js/util.js"></script>
+<script type="text/javascript" src="/uas/platform/js/md5/md5.js"></script>
 </head> 
 <body>
 	<div id="loading"> 
-      <image src='/platform/image/loading3.gif'/>
+      <image src='/uas/platform/image/loading3.gif'/>
       <h1><font color="#15428B">页面载入中....</font></h1>   
      </div>  
     <div class="container" >
        <table id="tg" class="easyui-datagrid"  title="组织结构类型列表"
-             url="/uasOrgType/list" data-options="
+             url="/uas/uasOrgType/list" data-options="
                fitColumns:true,
                 singleSelect:true,
                 autoRowHeight:false,
@@ -102,7 +102,7 @@
         function newOrgType() {
         	$("#orgTypeAddForm").form("clear");
             $("#dlg").dialog("open").dialog('setTitle', '增加组织结构类型');
-            url = "/uasOrgType/insert";
+            url = "/uas/uasOrgType/insert";
             $('#orgTypeId').textbox('textbox').attr('readonly',false);
             $('#orgTypeId').textbox('textbox').css('background-color','#fff');
         }
@@ -128,7 +128,7 @@
             	$("#orgTypeAddForm").form("clear");
                 $("#dlg").dialog("open").dialog('setTitle', '编辑组织结构类型');
                 $("#orgTypeAddForm").form("load", row);
-                url = "/uasOrgType/update";
+                url = "/uas/uasOrgType/update";
                 
                 $('#orgTypeId').textbox('textbox').attr('readonly',true);
                 $('#orgTypeId').textbox('textbox').css('background-color','#ccc');
@@ -188,7 +188,7 @@
                         $.ajax({
                             type:"post",
                             dataType:"json",
-                            url:"/uasOrgType/deleteBatch",
+                            url:"/uas/uasOrgType/deleteBatch",
                             data:{ "ids":ids },
                             error:function(request) {
                             	$.messager.alert("操作提示", "发生异常！", "error"); 

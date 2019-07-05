@@ -4,20 +4,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>日程安排</title>
-    <link rel="stylesheet" href="/platform/static/darkblue/css/base.css" >
-    <link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-    <link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-     <link href="/platform/css/public.css" rel="stylesheet">
-     <link rel="stylesheet" type="text/css" href="/platform/css/spectrum.css">
-     <script type="text/javascript" src="/platform/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/platform/js/spectrum.js"></script>
-    <script type='text/javascript' src='/platform/js/docs/toc.js'></script>
-    <script type='text/javascript' src='/platform/js/docs/docs.js'></script>
-    <script type="text/javascript" src="/platform/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
-    <script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
-    <script type="text/javascript" src="/platform/js/base.js"></script>
-    <script src='/platform/js/fullcalendar.min.js'></script>
+    <link rel="stylesheet" href="/uas/platform/static/darkblue/css/base.css" >
+    <link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+     <link href="/uas/platform/css/public.css" rel="stylesheet">
+     <link rel="stylesheet" type="text/css" href="/uas/platform/css/spectrum.css">
+     <script type="text/javascript" src="/uas/platform/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/spectrum.js"></script>
+    <script type='text/javascript' src='/uas/platform/js/docs/toc.js'></script>
+    <script type='text/javascript' src='/uas/platform/js/docs/docs.js'></script>
+    <script type="text/javascript" src="/uas/platform/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/base.js"></script>
+    <script src='/uas/platform/js/fullcalendar.min.js'></script>
 </head>
 <body>
 <div class="container" id="catainer-id"> 
@@ -96,7 +96,7 @@
 /*     var $ = jQuery.noConflict(); */
     $(".id-data_label").hide();
     var url;
-    var eventUrl="/agenda/list";
+    var eventUrl="/uas/agenda/list";
     Date.prototype.pattern=function(fmt) {         
         var o = {         
         "M+" : this.getMonth()+1, //月份         
@@ -169,7 +169,7 @@
                   }         
     $('#mycalendar').fullCalendar( 'removeEventSource', events); 
       var json_data = $('#searchScheduleForm').serialize();
-      eventUrl="/agenda/list?"+json_data;
+      eventUrl="/uas/agenda/list?"+json_data; 
       var events2 = {
                url:  eventUrl,
                type: 'POST',
@@ -191,7 +191,7 @@
         $("#start").datetimebox('setValue',startTime);
         $("#end").datetimebox('setValue',end.pattern('yyyy-MM-dd HH:mm'));  
         $("#full").val(document.getElementsByClassName("sp-preview-inner")[0].style.backgroundColor);
-        url= "/agenda/create";
+        url= "/uas/agenda/create";    
         } 
     function editEvent(data){
         $("#scheduleForm").form("clear"); 
@@ -244,8 +244,8 @@
             $("#timeType").attr("disabled", true);
       }
         $("#addCalendarWin").dialog("open").dialog('setTitle', '修改日程');
-         url= "/agenda/update";
-         urldel="/agenda/delete?id="+data.id;
+         url= "/uas/agenda/update";
+         urldel="/uas/agenda/delete?id="+data.id;
     }
     function saveSchedule(){
         $("#scheduleForm").form("submit", {

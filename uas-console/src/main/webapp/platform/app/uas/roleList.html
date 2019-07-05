@@ -4,23 +4,23 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>角色列表</title> 
-<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/uas/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
 </head> 
 <body>
 	<div id="loading"> 
-       <image src='/platform/image/loading3.gif'/>
+       <image src='/uas/platform/image/loading3.gif'/>
       <h1><font color="#15428B">页面载入中....</font></h1>   
      </div>  
     <div class="container" >
         <table id="tg" class="easyui-datagrid"  title="应用列表类型列表"
-             url="/uasRole/list" data-options="
+             url="/uas/uasRole/list" data-options="
                fitColumns:true,
                 singleSelect:true,
                 autoRowHeight:false,
@@ -47,13 +47,13 @@
 	      <form id="searchUasRoleForm">
 	          <div class="conditions">
 	              <span class="con-span">角色名称: </span><input class="easyui-textbox" type="text" name ="roleName" style="width:146px;height:35px;line-height:35px;"></input>
-		          <span class="con-span" style="margin-left:20px">状态: </span><input class="easyui-combobox" id="sStatus" type="text" name ="status" data-options="url:'/dictionary/comboOption?key=status',
+		          <span class="con-span" style="margin-left:20px">状态: </span><input class="easyui-combobox" id="sStatus" type="text" name ="status" data-options="url:'/uas/dictionary/comboOption?key=status',
 																method:'get',
 																valueField:'value',
 																textField:'text',
 																panelHeight:'auto',
 																editable:false" style="width:200px;height:35px;line-height:35px;"></input>
-		          <span class="con-span" style="margin-left:20px">角色类型: </span><input id="sRoleType" class="easyui-combobox" type="text" name ="roleType" data-options="url:'/uasRoleType/comlist',
+		          <span class="con-span" style="margin-left:20px">角色类型: </span><input id="sRoleType" class="easyui-combobox" type="text" name ="roleType" data-options="url:'/uas/uasRoleType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'name',
@@ -82,7 +82,7 @@
 					    <tr>
 							<td class="kv-label">角色类型</td>
 							<td class="kv-content">
-								<input id="roleType" class="easyui-combobox" type="text" name ="roleType" data-options="url:'/uasRoleType/comlist',
+								<input id="roleType" class="easyui-combobox" type="text" name ="roleType" data-options="url:'/uas/uasRoleType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
@@ -107,13 +107,13 @@
 						<tr>
 						    <td class="kv-label">上级角色</td>
 							<td class="kv-content">
-								<!-- <select id=""parentOrgId"" class="easyui-combotree"  name="parentRoleId" style="width:200px;height:35px;" data-options="url:'/uasRole/tree',parentField:'pid'"></select> -->
+								<!-- <select id=""parentOrgId"" class="easyui-combotree"  name="parentRoleId" style="width:200px;height:35px;" data-options="url:'/uas/uasRole/tree',parentField:'pid'"></select> -->
 								<select id="parentOrgId" class="easyui-combotree"  name="parentOrgId" style="width:200px;height:35px;" data-options="parentField:'pid'"></select>
 							</td>
 							<td class="kv-label">状态</td>
 							<td class="kv-content">
 								<input class="easyui-combobox" 
-		                        		type="text" name ="status" data-options="url:'/dictionary/comboOption?key=status',
+		                        		type="text" name ="status" data-options="url:'/uas/dictionary/comboOption?key=status',
 																method:'get',
 																valueField:'value',
 																textField:'text',
@@ -173,8 +173,8 @@
     function searchRole() {
 	    //var json_data = $('#searchUserForm').serializeJSON();  
 	    var json_data = $('#searchUasRoleForm').serialize();
-	    $('#tg').treegrid('options').url = "/uasRole/list?" + json_data;
-	    //$('#dg').datagrid({url : '/employee/list' , queryParams : {json_data}});
+	    $('#tg').treegrid('options').url = "/uas/uasRole/list?" + json_data;
+	    //$('#dg').datagrid({url : '/uas/employee/list' , queryParams : {json_data}});
     	//$("#dg").datagrid('load', json_data);
 	    $('#tg').treegrid('reload');
     }
@@ -215,8 +215,8 @@
         	$("#roleAddForm").form("clear");
         	var json_data = $('#searchUasRoleForm').serialize();
              $.ajax({
-//            	 url: "/platform/app/role2.json",
-               url: "/uasRole/tree?" + json_data,
+//            	 url: "/uas/platform/app/uas/role2.json",
+               url: "/uas/uasRole/tree?" + json_data,
 //               data: { BrandID: BrandID, },
                  dataType: 'json',
                  success: function (data) {   
@@ -228,7 +228,7 @@
             //$("#parentOrgId").combotree({readonly : false});
             $('#roleType').combobox('readonly',false);
             
-            url = "/uasRole/insert";
+            url = "/uas/uasRole/insert";
         }
 */
 
@@ -239,7 +239,7 @@
 			$('#roleType').combobox('select', val);
 			
 		     $.ajax({
-		         url: "/uasRole/tree",
+		         url: "/uas/uasRole/tree",
 		         data: { 'roleType' : val },
 		         dataType: 'json',
 		         success: function (data) {   
@@ -251,7 +251,7 @@
 		    //$("#parentOrgId").combotree({readonly : false});
 		    $('#roleType').combobox('readonly',true);
 		    
-		    url = "/uasRole/insert";
+		    url = "/uas/uasRole/insert";
 		}
 		
         function editRole() {
@@ -282,8 +282,8 @@
                         	
         	    var json_data = $('#searchUasRoleForm').serialize();
                 $.ajax({
-//            	  url: "/platform/app/role2.json",
-                  url: "/uasRole/tree?" + json_data,
+//            	  url: "/uas/platform/app/uas/role2.json",
+                  url: "/uas/uasRole/tree?" + json_data,
 //                data: { BrandID: BrandID, },
                   dataType: 'json',
                   success: function (data) {   
@@ -295,7 +295,7 @@
                 //$("#parentOrgId").combotree('readonly');
                 $('#roleType').combobox('readonly');
                 
-                url = "/uasRole/update";
+                url = "/uas/uasRole/update";
             }
         }
         function saveRole() {
@@ -349,7 +349,7 @@
 	    	}
                 $.messager.confirm('操作确认', '确认要删除角色吗？', function (r) {
                     if (r) {
-                       /*  $.post('/rolenization/deleteBatch', { "ids":ids }, function (result) {
+                       /*  $.post('/uas/rolenization/deleteBatch', { "ids":ids }, function (result) {
                         	result = $.parseJSON(result);
                             if (result.status == 1) {
                                 $('#tg').treegrid('reload');
@@ -361,7 +361,7 @@
                         $.ajax({
                             type:"post",
                             dataType:"json",
-                            url:"/uasRole/deleteBatch",
+                            url:"/uas/uasRole/deleteBatch",
                             data:{ "ids":ids },
                             error:function(request) {
                             	$.messager.alert("操作提示", "发生异常！", "error"); 

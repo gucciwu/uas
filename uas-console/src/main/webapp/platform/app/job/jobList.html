@@ -4,18 +4,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>定时任务列表</title>
-    <link rel="stylesheet" href="/platform/static/darkblue/css/base.css" >
-    <link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-        <link href="/platform/css/public.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-    <script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
-    <script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
-    <script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
-    <script type="text/javascript" src="/platform/js/base.js"></script>
+    <link rel="stylesheet" href="/uas/platform/static/darkblue/css/base.css" >
+    <link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+        <link href="/uas/platform/css/public.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+    <script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/base.js"></script>
 </head>
 <body>
 <div id="loading"> 
-     <image src='/platform/image/loading3.gif'/>
+     <image src='/uas/platform/image/loading3.gif'/>
      <h1><font color="#15428B">页面载入中....</font></h1>  
 </div>
 <div class="container">
@@ -79,7 +79,7 @@
   </div>
     <table id="dg" class="easyui-datagrid" title="定时任务列表"
            data-options="
-                url:'/job/jobList',
+                url:'/uas/job/jobList',
                 method:'get',
                 rownumbers:true,
                 singleSelect:true,
@@ -194,7 +194,7 @@ $.parser.onComplete = function () {
     }
     function constructionManager(id){
         $('#logdg').datagrid({   
-              url:"/jobLog/logList?&jobId=" + id,   
+              url:"/uas/jobLog/logList?&jobId=" + id,   
               columns:[[   
                   {field:'jobId',title:'任务Id',width:100,align:'center'},   
                   {field:'runTime',title:'任务执行时间',width:200,align:'center'},   
@@ -229,7 +229,7 @@ $.parser.onComplete = function () {
         $("#dlg").dialog("open").dialog('setTitle', '新增任务') ;
         $("#quartzForm :input").attr("readonly", false);
         $("#quartzForm").form("clear");
-        url= "/job/createJob";
+        url= "/uas/job/createJob";
     }
     function saveJob() {
         $("#quartzForm").form("submit", {
@@ -271,7 +271,7 @@ $.parser.onComplete = function () {
             $("#quartzForm :input").attr("readonly", "readonly");
             $("#cronExpression").textbox("readonly", false);
             $("#quartzForm").form("load", row);
-            url= "/job/update";
+            url= "/uas/job/update";
            
         }
     }
@@ -287,7 +287,7 @@ $.parser.onComplete = function () {
             if (r) {
                 $.ajax({
                     dataType:"json",
-                    url:"/job/stratNow",
+                    url:"/uas/job/stratNow",
                     data:{ "jobName" : row.jobName,
                   	   "jobGroup" : row.jobGroup },
                     error:function(request) {
@@ -316,7 +316,7 @@ $.parser.onComplete = function () {
             if (r) {
                 $.ajax({
                     dataType:"json",
-                    url:"/job/delete",
+                    url:"/uas/job/delete",
                     data:{ "jobName" : row.jobName,
                   	   "jobGroup" : row.jobGroup },
                     error:function(request) {
@@ -346,7 +346,7 @@ $.parser.onComplete = function () {
             if (r) {
                 $.ajax({
                     dataType:"json",
-                    url:"/job/resume",
+                    url:"/uas/job/resume",
                     data:{ "jobName" : row.jobName,
                  	   "jobGroup" : row.jobGroup },
                     error:function(request) {
@@ -376,7 +376,7 @@ $.parser.onComplete = function () {
             if (r) {
                 $.ajax({
                     dataType:"json",
-                    url:"/job/stopJob",
+                    url:"/uas/job/stopJob",
                     data:{ "jobName" : row.jobName,
                     	   "jobGroup" : row.jobGroup},
                     error:function(request) {

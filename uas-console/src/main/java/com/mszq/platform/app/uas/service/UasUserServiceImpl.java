@@ -40,6 +40,24 @@ public class UasUserServiceImpl implements IUasUserService {
 	@Autowired
 	ApiSenderService apiSender;
 
+	private String appId = null;
+	private String secret = null;
+
+	private String getAppId(){
+		if(appId == null){
+			this.appId = configDAO.getConfigValueByCode("uasAppId");
+		}
+		return this.appId;
+	}
+
+	private String getSecret(){
+		if(secret == null){
+			this.secret =configDAO.getConfigValueByCode("uasSecret");
+		}
+
+		return this.secret;
+	}
+
 	@Override
 	public EUDataGridResult selectList(Map<String, Object> condition, int page, int rows) {
 		// 分页处理
@@ -59,11 +77,10 @@ public class UasUserServiceImpl implements IUasUserService {
 	public int insert(UasUser record) throws RuntimeException {
 		int ret = -1;
 		try {
-			UasAppDto uasApp = uasAppDAO.selectByPrimaryKey(new Long(0));
 			JSONObject obj = new JSONObject();
-			obj.put("_appId", 0);
+			obj.put("_appId", this.getAppId());
 			obj.put("_devInfo", "");
-			obj.put("_secret", uasApp.getSecret());
+			obj.put("_secret", this.getSecret());
 			obj.put("user", record);
 
 			apiSender.setMethod("/datasync/update_user");
@@ -82,11 +99,10 @@ public class UasUserServiceImpl implements IUasUserService {
 	public int update(UasUser record) throws RuntimeException {
 		int ret = -1;
 		try {
-			UasAppDto uasApp = uasAppDAO.selectByPrimaryKey(new Long(0));
 			JSONObject obj = new JSONObject();
-			obj.put("_appId", 0);
+			obj.put("_appId", this.getAppId());
 			obj.put("_devInfo", "");
-			obj.put("_secret", uasApp.getSecret());
+			obj.put("_secret", this.getSecret());
 			obj.put("user", record);
 
 			apiSender.setMethod("/datasync/update_user");
@@ -106,7 +122,15 @@ public class UasUserServiceImpl implements IUasUserService {
 		int ret = 0;
 		for (String id : ids) {
 			Long key = Long.parseLong(id);
-			ret = ret + uasUserDAO.deleteByPrimaryKey(key);
+			JSONObject obj = new JSONObject();
+			obj.put("_appId", this.getAppId());
+			obj.put("_devInfo", "");
+			obj.put("_secret", this.getSecret());
+			obj.put("jobNumber", key);
+			apiSender.setMethod("/datasync/delele_user");
+			apiSender.setObj(obj);
+			apiSender.send();
+			ret = 1;
 		}
 		return ret;
 	}
@@ -119,26 +143,13 @@ public class UasUserServiceImpl implements IUasUserService {
 	@Override
 	public int savePassword(UasPassword password) {
 		int ret = 0;
-		//String passwordText = password.getPassword();
-		// UasPassword pwd = uasPasswordDAO.selectByUserId(password.getUserId());
-		//
-		// if (pwd != null && pwd.getId() != null) {
-		// pwd.setPassword(MD5Function.getMD5Digest(passwordText));
-		// ret = uasPasswordDAO.updateByPrimaryKeySelective(pwd);
-		// } else {
-		// password.setPassword(MD5Function.getMD5Digest(passwordText));
-		// ret = uasPasswordDAO.insertSelective(password);
-		// }
 
-		UasAppDto uasApp = uasAppDAO.selectByPrimaryKey(new Long(0));
 		UasUserDto uasUserDto = uasUserDAO.selectByPrimaryKey(password.getUserId());
 
-		// String keyAes = configDAO.getConfigValueByCode("keyAes");
-
 		JSONObject obj = new JSONObject();
-		obj.put("_appId", 0);
+		obj.put("_appId", this.getAppId());
 		obj.put("_devInfo", "");
-		obj.put("_secret", uasApp.getSecret());
+		obj.put("_secret", this.getSecret());
 		obj.put("jobNumber", uasUserDto.getJobNumber());
 
 		// obj.put("newPassword", AESCoder.encrypt(password.getPassword(), keyAes));

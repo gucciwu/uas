@@ -2,6 +2,7 @@ package com.mszq.platform.app.uas.service;
 
 import java.util.List;
 
+import com.mszq.platform.app.config.dao.IConfigDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,10 +19,31 @@ public class UasRoleAppServiceImpl implements IUasRoleAppService {
 	IUasRoleAppDAO uasRoleAppDao;
 
 	@Autowired
-	ApiSenderService apiSender;
+	IUasAppDAO uasAppDAO;
 
 	@Autowired
-	IUasAppDAO uasAppDAO;
+	IConfigDAO configDAO;
+
+	@Autowired
+	ApiSenderService apiSender;
+
+	private String appId = null;
+	private String secret = null;
+
+	private String getAppId(){
+		if(appId == null){
+			this.appId = configDAO.getConfigValueByCode("uasAppId");
+		}
+		return this.appId;
+	}
+
+	private String getSecret(){
+		if(secret == null){
+			this.secret =configDAO.getConfigValueByCode("uasSecret");
+		}
+
+		return this.secret;
+	}
 
 	@Override
 	public List<UasRoleAppDto> getAppListByRole(Long RoleId) {
@@ -32,8 +54,6 @@ public class UasRoleAppServiceImpl implements IUasRoleAppService {
 	public int saveRolePermission(Long roleId, String appIds) {
 //		Log4j2Util
 		// 给角色授权时，先删除旧的mapping，再插入新的
-		UasAppDto uasApp = uasAppDAO.selectByPrimaryKey(new Long(0));
-
 		int count = 0;
 		// List<UasRoleApp> raList = new ArrayList<UasRoleApp>();
 		List<UasRoleAppDto> roleAppList = uasRoleAppDao.queryAppListByRole(roleId);
@@ -42,26 +62,26 @@ public class UasRoleAppServiceImpl implements IUasRoleAppService {
 		for (String appId : appIdArray) {
 			if (!"".equals(appId.trim())) {
 				if(!isExistApp(appId, roleAppList)) {
-			          JSONObject obj = new JSONObject(); 
-			          obj.put("_appId", 0); 
-			          obj.put("_devInfo", ""); 
-			          obj.put("_secret", uasApp.getSecret()); 
-			          obj.put("appId", Long.parseLong(appId)); 
-			          obj.put("roleId", roleId);
-			  
-			          apiSender.setMethod("/permission/add_app_to_role"); 
-			          apiSender.setObj(obj);
-			          apiSender.send();
+					JSONObject obj = new JSONObject();
+					obj.put("_appId", this.getAppId());
+					obj.put("_devInfo", "");
+					obj.put("_secret", this.getSecret());
+					obj.put("appId", Long.parseLong(appId));
+					obj.put("roleId", roleId);
+
+					apiSender.setMethod("/permission/add_app_to_role");
+					apiSender.setObj(obj);
+					apiSender.send();
 				}
 			}
 		}
 		
 		for (UasRoleAppDto roleApp : roleAppList) { 
 			if(isDeleteApp(roleApp.getAppId().toString(), appIds)) {
-				JSONObject obj = new JSONObject(); 
-			    obj.put("_appId", 0); 
-			    obj.put("_devInfo", "");
-		        obj.put("_secret", uasApp.getSecret()); 
+				JSONObject obj = new JSONObject();
+				obj.put("_appId", this.getAppId());
+				obj.put("_devInfo", "");
+				obj.put("_secret", this.getSecret());
 		        obj.put("appId", roleApp.getAppId());
 		        obj.put("roleAppId", roleApp.getId()); 
 		        obj.put("roleId", roleApp.getRoleId());

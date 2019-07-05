@@ -105,7 +105,7 @@
              /manager/getValidateCode=anon
              /manager/addOrUpdateManager/add=anon
              /pp/app/manager/register.html=anon
-             /captcha.form=anon
+             /captcha=anon
              /**=authc
              <!-- /**=anon -->
            </value>

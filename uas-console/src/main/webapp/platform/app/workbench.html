@@ -4,33 +4,33 @@
  <meta charset="utf-8"> 
  <meta name="viewport" content="width=device-width, initial-scale=1"> 
  <title>工作台</title> 
-  	<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
-    <link href="/platform/static/darkblue/css/platform.css" rel="stylesheet">
-    <link href="/platform/css/public.css" rel="stylesheet">
-    <link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-    <link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-    <link href="/platform/js/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
-    <link rel="stylesheet" href="/platform/static/darkblue/css/workbench.css">
-	<link rel="stylesheet" href="/platform/js/qtip/jquery.qtip.css?v=1.1.2"  />
-	<link rel="stylesheet" href="/platform/js/qtip/jquery.qtip.min.css"  />
-	<link rel="stylesheet" type="text/css" href="/platform/css/spectrum.css">
-    <script type="text/javascript" src="/platform/js/jquery.min.js"></script>
-    <script type="text/javascript" src="/platform/js/spectrum.js"></script>
-       <script type='text/javascript' src='/platform/js/docs/toc.js'></script>
-    <script type='text/javascript' src='/platform/js/docs/docs.js'></script>
-	<script type="text/javascript" charset="utf-8" src="/platform/js/jquery.min.js"></script>
-	<script type="text/javascript" charset="utf-8" src="/platform/js/umeditor/umeditor.config.js"></script>
-	<script type="text/javascript" charset="utf-8" src="/platform/js/umeditor/umeditor.js"></script>
-	<script type="text/javascript" src="/platform/js/umeditor/lang/zh-cn/zh-cn.js"></script>
-	<script type="text/javascript" src="/platform/js/jquery.outerhtml.js"></script>
-	<script type="text/javascript" src="/platform/js/workflow/workflow.js"></script>
-	<script type="text/javascript" src="/platform/js/qtip/jquery.qtip.min.js" ></script>
-	<script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
-	<script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
-    <script src="/platform/js/fullcalendar.min.js"></script>
-    <script type="text/javascript" src="/platform//static/darkblue/js/echarts-all.js"></script>
-    <script type="text/javascript" src="/platform/js/workbench.js"></script>
-    <script type="text/javascript" src="/platform/js/base.js"></script>
+  	<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
+    <link href="/uas/platform/static/darkblue/css/platform.css" rel="stylesheet">
+    <link href="/uas/platform/css/public.css" rel="stylesheet">
+    <link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+    <link href="/uas/platform/js/umeditor/themes/default/css/umeditor.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" href="/uas/platform/static/darkblue/css/workbench.css">
+	<link rel="stylesheet" href="/uas/platform/js/qtip/jquery.qtip.css?v=1.1.2"  />
+	<link rel="stylesheet" href="/uas/platform/js/qtip/jquery.qtip.min.css"  />	
+	<link rel="stylesheet" type="text/css" href="/uas/platform/css/spectrum.css">
+    <script type="text/javascript" src="/uas/platform/js/jquery.min.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/spectrum.js"></script>
+       <script type='text/javascript' src='/uas/platform/js/docs/toc.js'></script>
+    <script type='text/javascript' src='/uas/platform/js/docs/docs.js'></script>
+	<script type="text/javascript" charset="utf-8" src="/uas/platform/js/jquery.min.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/uas/platform/js/umeditor/umeditor.config.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/uas/platform/js/umeditor/umeditor.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/umeditor/lang/zh-cn/zh-cn.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/jquery.outerhtml.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/workflow/workflow.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/qtip/jquery.qtip.min.js" ></script>
+	<script type="text/javascript" src="/uas/platform/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/easyui-lang-zh_CN.js"></script>
+    <script src="/uas/platform/js/fullcalendar.min.js"></script>
+    <script type="text/javascript" src="/uas/platform//static/darkblue/js/echarts-all.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/workbench.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/base.js"></script>
     
 <style>
 a.easyui-linkbutton.l-btn.l-btn-small {
@@ -322,7 +322,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
     function remind(){
         $.ajax({
             type: 'GET',
-            url: '/remind/titleList',
+            url: '/uas/remind/titleList',
             dataType: 'json',
             success: function (data) {
             	data=data.rows;
@@ -354,7 +354,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
         
         $.ajax({
             type: 'GET',
-            url: '/remind/titleWorkflowList',
+            url: '/uas/remind/titleWorkflowList',
             dataType: 'json',
             success: function (data) {
             	data=data.rows;
@@ -389,7 +389,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
     function openCalendarDialog(id){
     	$.ajax({
             type: 'GET',
-            url: '/agenda/keylist',
+            url: '/uas/agenda/keylist',
             data: {id:id},
             dataType: 'json',
             success: function (data) {
@@ -443,8 +443,8 @@ a.easyui-linkbutton.l-btn.l-btn-small {
             	   $("#timeType").attr("disabled", true);
                }
                  $("#addCalendarWin").dialog("open").dialog('setTitle', '修改日程');
-                  url= "/agenda/update";
-                  urldel="/agenda/delete?id="+data.id;
+                  url= "/uas/agenda/update";
+                  urldel="/uas/agenda/delete?id="+data.id;
                     // 如果没有数据
                 },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -459,7 +459,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
     	 $(".calendar-menu-month-inner").click(function (){
              $.ajax({
                  type: 'GET',
-                 url: '/agenda/datelist',
+                 url: '/uas/agenda/datelist',
                  dataType: 'json',
                  success: function (data) {
                      var result = "";
@@ -499,7 +499,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
          $(".calendar-nav").on("click",function(){
              $.ajax({
                  type: 'GET',
-                 url: '/agenda/datelist',
+                 url: '/uas/agenda/datelist',
                  dataType: 'json',
                  success: function (data) {
                      var result = "";
@@ -537,7 +537,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
     	 //加载打点
          $.ajax({
              type: 'GET',
-             url: '/agenda/datelist',
+             url: '/uas/agenda/datelist',
              dataType: 'json',
              success: function (data) {
                  var result = "";
@@ -589,7 +589,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
         	    	}
         	    	$.ajax({
         	             type: 'GET',
-        	             url: '/agenda/dateCalendarList',
+        	             url: '/uas/agenda/dateCalendarList',
         	             dataType: 'json',
         	             success: function (data) {
         	                 var result = "";
@@ -611,7 +611,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
         	    	//打点加载
                     $.ajax({
                         type: 'GET',
-                        url: '/agenda/datelist',
+                        url: '/uas/agenda/datelist',
                         dataType: 'json',
                         success: function (data) {
                             console.log("aaadata"+data);
@@ -653,7 +653,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
          
          $.ajax({
              type: 'GET',
-             url: '/agenda/dateCalendarList',
+             url: '/uas/agenda/dateCalendarList',
              dataType: 'json',
              success: function (data) {
                  console.log("aaadata"+data);
@@ -687,7 +687,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
          });
         $.ajax({
             type: 'GET',
-            url: '/announcement/titleList',
+            url: '/uas/announcement/titleList',
             dataType: 'json',
             success: function (data) {
                 var result = "";
@@ -742,7 +742,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
         /* 刷新日程标题 */
         $.ajax({
             type: 'GET',
-            url: '/agenda/dateCalendarList',
+            url: '/uas/agenda/dateCalendarList',
             dataType: 'json',
             success: function (data) {
                 console.log("aaadata"+data);
@@ -777,7 +777,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
         /* 刷新打点 */
         $.ajax({
             type: 'GET',
-            url: '/agenda/datelist',
+            url: '/uas/agenda/datelist',
             dataType: 'json',
             success: function (data) {
                 var result = "";
@@ -828,7 +828,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
             $("#start").datetimebox('setValue',startTime);
             $("#end").datetimebox('setValue',myDate.pattern('yyyy-MM-dd'));
             $("#full").val(document.getElementsByClassName("sp-preview-inner")[0].style.backgroundColor);
-            url= "/agenda/create";
+            url= "/uas/agenda/create";    
    }
    
    
@@ -887,7 +887,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
          $.ajax({
              type:"post",
              dataType:"json",
-             url:"/announcement/lookOne",
+             url:"/uas/announcement/lookOne",
              data:{ "id":id },
              error:function(request) {
                  $.messager.alert("操作提示", "发生异常！", "error"); 
@@ -919,7 +919,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
    	$.messager.confirm('操作确认', '该操作将替换所选报表文件，确认要上传吗？', function (r) {
         if (r) {
         	$("#reportUploadForm").form("submit", {
-                url: "/periodReport/fileUpload",
+                url: "/uas/periodReport/fileUpload",
                 onSubmit: function () {
                     return $(this).form("validate");
                 },
@@ -974,7 +974,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
    function refreshProcessList(){
   	 $.ajax({
            type: 'GET',
-           url: '/workflow/queryTodo',
+           url: '/uas/workflow/queryTodo',
            dataType: 'json',
            success: function (data) {
                var result = "";
@@ -1001,7 +1001,7 @@ a.easyui-linkbutton.l-btn.l-btn-small {
   	 
   	 $.ajax({
          type: 'GET',
-         url: '/workflow/queryHisTask',
+         url: '/uas/workflow/queryHisTask',
          dataType: 'json',
          success: function (data) {
              var result = "";

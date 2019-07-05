@@ -4,22 +4,22 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>组织列表</title> 
-<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/uas/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
 </head> 
 <body>
 	<div id="loading"> 
-       <image src='/platform/image/loading3.gif'/>
+       <image src='/uas/platform/image/loading3.gif'/>
       <h1><font color="#15428B">页面载入中....</font></h1>   
      </div>  
     <div class="container" >
-        <table id="tg" class="easyui-treegrid" title="组织列表" url="/uasOrg/list" resultAsTree="true" data-options="
+        <table id="tg" class="easyui-treegrid" title="组织列表" url="/uas/uasOrg/list" resultAsTree="true" data-options="
                 idField:'orgId',
                 treeField:'name',
                 fitColumns:true,
@@ -40,7 +40,7 @@
       <div id="tb">
 	      <form id="searchUasOrgForm">
 	          <div class="conditions">
-		            <span class="con-span">组织类型: </span><input id="sOrgType" class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uasOrgType/comlist',
+		            <span class="con-span">组织类型: </span><input id="sOrgType" class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uas/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
@@ -68,7 +68,7 @@
 					    <tr>
 							<td class="kv-label">组织类型</td>
 							<td class="kv-content">
-								<input id="orgType" class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uasOrgType/comlist',
+								<input id="orgType" class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uas/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
@@ -93,13 +93,13 @@
 						<tr>
 						    <td class="kv-label">上级组织</td>
 							<td class="kv-content">
-								<!-- <select id=""parentOrgId"" class="easyui-combotree"  name="parentOrgnizationId" style="width:200px;height:35px;" data-options="url:'/uasOrg/tree',parentField:'pid'"></select> -->
+								<!-- <select id=""parentOrgId"" class="easyui-combotree"  name="parentOrgnizationId" style="width:200px;height:35px;" data-options="url:'/uas/uasOrg/tree',parentField:'pid'"></select> -->
 								<select id="parentOrgId" class="easyui-combotree"  name="parentOrgId"  style="width:200px;height:35px;" data-options="parentField:'pid'"></select>
 							</td>
 							<td class="kv-label">状态</td>
 							<td class="kv-content">
 								<input class="easyui-combobox" 
-		                        		type="text" name ="status" data-options="url:'/dictionary/comboOption?key=status',
+		                        		type="text" name ="status" data-options="url:'/uas/dictionary/comboOption?key=status',
 																method:'get',
 																valueField:'value',
 																textField:'text',
@@ -159,8 +159,8 @@
     function searchUasOrg() {
 	    //var json_data = $('#searchUserForm').serializeJSON();  
 	    var json_data = $('#searchUasOrgForm').serialize();
-	    $('#tg').treegrid('options').url = "/uasOrg/list?" + json_data;
-	    //$('#dg').datagrid({url : '/employee/list' , queryParams : {json_data}});
+	    $('#tg').treegrid('options').url = "/uas/uasOrg/list?" + json_data;
+	    //$('#dg').datagrid({url : '/uas/employee/list' , queryParams : {json_data}});
     	//$("#dg").datagrid('load', json_data);
 	    $('#tg').treegrid('reload');
     }
@@ -201,8 +201,8 @@
         	$("#orgnizationAddForm").form("clear");
         	var json_data = $('#searchUasOrgForm').serialize();
              $.ajax({
-//            	 url: "/platform/app/org2.json",
-               url: "/uasOrg/tree?" + json_data,
+//            	 url: "/uas/platform/app/uas/org2.json",
+               url: "/uas/uasOrg/tree?" + json_data,
 //               data: { BrandID: BrandID, },
                  dataType: 'json',
                  success: function (data) {   
@@ -214,7 +214,7 @@
             //$("#parentOrgId").combotree({readonly : false});
             $('#orgType').combobox('readonly',false);
             
-            url = "/uasOrg/insert";
+            url = "/uas/uasOrg/insert";
         }
 */
 
@@ -225,7 +225,7 @@
 			$('#orgType').combobox('select', val);
 			
 		     $.ajax({
-		         url: "/uasOrg/tree",
+		         url: "/uas/uasOrg/tree",
 		         data: { 'orgType' : val },
 		         dataType: 'json',
 		         success: function (data) {   
@@ -237,7 +237,7 @@
 		    //$("#parentOrgId").combotree({readonly : false});
 		    $('#orgType').combobox('readonly',true);
 		    
-		    url = "/uasOrg/insert";
+		    url = "/uas/uasOrg/insert";
 		}
 		
         function editOrgnization() {
@@ -268,8 +268,8 @@
                         	
         	    var json_data = $('#searchUasOrgForm').serialize();
                 $.ajax({
-//            	  url: "/platform/app/org2.json",
-                  url: "/uasOrg/tree?" + json_data,
+//            	  url: "/uas/platform/app/uas/org2.json",
+                  url: "/uas/uasOrg/tree?" + json_data,
 //                data: { BrandID: BrandID, },
                   dataType: 'json',
                   success: function (data) {   
@@ -281,7 +281,7 @@
                 //$("#parentOrgId").combotree('readonly');
                 $('#orgType').combobox('readonly');
                 
-                url = "/uasOrg/update";
+                url = "/uas/uasOrg/update";
             }
         }
         function saveOrgnization() {
@@ -335,7 +335,7 @@
 	    	}
                 $.messager.confirm('操作确认', '确认要删除组织吗？', function (r) {
                     if (r) {
-                       /*  $.post('/orgnization/deleteBatch', { "ids":ids }, function (result) {
+                       /*  $.post('/uas/orgnization/deleteBatch', { "ids":ids }, function (result) {
                         	result = $.parseJSON(result);
                             if (result.status == 1) {
                                 $('#tg').treegrid('reload');
@@ -347,7 +347,7 @@
                         $.ajax({
                             type:"post",
                             dataType:"json",
-                            url:"/uasOrg/deleteBatch",
+                            url:"/uas/uasOrg/deleteBatch",
                             data:{ "ids":ids },
                             error:function(request) {
                             	$.messager.alert("操作提示", "发生异常！", "error"); 

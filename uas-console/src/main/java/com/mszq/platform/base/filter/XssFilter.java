@@ -33,8 +33,8 @@ public class XssFilter implements Filter {
 //					.forward(((HttpServletRequest) request), response);
 //			System.out.println("referer不为空，referer >>>>>>>>>>>>>> " + referer);
 //		}
-		XssHttpServletRequestWrapper xssRequest = new XssHttpServletRequestWrapper((HttpServletRequest) request);
-		chain.doFilter(xssRequest, response);
+//		XssHttpServletRequestWrapper xssRequest = new XssHttpServletRequestWrapper((HttpServletRequest) request);
+		chain.doFilter(request, response);
 	}
 
 	@Override

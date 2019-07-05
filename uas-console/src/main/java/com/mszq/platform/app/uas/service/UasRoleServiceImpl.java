@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mszq.platform.app.config.dao.IConfigDAO;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +32,30 @@ public class UasRoleServiceImpl implements IUasRoleService {
 
 	@Autowired
 	IUasAppDAO uasAppDAO;
-	
+
+	@Autowired
+	IConfigDAO configDAO;
+
 	@Autowired
 	ApiSenderService apiSender;
+
+	private String appId = null;
+	private String secret = null;
+
+	private String getAppId(){
+		if(appId == null){
+			this.appId = configDAO.getConfigValueByCode("uasAppId");
+		}
+		return this.appId;
+	}
+
+	private String getSecret(){
+		if(secret == null){
+			this.secret =configDAO.getConfigValueByCode("uasSecret");
+		}
+
+		return this.secret;
+	}
 
 	@Override
 	public EUDataGridResult selectList(@Param("condition") Map<String, Object> condition, int page, int rows) {
@@ -65,12 +87,11 @@ public class UasRoleServiceImpl implements IUasRoleService {
 	@Override
 	public int insert(UasRole record) {
 		record.setModifyTime(DateUtil.dateToStr(new Date(), Constants.PATTERN_DATETIME));
-		
-		UasAppDto uasApp = uasAppDAO.selectByPrimaryKey(new Long(0));
+
 		JSONObject obj = new JSONObject();
-		obj.put("_appId", 0);
+		obj.put("_appId", this.getAppId());
 		obj.put("_devInfo", "");
-		obj.put("_secret", uasApp.getSecret());
+		obj.put("_secret", this.getSecret());
 		obj.put("role", record);
 
 		apiSender.setMethod("/permission/add_role");
@@ -84,12 +105,11 @@ public class UasRoleServiceImpl implements IUasRoleService {
 	@Override
 	public int update(UasRole record) {
 		record.setModifyTime(DateUtil.dateToStr(new Date(), Constants.PATTERN_DATETIME));
-		
-		UasAppDto uasApp = uasAppDAO.selectByPrimaryKey(new Long(0));
+
 		JSONObject obj = new JSONObject();
-		obj.put("_appId", 0);
+		obj.put("_appId", this.getAppId());
 		obj.put("_devInfo", "");
-		obj.put("_secret", uasApp.getSecret());
+		obj.put("_secret", this.getSecret());
 		obj.put("role", record);
 
 		apiSender.setMethod("/permission/modify_role");
@@ -101,31 +121,14 @@ public class UasRoleServiceImpl implements IUasRoleService {
 
 	@Override
 	public int deleteBatch(String[] ids) {
-		UasAppDto uasApp = uasAppDAO.selectByPrimaryKey(new Long(0));
 		
 		int ret = 0;
-		/*
 		for (String id : ids) {
 			Long key = Long.parseLong(id);
-			UasRoleDto uasRoleDto = uasRoleDAO.selectByPrimaryKey(key);
-			//int r = deleteTree(0, uasRoleDto, "================================================");
-			
-			//ret = ret + r;
-			//ret = ret + uasOrgDAO.deleteByPrimaryKey(key);
-			
-			int childrenCount = getChildernCount(uasRoleDto);
-			if (childrenCount > 0) {
-				throw new RuntimeException("角色"+uasRoleDto.getRoleName()+"存在子角色，不能删除");
-			}
-		}
-		*/
-		for (String id : ids) {
-			Long key = Long.parseLong(id);
-			UasRoleDto uasRoleDto = uasRoleDAO.selectByPrimaryKey(key);
 			JSONObject obj = new JSONObject();
-			obj.put("_appId", 0);
+			obj.put("_appId", this.getAppId());
 			obj.put("_devInfo", "");
-			obj.put("_secret", uasApp.getSecret());
+			obj.put("_secret", this.getSecret());
 			obj.put("roleId", id);
 			
 			apiSender.setMethod("/permission/del_role");

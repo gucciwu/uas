@@ -12,14 +12,14 @@
      	width:200px!important;
      }
     </style>
-	<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
-	<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
-	<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
-	<script type="text/javascript" src="/platform/js/jquery.min.js"></script>
-	<script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
-	<script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
-	<script type="text/javascript" src="/platform/js/base.js"></script>
-    <link href="/platform/css/public.css" rel="stylesheet">
+	<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
+	<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
+	<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
+	<script type="text/javascript" src="/uas/platform/js/jquery.min.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/jquery.easyui.min.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/easyui-lang-zh_CN.js"></script>
+	<script type="text/javascript" src="/uas/platform/js/base.js"></script>
+    <link href="/uas/platform/css/public.css" rel="stylesheet">
     
 </head> 
 <body>
@@ -70,9 +70,9 @@
         //页面初始方法 
         $(function() {
 	    	$('#traceTb').datagrid({
-	  			url:'/workflow/process/trace/info?bid='+params.bid+"&pid="+params.pid
+	  			url:'/uas/workflow/process/trace/info?bid='+params.bid+"&pid="+params.pid
 	  		});  
-	 	  var url="/platform/app/workflow/workflowTrace.html?pid="+params.pid+"&bid="+params.bid;
+	 	  var url="/uas/platform/app/workflow/workflowTrace.html?pid="+params.pid+"&bid="+params.bid;
 	 	  document.getElementById("processIframe_pic").src=url;
         })
         

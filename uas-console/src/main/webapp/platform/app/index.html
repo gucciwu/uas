@@ -4,22 +4,22 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>统一登录后台管理系统</title> 
-<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link href="/platform/static/darkblue/css/platform.css" rel="stylesheet">
-<link href="/platform/custom/darkblue/uimaker/easyui.css" rel="stylesheet">
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link href="/uas/platform/static/darkblue/css/platform.css" rel="stylesheet">
+<link href="/uas/platform/custom/darkblue/uimaker/easyui.css" rel="stylesheet">
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
 
-<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="/platform/js/base.js"></script>
-<script type="text/javascript" src="/platform/js/util.js"></script>
-<script type="text/javascript" src="/platform/js/md5/md5.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/uas/platform/js/base.js"></script>
+<script type="text/javascript" src="/uas/platform/js/util.js"></script>
+<script type="text/javascript" src="/uas/platform/js/md5/md5.js"></script>
 </head> 
 <body>
     <div class="container">
         <div id="pf-hd">
             <div class="pf-logo">
-                <img src="/platform/image/main_logo.png" width="60" height="50" alt="logo"><font color="white" size="5">&nbsp;统一登录后台管理系统</font>
+                <img src="/uas/platform/image/main_logo.png" width="60" height="50" alt="logo"><font color="white" size="5">&nbsp;统一登录后台管理系统</font>
             </div>           
             <div class="pf-nav-wrap">
               <!--<div class="pf-nav-ww">-->
@@ -117,8 +117,8 @@
 	  
 	
 
-    <script type="text/javascript" src="/platform/static/darkblue/js/main.js"></script>
-    <script type="text/javascript" src="/platform/js/storage.js"></script>    
+    <script type="text/javascript" src="/uas/platform/static/darkblue/js/main.js"></script>
+    <script type="text/javascript" src="/uas/platform/js/storage.js"></script>    
     <script type="text/javascript">
     
     
@@ -232,7 +232,7 @@
     		var oldPassword =$('#oldPassword').textbox("getValue");
     		$('#oldPassword').textbox("setValue",md5(oldPassword));
         	$("#passwordForm").form("submit", {
-                url: '/employee/update/password',
+                url: '/uas/employee/update/password',
                 onSubmit: function () {
                     return $(this).form("validate");
                 },
@@ -249,7 +249,7 @@
                         $.messager.alert("操作信息", result.msg,"info");
                         //--------退出-------
                         //调用退出方法
-                        //$.post('/logout');
+                        //$.post('/uas/logout');
                         //清理cookie和storage
                         //clearStorage();
                         //window.location.href = 'login.html';
