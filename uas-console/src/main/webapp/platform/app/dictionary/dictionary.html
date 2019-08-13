@@ -4,22 +4,22 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>数据字典</title> 
-<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/uas/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/switchbutton.css">
-<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/switchbutton.css">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
 </head> 
 <body>
 <div id="loading"> 
-     <image src='/uas/platform/image/loading3.gif'/>
+     <image src='/platform/image/loading3.gif'/>
      <h1><font color="#15428B">页面载入中....</font></h1>  
 </div>
  <div class="container">
        	<table id="tg" class="easyui-treegrid" title="数据字典列表" 
 			data-options="
-			    url:'/uas/dictionary/list',
+			    url:'/dictionary/list',
 			    method:'get',
 			    rownumbers: true,
 			    pagination: true,
@@ -127,9 +127,9 @@
 	<!-- treegrid异步加载子节点的方法都不用写了，easyui自己就搞定了 ,但为啥不显示？-->
 
 
-    <script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
-    <script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
-    <script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
     <script type="text/javascript">
     function closes() {  
         $('#loading').fadeOut('normal', function () {  
@@ -180,7 +180,7 @@
     		
    	   $.ajax({
    		   type:"POST",
-   		   url: "/uas/dictionary/create",
+   		   url: "/dictionary/create",
    		   data:{"Id":0,"type":type,"parentId":parentId,"name":name,"value":value,"code":code},//id的值设置一个初始值，避免前端向后端提交form时报错
    		   error:function(){
    			   
@@ -247,7 +247,7 @@
 				$.ajax({
                                 type:"post",
                                 dataType:"json",
-                                url:"/uas/dictionary/update",
+                                url:"/dictionary/update",
                                 data:{ "id":row.id,"name":row.name,"value":row.value,"status":row.status,"type":row.type },
                                 error:function(request) {
                                 	isServerResponse=1;
@@ -297,7 +297,7 @@
                            $.ajax({
                                type:"post",
                                dataType:"json",
-                               url:"/uas/dictionary/delete",
+                               url:"/dictionary/delete",
                                data:{ "id":row.id,"type":row.type,"levelCode":row.levelCode },
                                error:function(request) {
                                	$.messager.alert("操作提示", "发生异常！", "error"); 
@@ -329,14 +329,14 @@
 		    		var val=$('input:radio[name="type"]:checked').val();
 		            if(val==0){
 		            	$("#dictionary").css("display","table");
-		            	$("#dictionary_combotree").combotree("reload","/uas/dictionary/list?source=new");
+		            	$("#dictionary_combotree").combotree("reload","/dictionary/list?source=new");
 		            	$("#dictionaryItem").css("display","none");
 		            }
 		            else if(val==1){
 		            	$("#dictionaryItem").css("display","table");
 		            	$("#dictionaryItem_combotree").combotree({  
 		            			    //获取数据URL  
-		            			    url : "/uas/dictionary/list?source=new",  
+		            			    url : "/dictionary/list?source=new",
 		            			    //选择树节点触发事件  
 		            			    onSelect : function(node) {  
 		            			        //返回树对象  

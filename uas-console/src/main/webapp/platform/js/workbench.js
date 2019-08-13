@@ -5,7 +5,7 @@ function changeStatus(id,status){
 		$.ajax({
             type:"get",
             dataType:"json",
-            url:"/uas/workflow/queryWorkflowBusinessData",
+            url:"/workflow/queryWorkflowBusinessData",
             data:{ "businessDataIds":id,"businessTableName":"PP_REPORT_PERIOD" },
             error:function(request) {
             	$.messager.alert("操作提示", "发生异常！", "error"); 
@@ -23,7 +23,7 @@ function changeStatus(id,status){
 		$.ajax({
 		       type:"post",
 		       dataType:"json",
-		       url:"/uas/periodReport/changeStatus",
+		       url:"/periodReport/changeStatus",
 		       data:{ "id":id,
 		      	 	"status":status,
 		      	    "rejectReason":$("#rejectReason").val()

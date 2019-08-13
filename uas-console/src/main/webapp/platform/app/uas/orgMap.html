@@ -4,26 +4,26 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>角色列表</title> 
-<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/uas/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
-<script type="text/javascript" src="/uas/platform/js/jquery.min.js"></script>
-<script type="text/javascript" src="/uas/platform/js/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/uas/platform/js/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="/uas/platform/js/base.js"></script>
-<script type="text/javascript" src="/uas/platform/js/util.js"></script>
-<script type="text/javascript" src="/uas/platform/js/md5/md5.js"></script>
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/js/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/js/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/js/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="/platform/js/base.js"></script>
+<script type="text/javascript" src="/platform/js/util.js"></script>
+<script type="text/javascript" src="/platform/js/md5/md5.js"></script>
 </head> 
 <body>
 	<div id="loading"> 
-      <image src='/uas/platform/image/loading3.gif'/>
+      <image src='/platform/image/loading3.gif'/>
       <h1><font color="#15428B">页面载入中....</font></h1>   
      </div>  
     <div class="container" >
        <table id="tg" class="easyui-datagrid"  title="组织对应关系"
-             url="/uas/uasOrgIdMap/list" data-options="
+             url="/uasOrgIdMap/list" data-options="
                fitColumns:true,
                 singleSelect:true,
                 autoRowHeight:false,
@@ -51,14 +51,14 @@
       <div id="tb">
 	    <form id="searchUasOrgIdMapForm">
 	          <div class="conditions">
-	                <span class="con-span">原组织类型: </span><input class="easyui-combobox" type="text" id ="sSrouceOrgType" name ="srouceOrgType" data-options="url:'/uas/uasOrgType/comlist',
+	                <span class="con-span">原组织类型: </span><input class="easyui-combobox" type="text" id ="sSrouceOrgType" name ="srouceOrgType" data-options="url:'/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
 																panelHeight:'auto',
 																editable:false" style="width:146px;height:35px;line-height:35px;"></input>
 		            <span class="con-span" style="width:40px;margin-left:20px">原部门: </span><input class="easyui-textbox" type="text"  name="srouceOrgName" style="width:200px;height:35px;line-height:35px;"></input>
-		            <span class="con-span" style="width:80px;margin-left:20px">关联组织类型: </span><input class="easyui-combobox" type="text" id ="sTargetOrgType" name ="targetOrgType" data-options="url:'/uas/uasOrgType/comlist',
+		            <span class="con-span" style="width:80px;margin-left:20px">关联组织类型: </span><input class="easyui-combobox" type="text" id ="sTargetOrgType" name ="targetOrgType" data-options="url:'/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
@@ -90,7 +90,7 @@
 						    <tr>
 								<td class="kv-label">原组织类型</td>
 								<td class="kv-content">
-									<input class="easyui-combobox" type="text" id ="srouceOrgType" name ="srouceOrgType" data-options="url:'/uas/uasOrgType/comlist',
+									<input class="easyui-combobox" type="text" id ="srouceOrgType" name ="srouceOrgType" data-options="url:'/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
@@ -108,7 +108,7 @@
 						    <tr>
 								<td class="kv-label">关联组织类型</td>
 								<td class="kv-content">
-									<input class="easyui-combobox" type="text" id ="targetOrgType" name ="targetOrgType" data-options="url:'/uas/uasOrgType/comlist',
+									<input class="easyui-combobox" type="text" id ="targetOrgType" name ="targetOrgType" data-options="url:'/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
@@ -154,7 +154,7 @@
 	    	$('#srouceOrgType').combobox({
 	    		onChange:function(newValue){
 	    			$.ajax({
-	                    url: "/uas/uasOrg/tree",
+	                    url: "/uasOrg/tree",
     	                data: { "orgType": newValue},
 	                    dataType: 'json',
 	                    success: function (data) {   
@@ -168,7 +168,7 @@
 	    	$('#targetOrgType').combobox({
 	    		onChange:function(newValue){
 	    			$.ajax({
-	                    url: "/uas/uasOrg/tree",
+	                    url: "/uasOrg/tree",
     	                data: { "orgType": newValue},
 	                    dataType: 'json',
 	                    success: function (data) {   
@@ -199,8 +199,8 @@
 	    //var json_data = $('#searchUserForm').serializeJSON();  
 	    var json_data = $('#searchUasOrgIdMapForm').serialize();
 	    //alert($('#dg').datagrid);
-	    $('#tg').datagrid('options').url = "/uas/uasOrgIdMap/list?" + json_data;
-	    //$('#dg').datagrid({url : '/uas/employee/list' , queryParams : {json_data}});
+	    $('#tg').datagrid('options').url = "/uasOrgIdMap/list?" + json_data;
+	    //$('#dg').datagrid({url : '/employee/list' , queryParams : {json_data}});
     	//$("#dg").datagrid('load', json_data);
     	//alert(json_data);
 	    $("#tg").datagrid('load');
@@ -218,7 +218,7 @@
         function newUasOrgIdMap() {
         	$("#uasOrgIdMapAddForm").form("clear");
             $("#dlg").dialog("open").dialog('setTitle', '组织对应关系');
-            url = "/uas/uasOrgIdMap/insert";
+            url = "/uasOrgIdMap/insert";
         }
         function editUasOrgIdMap() {
         	var dgObject = $("#tg");
@@ -242,7 +242,7 @@
             	$("#uasOrgIdMapAddForm").form("clear");
                 $("#dlg").dialog("open").dialog('setTitle', '编辑组织对应关系');
                 $("#uasOrgIdMapAddForm").form("load", row);
-                url = "/uas/uasOrgIdMap/update";
+                url = "/uasOrgIdMap/update";
             }
         }
         function saveUasOrgIdMap() {
@@ -299,7 +299,7 @@
                         $.ajax({
                             type:"post",
                             dataType:"json",
-                            url:"/uas/uasOrgIdMap/deleteBatch",
+                            url:"/uasOrgIdMap/deleteBatch",
                             data:{ "ids":ids },
                             error:function(request) {
                             	$.messager.alert("操作提示", "发生异常！", "error"); 

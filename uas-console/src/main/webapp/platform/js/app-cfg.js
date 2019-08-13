@@ -1,4 +1,4 @@
 'use strict';
 
-var ctx="/uas/";
+var ctx="/";
 

@@ -4,23 +4,23 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>角色列表</title> 
-<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/uas/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
-<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
-<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
 </head> 
 <body>
 	<div id="loading"> 
-      <image src='/uas/platform/image/loading3.gif'/>
+      <image src='/platform/image/loading3.gif'/>
       <h1><font color="#15428B">页面载入中....</font></h1>   
      </div>  
     <div class="container" >
        <table id="tg" class="easyui-datagrid"  title="应用列表类型列表"
-             url="/uas/uasApp/list" data-options="
+             url="/uasApp/list" data-options="
                fitColumns:true,
                 singleSelect:true,
                 autoRowHeight:false,
@@ -49,14 +49,14 @@
 		            <span class="con-span">应用名称: </span><input class="easyui-textbox" type="text" name ="name" style="width:146px;height:35px;line-height:35px;"></input>
 		            <span class="con-span">密钥: </span><input class="easyui-textbox" type="text" name ="secret" style="width:146px;height:35px;line-height:35px;"></input>
 		            <span class="con-span">链接: </span><input class="easyui-textbox" type="text" name ="path" style="width:146px;height:35px;line-height:35px;"></input>
-		            <span class="con-span">组织类型: </span><input class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uas/uasOrgType/comlist',
+		            <span class="con-span">组织类型: </span><input class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
 																panelHeight:'auto',
 																editable:false" style="width:146px;height:35px;line-height:35px;"></input>
 		            <!-- span class="con-span">所属机构: </span><input class="easyui-combotree"  name="orgnizationId"  
-								data-options="url:'/uas/orgnization/tree',parentField:'pid'" style="width:206px;height:35px;line-height:35px;"></input>
+								data-options="url:'/orgnization/tree',parentField:'pid'" style="width:206px;height:35px;line-height:35px;"></input>
 		             -->
 		            <a href="#" class="easyui-linkbutton" iconCls="icon-search" data-options="selected:true" onclick="searchApp()">查询</a>
 		            <a href="#" class="easyui-linkbutton" iconCls="icon-reload" onclick="cleanCondition()" >重置</a>
@@ -98,7 +98,7 @@
 								<td class="kv-label">组织结构类型</td>
 								<td class="kv-content">
 									<!--input class="easyui-textbox" type="text" name="orgType" style="width:166px;height:35px;line-height:35px;"></input-->
-									<input class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uas/uasOrgType/comlist',
+									<input class="easyui-combobox" type="text" name ="orgType" data-options="url:'/uasOrgType/comlist',
 																method:'post',
 																valueField:'id',
 																textField:'comment',
@@ -177,8 +177,8 @@
 	    //var json_data = $('#searchUserForm').serializeJSON();  
 	    var json_data = $('#searchUasAppForm').serialize();
 	    //alert($('#dg').datagrid);
-	    $('#tg').datagrid('options').url = "/uas/uasApp/list?" + json_data;
-	    //$('#dg').datagrid({url : '/uas/employee/list' , queryParams : {json_data}});
+	    $('#tg').datagrid('options').url = "/uasApp/list?" + json_data;
+	    //$('#dg').datagrid({url : '/employee/list' , queryParams : {json_data}});
     	//$("#dg").datagrid('load', json_data);
 	    $("#tg").datagrid('load');
     }
@@ -195,7 +195,7 @@
         function newApp() {
         	$("#appAddForm").form("clear");
             $("#dlg").dialog("open").dialog('setTitle', '增加应用列表类型');
-            url = "/uas/uasApp/insert";
+            url = "/uasApp/insert";
         }
         function editApp() {
         	var dgObject = $("#tg");
@@ -219,7 +219,7 @@
             	$("#appAddForm").form("clear");
                 $("#dlg").dialog("open").dialog('setTitle', '编辑应用列表类型');
                 $("#appAddForm").form("load", row);
-                url = "/uas/uasApp/update";
+                url = "/uasApp/update";
             }
         }
         function saveApp() {
@@ -276,7 +276,7 @@
                         $.ajax({
                             type:"post",
                             dataType:"json",
-                            url:"/uas/uasApp/deleteBatch",
+                            url:"/uasApp/deleteBatch",
                             data:{ "ids":ids },
                             error:function(request) {
                             	$.messager.alert("操作提示", "发生异常！", "error"); 

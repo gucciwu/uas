@@ -4,23 +4,23 @@
     <meta charset="utf-8"> 
     <meta name="viewport" content="width=device-width, initial-scale=1"> 
     <title>角色列表</title> 
-<link href="/uas/platform/static/darkblue/css/base.css" rel="stylesheet">
-<link rel="stylesheet" href="/uas/platform/custom/darkblue/uimaker/easyui.css">
-    <link href="/uas/platform/css/public.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="/uas/platform/custom/darkblue/uimaker/icon.css">
-<link rel="stylesheet" href="/uas/platform/static/darkblue/css/providers1.css">
-<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.min.js"></script>
-<script type="text/javascript" src="/uas/platform/custom/darkblue/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/uas/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
+<link href="/platform/static/darkblue/css/base.css" rel="stylesheet">
+<link rel="stylesheet" href="/platform/custom/darkblue/uimaker/easyui.css">
+    <link href="/platform/css/public.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="/platform/custom/darkblue/uimaker/icon.css">
+<link rel="stylesheet" href="/platform/static/darkblue/css/providers1.css">
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="/platform/custom/darkblue/easyui-lang-zh_CN.js"></script>
 </head> 
 <body>
 	<div id="loading"> 
-      <image src='/uas/platform/image/loading3.gif'/>
+      <image src='/platform/image/loading3.gif'/>
       <h1><font color="#15428B">页面载入中....</font></h1>   
      </div>  
     <div class="container" >
        <table id="tg" class="easyui-datagrid"  title="会话列表"
-             url="/uas/uasSession/list" data-options="
+             url="/uasSession/list" data-options="
                fitColumns:true,
                 singleSelect:true,
                 autoRowHeight:false,
@@ -107,8 +107,8 @@
 	    //var json_data = $('#searchUserForm').serializeJSON();  
 	    var json_data = $('#searchUasSessionForm').serialize();
 	    //alert($('#dg').datagrid);
-	    $('#tg').datagrid('options').url = "/uas/uasSession/list?" + json_data;
-	    //$('#dg').datagrid({url : '/uas/employee/list' , queryParams : {json_data}});
+	    $('#tg').datagrid('options').url = "/uasSession/list?" + json_data;
+	    //$('#dg').datagrid({url : '/employee/list' , queryParams : {json_data}});
     	//$("#dg").datagrid('load', json_data);
 	    $("#tg").datagrid('load');
     }
@@ -138,7 +138,7 @@
                         $.ajax({
                             type:"post",
                             dataType:"json",
-                            url:"/uas/uasSession/deleteBatch",
+                            url:"/uasSession/deleteBatch",
                             data:{ "ids":ids },
                             error:function(request) {
                             	$.messager.alert("操作提示", "发生异常！", "error"); 

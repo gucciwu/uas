@@ -491,7 +491,7 @@ jQuery(function($){
           },
           error:function(data, textStatus){
         	 if(data.status==401){
-                     window.top.location.href= "/uas/platform/app/login.html";
+                     window.top.location.href= "/platform/app/login.html";
                      return;
         	 }
             _error(data, textStatus);

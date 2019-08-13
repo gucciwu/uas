@@ -156,7 +156,7 @@ var mainPlatform = {
         				$.ajax({
         		            type:"post",
         		            dataType:"json",
-        		            url:"/uas/logout",
+        		            url:"/logout",
         		            /*
         		            data:{code : $("#code").val(),
         		            	password : $("#password").val() 
@@ -388,7 +388,7 @@ var buttonMap;
 $.ajax({
     type:"get",
     dataType:"json",
-    url:"/uas/permission/query",
+    url:"/permission/query",
     success:function(result) {
     /*	 $.messager.alert("操作信息", result,"info");
     	 return;
